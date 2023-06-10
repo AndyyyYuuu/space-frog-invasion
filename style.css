@@ -1,3 +1,13 @@
+@font-face{
+  font-family: tiny;
+  src: assets/font/tiny/tiny.ttf;
+}
+
+@font-face{
+  font-family: pixel-bit-advanced;
+  src: assets/font/pixel-bit-advanced.ttf;
+}
+
 html, body {
   height: 100%;
   width: 100%;
