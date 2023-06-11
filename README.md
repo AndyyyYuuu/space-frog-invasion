@@ -1,6 +1,6 @@
 # space-frog-invasion
 ### GAME: SPACE FROG INVASION
 
-SHIP TYPES:
-Collider Ship
-Shooty Ship
+#### Planned Ship Types:
+- Collider Ship
+- Shooty Ship
