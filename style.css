@@ -1,11 +1,11 @@
 @font-face{
   font-family: tiny;
-  src: assets/font/tiny/tiny.ttf;
+  src: url(assets/font/tiny/tiny.otf);
 }
 
 @font-face{
-  font-family: pixel-bit-advanced;
-  src: assets/font/pixel-bit-advanced.ttf;
+  font-family: pixel-advanced;
+  src: url(assets/font/pixel-bit-advanced.ttf);
 }
 
 html, body {
@@ -18,5 +18,5 @@ html, body {
 }
 canvas{
   /*border: 4px solid white;*/
-  background: black
+  background: black;
 }

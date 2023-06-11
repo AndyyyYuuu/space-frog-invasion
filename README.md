@@ -1,2 +1,6 @@
 # space-frog-invasion
-A sci-fi game
+### GAME: SPACE FROG INVASION
+
+SHIP TYPES:
+Collider Ship
+Shooty Ship
