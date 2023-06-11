@@ -25,7 +25,7 @@ const COLOR = {
 }
 
 var settings = {
-  pixelChecker: false,
+  pixelChecker: true,
 }
 
 function randChoice(list){
@@ -68,9 +68,10 @@ class Ship{
   constructor(x, y, attributes){
     this.x = x;
     this.y = y;
+    this.attributes = attributes;
     this.dx = 1;
     this.dy = 0;
-
+    this.dead = false;
   }
 
   draw(){
@@ -93,18 +94,22 @@ class Game{
   constructor(name){
     this.name = name;
     this.state = 0;
+    this.fleet = [];
+
   }
 
   render(){
     ctx.fillStyle = COLOR.TEXT;
-    ctx.font = "32px pixel-advanced";
-    ctx.fillText("Game",125,100);
+    ctx.textAlign = "left";
+    ctx.font = "40px wendy";
+    ctx.fillText("Fleet Formation",16,32);
+    uiRect(16, 320, 480, 176);
   }
 }
 
 
 var saveSlots = [
-  null,
+  new Game("Test Save"),
   null,
   null
 ]

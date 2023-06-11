@@ -4,6 +4,11 @@
 }
 
 @font-face{
+  font-family: wendy;
+  src: url(assets/font/wendy.ttf);
+}
+
+@font-face{
   font-family: pixel-advanced;
   src: url(assets/font/pixel-bit-advanced.ttf);
 }
