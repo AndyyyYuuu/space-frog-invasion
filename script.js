@@ -12,8 +12,8 @@ ctx.imageSmoothingEnabled = false;
 ctx.textRendering = "geometricPrecision";
 ctx.textRendering = "optimizeLegibility";
 const RANDWORDS = {
-  adj: ["Crunchy ", "Space ", "Froggy ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Slimy "],
-  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleet", "War", "Ships", "Pond", "Star"]
+  adj: ["Crunchy ", "Space ", "Froggy ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Slimy ", "Jazzy "],
+  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleet", "War", "Ships", "Pond", "Star", "Plasma"]
 }
 
 const COLOR = {
@@ -51,6 +51,7 @@ var newGameWindow = {
 
 var mouseX = -1;
 var mouseY = -1;
+var mouseIsDown = false;
 var newSaveName = null;
 var IMAGE = {
   /*
@@ -91,6 +92,7 @@ class ShootyShip extends Ship{
 class Game{
   constructor(name){
     this.name = name;
+    this.state = 0;
   }
 
   render(){
@@ -125,6 +127,7 @@ function mouseInRect(x, y, w, h){
 }
 
 canvas.onmousedown=function(){
+  mouseIsDown = true;
   if (mode == "start"){
     if (newGameWindow.createdSlot == -1){
       for (let i=0; i<3; i++){
@@ -152,6 +155,9 @@ canvas.onmousedown=function(){
   }
 }
 
+canvas.onmouseup=function(){
+  mouseIsDown = false
+}
 
 document.addEventListener("keydown", event => {
   
@@ -169,6 +175,22 @@ function uiRect(x, y, w, h){
   ctx.stroke();
 }
 
+function buttonRect(x, y, w, h){
+  if (mouseInRect(x, y, w, h) && !mouseIsDown){
+    uiRect(x, y, w, h);
+  }else{
+    
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = COLOR.UI[1];
+    ctx.beginPath();
+    ctx.rect(x-2, y-2, w+4, h+4);
+    ctx.stroke();
+    ctx.strokeStyle = COLOR.UI[0];
+    ctx.beginPath();
+    ctx.rect(x+2, y+2, w-4, h-4);
+    ctx.stroke();
+  }
+}
 
 var frames = 1;
 const FPS_LIMIT = 40;
@@ -233,8 +255,8 @@ function renderLoop(currentDelta){
         ctx.fillText("Name:   "+newGameWindow.name, 128, 288);
       }
       
-      uiRect(128, 312, 112, 32);
-      uiRect(256, 312, 112, 32);
+      buttonRect(128, 312, 112, 32);
+      buttonRect(256, 312, 112, 32);
       ctx.fillText(" Cancel", 128, 336);
       ctx.fillText(" Create", 256, 336);
     }
