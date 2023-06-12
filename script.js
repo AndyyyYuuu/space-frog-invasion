@@ -11,6 +11,9 @@ ctx.imageSmoothingEnabled = false;
 //label.textContent = "geometricPrecision";
 ctx.textRendering = "geometricPrecision";
 ctx.textRendering = "optimizeLegibility";
+
+const PIXEL = 4;
+
 const RANDWORDS = {
   adj: ["Crunchy ", "Space ", "Froggy ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Slimy ", "Jazzy "],
   n: ["Planet", "Frogs", "Croak", "Gravity", "Fleet", "War", "Ships", "Pond", "Star", "Plasma"]
@@ -35,7 +38,6 @@ function randChoice(list){
 function randName(){
   return randChoice(RANDWORDS.adj) + randChoice(RANDWORDS.n);
 }
-console.log(randName());
 
 function newImage(src){
   img = new Image();
@@ -75,7 +77,9 @@ class Ship{
   }
 
   draw(){
-
+    ctx.fillStyle = "gray";
+    ctx.fillRect(Math.round(this.x)*PIXEL, Math.round(this.y)*PIXEL, this.attributes.width*PIXEL, this.attributes.height*PIXEL);
+    
   }
 }
 
@@ -83,19 +87,19 @@ class ShootyShip extends Ship{
   constructor(x, y){
     super(x, y, {
       health: 1,
-
-      image: null
+      width: 8,
+      height: 8,
+      image: null // Replace with actual image later
     })
   }
 }
-
 
 class Game{
   constructor(name){
     this.name = name;
     this.state = 0;
-    this.fleet = [];
-
+    this.fleet = [new ShootyShip(64, 64)];
+    this.heldShip = null;
   }
 
   render(){
@@ -103,6 +107,9 @@ class Game{
     ctx.textAlign = "left";
     ctx.font = "40px wendy";
     ctx.fillText("Fleet Formation",16,32);
+    for (let i=0; i<this.fleet.length; i++){
+      this.fleet[i].draw();
+    }
     uiRect(16, 320, 480, 176);
   }
 }
