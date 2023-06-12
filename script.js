@@ -62,10 +62,13 @@ var mouseIsDown = false;
 
 // Structure to contain and pre-load all images
 var IMAGE = {
-  /*
-  SHIP:{
-    newImage()
-  }*/
+  
+  ship:{
+
+    shooter: [newImage("ship/collider0.png"), newImage("ship/shooter1.png")],
+    collider: [newImage("ship/collider0.png")]
+    healer: [newImage("ship/collider0.png")]
+  }
   debug: {
     pixelChecker: newImage("misc/pixel-checker.png")
   }

@@ -44,7 +44,7 @@ class Game{
     this.fleet = [new ShootyShip(64, 64)];
     this.heldShip = null;
   }
-
+  
   render(){
     if (this.state == 0){
       ctx.fillStyle = COLOR.TEXT;
