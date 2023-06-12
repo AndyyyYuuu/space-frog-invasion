@@ -192,7 +192,7 @@ function renderLoop(currentDelta){
   frames+=1;
 
   if(mode == "game"){
-    game.render();
+    game.render(); // runs render loop of the game
 
   }else if (mode == "start"){
     ctx.font = "32px pixel-advanced";
@@ -230,6 +230,7 @@ function renderLoop(currentDelta){
           }
         }
       }
+
     }else{ // Home page, with create save 
       ctx.fillText("Create game in Slot "+(newGameWindow.createdSlot+1), 128, 256);
       if (mouseInRect(208, 272, 224, 16)){ // Tactile name switcher
@@ -243,6 +244,8 @@ function renderLoop(currentDelta){
       ctx.fillText(" Cancel", 128, 336);
       ctx.fillText(" Create", 256, 336);
     }
+  }else if (mode == "credits"){
+    
   }
 
   if (settings.pixelChecker){ // Pixel checker tool
