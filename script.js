@@ -8,17 +8,17 @@ canvas.setAttribute('width', 512);
 canvas.setAttribute('height', 512);
 ctx = canvas.getContext("2d", {alpha: false});
 ctx.imageSmoothingEnabled = false;
-//label.textContent = "geometricPrecision";
-ctx.textRendering = "geometricPrecision";
-ctx.textRendering = "optimizeLegibility";
+
 
 const PIXEL = 4;
 
+// Random word generator for save slot names
 const RANDWORDS = {
   adj: ["Crunchy ", "Space ", "Froggy ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Slimy ", "Jazzy "],
   n: ["Planet", "Frogs", "Croak", "Gravity", "Fleet", "War", "Ships", "Pond", "Star", "Plasma"]
 }
 
+// Stores important colors in the game
 const COLOR = {
   TEXT: "#98C1E3", 
   UI: [
@@ -27,53 +27,63 @@ const COLOR = {
   ]
 }
 
+// Some settings
 var settings = {
-  pixelChecker: true,
+  pixelChecker: true, 
+  // Pixel checker: a pixel that follows the mouse, useful to make sure pixels are aligned
 }
 
+// Returns a random element from list
 function randChoice(list){
   return list[Math.floor(Math.random()*list.length)];
 }
 
+// Returns a randomly generated save slot name
 function randName(){
   return randChoice(RANDWORDS.adj) + randChoice(RANDWORDS.n);
 }
 
+// Returns a new image object with path "assets/image/src"
 function newImage(src){
   img = new Image();
-  img.src = src;
+  img.src = "assets/image/"+src;
   return img;
 }
 
 var mode = "start";
-var newGameWindow = {
-  createdSlot:-1,
-  name:randName()
+var newGameWindow = {//Stores variables for creating a new game
+  createdSlot:-1, // The slot the player is creating a game in, -1 when not creating slot
+  name:randName() // The currently selected name
 }
 
 var mouseX = -1;
 var mouseY = -1;
 var mouseIsDown = false;
-var newSaveName = null;
+
+// Structure to contain and pre-load all images
 var IMAGE = {
   /*
   SHIP:{
     newImage()
   }*/
+  debug: {
+    pixelChecker: newImage("misc/pixel-checker.png")
+  }
 }
 
 
 
-var game;
+var game; // The currently played game
 
 
-
+// 3 save slots for <Game>
 var saveSlots = [
   new Game("Test Save"),
   null,
   null
 ]
 
+// Gets mouse position
 function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();
   return {
@@ -81,23 +91,28 @@ function getMousePos(canvas, evt) {
     y: evt.clientY - rect.top
   };
 }
+
+// Updates mouse position to mouseX and mouseY
 canvas.addEventListener('mousemove', function(evt) {
   var mousePos = getMousePos(canvas, evt);
   mouseX = mousePos.x;
   mouseY = mousePos.y;
 }, false);
 
+// Checks if mouse is inside a rectangle
 function mouseInRect(x, y, w, h){
   return mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h;
 }
 
+
 canvas.onmousedown=function(){
   mouseIsDown = true;
   if (mode == "start"){
+    // If a slot is not being created / no slot creation window
     if (newGameWindow.createdSlot == -1){
       for (let i=0; i<3; i++){
         if (mouseInRect(128, 256+80*i, 256, 64)){
-          if (saveSlots[i] == null){
+          if (saveSlots[i] == null){ // If slot is empty
             newGameWindow.createdSlot = i;
             newGameWindow.name = randName();
             break;
@@ -107,20 +122,20 @@ canvas.onmousedown=function(){
           }
         }
       }
-    }else{
-      if (mouseInRect(128, 312, 112, 32)){
+    }else{ // If a slot is being created / slot creation window
+      if (mouseInRect(128, 312, 112, 32)){ // Cancel button
         newGameWindow.createdSlot = -1;
-      }else if (mouseInRect(256, 312, 112, 32)){
+      }else if (mouseInRect(256, 312, 112, 32)){ // Create new game button
         saveSlots[newGameWindow.createdSlot] = new Game(newGameWindow.name);
         newGameWindow.createdSlot = -1;
-      }else if (mouseInRect(208, 272, 224, 16)){
+      }else if (mouseInRect(208, 272, 224, 16)){ // Switch random name
         newGameWindow.name = randName();
       }
     }
   }
 }
 
-canvas.onmouseup=function(){
+canvas.onmouseup=function(){ // You know what this does
   mouseIsDown = false
 }
 
@@ -128,6 +143,7 @@ document.addEventListener("keydown", event => {
   
 });
 
+// Draws a rectangle in UI style
 function uiRect(x, y, w, h){
   ctx.lineWidth = 4;
   ctx.strokeStyle = COLOR.UI[0];
@@ -140,6 +156,7 @@ function uiRect(x, y, w, h){
   ctx.stroke();
 }
 
+// Draws a tactile rectangle in UI style
 function buttonRect(x, y, w, h){
   if (mouseInRect(x, y, w, h) && !mouseIsDown){
     uiRect(x, y, w, h);
@@ -164,6 +181,7 @@ var updateId,
 
 function renderLoop(currentDelta){
 
+  // Limit FPS under FPS_LIMIT
   updateId = requestAnimationFrame(renderLoop);
   var delta = currentDelta-previousDelta;
   if (FPS_LIMIT && delta < 1000/FPS_LIMIT){
@@ -184,7 +202,7 @@ function renderLoop(currentDelta){
     ctx.fillText("INVASION",256,144)
     ctx.font = "24px tiny";
     ctx.textAlign = "left";
-    if (newGameWindow.createdSlot == -1){
+    if (newGameWindow.createdSlot == -1){ // Home page, not creating save
       ctx.strokeStyle = COLOR.UI;
       
       for (let i=0; i<3; i++){
@@ -197,7 +215,7 @@ function renderLoop(currentDelta){
         ctx.fillText("Save Slot "+(i+1), 144, 280+80*i);
         if (saveSlots[i] == null){
           ctx.globalAlpha = 0.6;
-          if (mouseInRect(128, 256+80*i, 256, 64)){
+          if (mouseInRect(128, 256+80*i, 256, 64)){ // Tactile save slot buttons
             ctx.fillText("< Create New >", 144, 304+80*i);
           }else{
             ctx.fillText("  Empty Save  ", 144, 304+80*i);
@@ -212,9 +230,9 @@ function renderLoop(currentDelta){
           }
         }
       }
-    }else{
+    }else{ // Home page, with create save 
       ctx.fillText("Create game in Slot "+(newGameWindow.createdSlot+1), 128, 256);
-      if (mouseInRect(208, 272, 224, 16)){
+      if (mouseInRect(208, 272, 224, 16)){ // Tactile name switcher
         ctx.fillText("Name: < "+newGameWindow.name+" >", 128, 288);
       }else{
         ctx.fillText("Name:   "+newGameWindow.name, 128, 288);
@@ -226,12 +244,14 @@ function renderLoop(currentDelta){
       ctx.fillText(" Create", 256, 336);
     }
   }
-  if (settings.pixelChecker){
+
+  if (settings.pixelChecker){ // Pixel checker tool
     ctx.fillStyle = "white";
     ctx.globalAlpha = 0.5;
-    ctx.fillRect(Math.round(mouseX/4)*4-16, Math.round(mouseY/4)*4-16, 4, 4);
+    ctx.drawImage(IMAGE.debug.pixelChecker, Math.round(mouseX/4)*4-16, Math.round(mouseY/4)*4-16, 4*PIXEL, 4*PIXEL);
     ctx.globalAlpha = 1;
   }
+
   previousDelta = currentDelta;
 }
 
