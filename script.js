@@ -29,7 +29,7 @@ const COLOR = {
 
 // Some settings
 var settings = {
-  pixelChecker: true, 
+  pixelChecker: false, 
   // Pixel checker: a pixel that follows the mouse, useful to make sure pixels are aligned
 }
 
@@ -66,9 +66,9 @@ var IMAGE = {
   ship:{
 
     shooter: [newImage("ship/collider0.png"), newImage("ship/shooter1.png")],
-    collider: [newImage("ship/collider0.png")]
+    collider: [newImage("ship/collider0.png")],
     healer: [newImage("ship/collider0.png")]
-  }
+  },
   debug: {
     pixelChecker: newImage("misc/pixel-checker.png")
   }
