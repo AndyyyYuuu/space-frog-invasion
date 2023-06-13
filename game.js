@@ -170,7 +170,7 @@ class Game{
 
   render(){
     for (let i=0;i<this.starMap.length;i++){
-      this.starMap[i].draw(Math.min(this.battleFrames,48));
+      this.starMap[i].draw(Math.min(Math.round(this.battleFrames/2),24));
     }
     if (this.state == 0){
       buttonRect(95,4,29,8); // Battle button
