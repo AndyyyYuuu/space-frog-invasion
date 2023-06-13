@@ -29,7 +29,7 @@ const COLOR = {
 
 // Some settings
 var settings = {
-  pixelChecker: true, 
+  pixelChecker: false, 
   // Pixel checker: a pixel that follows the mouse, useful to make sure pixels are aligned
 }
 
@@ -184,10 +184,10 @@ function buttonRect(x, y, w, h){
 }
 
 function selectRect(x, y, w, h){
-  ctx.drawImage(IMAGE.ui.selectFrame, 0, 0, 2, 2, Math.round(x)*PIXEL, Math.round(y)*PIXEL, 2*PIXEL, 2*PIXEL);
-  ctx.drawImage(IMAGE.ui.selectFrame, 0, 2, 2, 2, Math.round(x)*PIXEL, (Math.round(y)+h)*PIXEL, 2*PIXEL, 2*PIXEL);
-  ctx.drawImage(IMAGE.ui.selectFrame, 2, 2, 2, 2, (Math.round(x)+w)*PIXEL, (Math.round(y)+h)*PIXEL, 2*PIXEL, 2*PIXEL);
-  ctx.drawImage(IMAGE.ui.selectFrame, 2, 0, 2, 2, (Math.round(x)+w)*PIXEL, Math.round(y)*PIXEL, 2*PIXEL, 2*PIXEL);
+  ctx.drawImage(IMAGE.ui.selectFrame, 0, 0, 2, 2, Math.round(x-1)*PIXEL, Math.round(y-1)*PIXEL, 2*PIXEL, 2*PIXEL);
+  ctx.drawImage(IMAGE.ui.selectFrame, 0, 2, 2, 2, Math.round(x-1)*PIXEL, (Math.round(y-1)+h)*PIXEL, 2*PIXEL, 2*PIXEL);
+  ctx.drawImage(IMAGE.ui.selectFrame, 2, 2, 2, 2, (Math.round(x-1)+w)*PIXEL, (Math.round(y-1)+h)*PIXEL, 2*PIXEL, 2*PIXEL);
+  ctx.drawImage(IMAGE.ui.selectFrame, 2, 0, 2, 2, (Math.round(x-1)+w)*PIXEL, Math.round(y-1)*PIXEL, 2*PIXEL, 2*PIXEL);
 }
 
 function drawText(txt, x, y, size){

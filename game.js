@@ -37,15 +37,34 @@ class Ship{
   }
 }
 
-class ShootyShip extends Ship{
-  constructor(x, y){
+class ShooterShip extends Ship{
+  constructor(x, y, lvl){
     super({
-      health: 1,
+      health: 2+lvl*2,
+      damage: 1+lvl,
       width: 5,
       height: 6,
       image: IMAGE.ship.collider[0], 
       fleetx: x,
-      fleety: y
+      fleety: y,
+      typeName: "Shooter",
+      lvl: lvl
+    })
+  }
+}
+
+class BasicShip extends Ship{
+  constructor(x, y){
+    super({
+      health: 3,
+      damage: 1,
+      width: 5,
+      height: 6,
+      image: IMAGE.ship.collider[0], 
+      fleetx: x,
+      fleety: y,
+      typeName: "Basic",
+      lvl: 0
     })
   }
 }
@@ -54,8 +73,9 @@ class Game{
   constructor(name){
     this.name = name;
     this.state = 0;
-    this.fleet = [new ShootyShip(32, 32),new ShootyShip(64, 32),new ShootyShip(32, 64),new ShootyShip(64, 64)];
+    this.fleet = [new ShooterShip(32, 32, 1),new BasicShip(64, 32),new BasicShip(32, 64),new BasicShip(64, 64)];
     this.heldShip = null;
+    this.selectedShip = null;
     this.battleFrames = 0;
 
     this.FORMATION_SCREEN = {
@@ -74,8 +94,18 @@ class Game{
 
   click(){
     if (this.state == 0){
-      if (mouseInRect(95,4,29,8)){
+      if (mouseInRect(95,4,29,8)){ // Battle button
         this.startBattle();
+      }else if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
+
+        for (let i=0; i<this.fleet.length; i++){
+          if (this.fleet[i].attributeInRect()){
+            this.selectedShip = this.fleet[i];
+            return;
+          }
+        }
+        this.selectedShip = null;
+        
       }
     }
   }
@@ -97,6 +127,9 @@ class Game{
           }
         }
       }
+      if (this.selectedShip != null){// draw box around selected ship
+        selectRect(Math.round(this.selectedShip.attributes.fleetx-this.selectedShip.attributes.width/2), Math.round(this.selectedShip.attributes.fleety-this.selectedShip.attributes.height/2), this.selectedShip.attributes.width, this.selectedShip.attributes.height);
+      }
       if (this.heldShip != null){
         if (mouseIsDown){
           this.heldShip.attributes.fleetx = Math.min(Math.max(mouseX-this.heldShip.dragX, this.FORMATION_SCREEN.x+Math.floor(this.heldShip.attributes.width/2)), this.FORMATION_SCREEN.x + this.FORMATION_SCREEN.w - Math.ceil(this.heldShip.attributes.width/2));
@@ -110,8 +143,17 @@ class Game{
         ctx.globalAlpha = 1;
       }
 
-      
+
+      // Bottom UI menu
       uiRect(4, 80, 120, 44);
+      if (this.selectedShip!=null){
+        drawText(this.selectedShip.attributes.typeName+" Ship", 8, 88, "large");
+        drawText("HP: ", 8, 96, "small");
+        drawText(this.selectedShip.attributes.health, 20, 96, "large");
+        drawText("DMG: ", 8, 104, "small")
+        drawText(this.selectedShip.attributes.damage, 26, 104, "large");
+        drawText("Lvl. "+this.selectedShip.attributes.lvl, 88, 88, "small");
+      }
       
 
     }else if (this.state == 1){
