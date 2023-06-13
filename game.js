@@ -61,7 +61,7 @@ class Game{
     this.battleFrames = 0;
 
     this.FORMATION_SCREEN = {
-      x: 8, y: 24, w: 112, h: 48
+      x: 16, y: 24, w: 96, h: 48
     }
   }
 
