@@ -185,7 +185,7 @@ function drawText(txt, x, y, size){
   }else if (size == "display"){
     ctx.font = "32px display";
   }else if (size == "large"){
-    ctx.font = "48px large";
+    ctx.font = "64px large";
   }
   ctx.fillText(txt, Math.round(x)*PIXEL, Math.round(y)*PIXEL)
 }
