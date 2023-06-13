@@ -29,7 +29,7 @@ const COLOR = {
 
 // Some settings
 var settings = {
-  pixelChecker: false, 
+  pixelChecker: true, 
   // Pixel checker: a pixel that follows the mouse, useful to make sure pixels are aligned
 }
 
@@ -98,8 +98,8 @@ function getMousePos(canvas, evt) {
 // Updates mouse position to mouseX and mouseY
 canvas.addEventListener('mousemove', function(evt) {
   var mousePos = getMousePos(canvas, evt);
-  mouseX = mousePos.x;
-  mouseY = mousePos.y;
+  mouseX = mousePos.x/4;
+  mouseY = mousePos.y/4;
 }, false);
 
 // Checks if mouse is inside a rectangle
@@ -114,7 +114,7 @@ canvas.onmousedown=function(){
     // If a slot is not being created / no slot creation window
     if (newGameWindow.createdSlot == -1){
       for (let i=0; i<3; i++){
-        if (mouseInRect(128, 256+80*i, 256, 64)){
+        if (mouseInRect(32, 64+20*i, 64, 16)){
           if (saveSlots[i] == null){ // If slot is empty
             newGameWindow.createdSlot = i;
             newGameWindow.name = randName();
@@ -126,15 +126,17 @@ canvas.onmousedown=function(){
         }
       }
     }else{ // If a slot is being created / slot creation window
-      if (mouseInRect(128, 312, 112, 32)){ // Cancel button
+      if (mouseInRect(32, 78, 28, 8)){ // Cancel button
         newGameWindow.createdSlot = -1;
-      }else if (mouseInRect(256, 312, 112, 32)){ // Create new game button
+      }else if (mouseInRect(64, 78, 28, 8)){ // Create new game button
         saveSlots[newGameWindow.createdSlot] = new Game(newGameWindow.name);
         newGameWindow.createdSlot = -1;
-      }else if (mouseInRect(208, 272, 224, 16)){ // Switch random name
+      }else if (mouseInRect(52, 68, 56, 4)){ // Switch random name
         newGameWindow.name = randName();
       }
     }
+  }else if (mode == "game"){
+    game.click();
   }
 }
 
@@ -151,11 +153,11 @@ function uiRect(x, y, w, h){
   ctx.lineWidth = 4;
   ctx.strokeStyle = COLOR.UI[0];
   ctx.beginPath();
-  ctx.rect(x-2, y-2, w+4, h+4);
+  ctx.rect(x*PIXEL-2, y*PIXEL-2, w*PIXEL+4, h*PIXEL+4);
   ctx.stroke();
   ctx.strokeStyle = COLOR.UI[1];
   ctx.beginPath();
-  ctx.rect(x+2, y+2, w-4, h-4);
+  ctx.rect(x*PIXEL+2, y*PIXEL+2, w*PIXEL-4, h*PIXEL-4);
   ctx.stroke();
 }
 
@@ -168,13 +170,28 @@ function buttonRect(x, y, w, h){
     ctx.lineWidth = 4;
     ctx.strokeStyle = COLOR.UI[1];
     ctx.beginPath();
-    ctx.rect(x-2, y-2, w+4, h+4);
+    ctx.rect(x*PIXEL-2, y*PIXEL-2, w*PIXEL+4, h*PIXEL+4);
     ctx.stroke();
     ctx.strokeStyle = COLOR.UI[0];
     ctx.beginPath();
-    ctx.rect(x+2, y+2, w-4, h-4);
+    ctx.rect(x*PIXEL+2, y*PIXEL+2, w*PIXEL-4, h*PIXEL-4);
     ctx.stroke();
   }
+}
+
+function drawText(txt, x, y, size){
+  if (size == "small"){
+    ctx.font = "24px small";
+  }else if (size == "display"){
+    ctx.font = "32px display";
+  }else if (size == "large"){
+    ctx.font = "48px large";
+  }
+  ctx.fillText(txt, Math.round(x)*PIXEL, Math.round(y)*PIXEL)
+}
+
+function drawImage(img, x, y){
+  ctx.drawImage(img, Math.round(x)*PIXEL, Math.round(y)*PIXEL, img.naturalWidth*PIXEL, img.naturalHeight*PIXEL);
 }
 
 var frames = 1;
@@ -198,63 +215,60 @@ function renderLoop(currentDelta){
     game.render(); // runs render loop of the game
 
   }else if (mode == "start"){
-    ctx.font = "32px pixel-advanced";
     ctx.fillStyle = COLOR.TEXT;
     ctx.textAlign = "center";
-    ctx.fillText("SPACE FROG",256,96);
-    ctx.fillText("INVASION",256,144)
-    ctx.font = "24px tiny";
+    drawText("SPACE FROG",64,24,"display");
+    drawText("INVASION",64,36,"display");
     ctx.textAlign = "left";
     if (newGameWindow.createdSlot == -1){ // Home page, not creating save
       ctx.strokeStyle = COLOR.UI;
       
       for (let i=0; i<3; i++){
-        uiRect(128, 256+80*i, 256, 64);
+        uiRect(32, 64+20*i, 64, 16);
         //ctx.rect(128, 256+80*i, 256, 64);
         //ctx.lineWidth = 4;
         //ctx.stroke();
 
         ctx.fillStyle = COLOR.TEXT;
-        ctx.fillText("Save Slot "+(i+1), 144, 280+80*i);
+        drawText("Save Slot "+(i+1), 36, 70+20*i, "small");
         if (saveSlots[i] == null){
           ctx.globalAlpha = 0.6;
-          if (mouseInRect(128, 256+80*i, 256, 64)){ // Tactile save slot buttons
-            ctx.fillText("< Create New >", 144, 304+80*i);
+          if (mouseInRect(32, 64+20*i, 64, 16)){ // Tactile save slot buttons
+            drawText("< Create New >", 36, 76+20*i, "small");
           }else{
-            ctx.fillText("  Empty Save  ", 144, 304+80*i);
+            drawText("  Empty Save  ", 36, 76+20*i, "small");
           }
           ctx.globalAlpha = 1;
         }else{
           
-          if (mouseInRect(128, 256+80*i, 256, 64)){
-            ctx.fillText("> "+saveSlots[i].name, 144, 304+80*i);
+          if (mouseInRect(32, 64+20*i, 64, 16)){
+            drawText("> "+saveSlots[i].name, 36, 76+20*i);
           }else{
-            ctx.fillText("  "+saveSlots[i].name, 144, 304+80*i);
+            drawText("  "+saveSlots[i].name, 36, 76+20*i);
           }
         }
       }
 
     }else{ // Home page, with create save 
-      ctx.fillText("Create game in Slot "+(newGameWindow.createdSlot+1), 128, 256);
-      if (mouseInRect(208, 272, 224, 16)){ // Tactile name switcher
-        ctx.fillText("Name: < "+newGameWindow.name+" >", 128, 288);
+      drawText("Create game in Slot "+(newGameWindow.createdSlot+1), 32, 64, "small");
+      if (mouseInRect(52, 68, 56, 4)){ // Tactile name switcher
+        drawText("Name: < "+newGameWindow.name+" >", 32, 72, "small");
       }else{
-        ctx.fillText("Name:   "+newGameWindow.name, 128, 288);
+        drawText("Name:   "+newGameWindow.name, 32, 72, "small");
       }
       
-      buttonRect(128, 312, 112, 32);
-      buttonRect(256, 312, 112, 32);
-      ctx.fillText(" Cancel", 128, 336);
-      ctx.fillText(" Create", 256, 336);
+      buttonRect(32, 78, 28, 8);
+      buttonRect(64, 78, 28, 8);
+      drawText(" Cancel", 32, 84, "small");
+      drawText(" Create", 64, 84, "small");
     }
   }else if (mode == "credits"){
     
   }
 
   if (settings.pixelChecker){ // Pixel checker tool
-    ctx.fillStyle = "white";
     ctx.globalAlpha = 0.5;
-    ctx.drawImage(IMAGE.debug.pixelChecker, Math.round(mouseX/4)*4-16, Math.round(mouseY/4)*4-16, 4*PIXEL, 4*PIXEL);
+    drawImage(IMAGE.debug.pixelChecker, mouseX-4, mouseY-4);
     ctx.globalAlpha = 1;
   }
 
