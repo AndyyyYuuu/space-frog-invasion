@@ -1,13 +1,13 @@
 class Star{
   constructor(){
-    x = Math.random() * 128;
-    y = Math.random() * 128;
-    opacity = Math.random()*0.5+0.25;
+    this.x = Math.random() * 128;
+    this.y = Math.random() * 192 - 64;
+    this.opacity = Math.random()*0.5+0.25;
   }
-  draw(){
-    ctx.globalAlpha = opacity;
+  draw(offset){
+    ctx.globalAlpha = this.opacity;
     ctx.fillStyle = "white";
-    ctx.fillRect(x*PIXEL, y*PIXEL, PIXEL, PIXEL);
+    ctx.fillRect(Math.round(this.x)*PIXEL, Math.round(this.y+offset)*PIXEL, PIXEL, PIXEL);
     ctx.globalAlpha = 1;
   }
 }
@@ -118,6 +118,11 @@ class Game{
     this.selectedShip = null;
     this.battleFrames = 0;
 
+    this.starMap = [];
+    for (var i=0;i<100;i++){
+      this.starMap.push(new Star());
+    }
+
     this.FORMATION_SCREEN = {
       x: 16, y: 24, w: 96, h: 48
     }
@@ -164,6 +169,9 @@ class Game{
   }
 
   render(){
+    for (let i=0;i<this.starMap.length;i++){
+      this.starMap[i].draw(Math.min(this.battleFrames,48));
+    }
     if (this.state == 0){
       buttonRect(95,4,29,8); // Battle button
       ctx.fillStyle = COLOR.TEXT;
