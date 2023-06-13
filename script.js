@@ -29,7 +29,7 @@ const COLOR = {
 
 // Some settings
 var settings = {
-  pixelChecker: false, 
+  pixelChecker: true, 
   // Pixel checker: a pixel that follows the mouse, useful to make sure pixels are aligned
 }
 
@@ -135,6 +135,8 @@ canvas.onmousedown=function(){
         newGameWindow.name = randName();
       }
     }
+  }else if (mode == "game"){
+    game.click();
   }
 }
 

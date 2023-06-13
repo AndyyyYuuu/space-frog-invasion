@@ -59,6 +59,10 @@ class Game{
     this.fleet = [new ShootyShip(32, 32),new ShootyShip(64, 32),new ShootyShip(32, 64),new ShootyShip(64, 64)];
     this.heldShip = null;
     this.battleFrames = 0;
+
+    this.FORMATION_SCREEN = {
+      x: 32, y: 96, w: 448, h: 192
+    }
   }
 
   startBattle(){
@@ -68,13 +72,23 @@ class Game{
     }
   }
 
+  click(){
+    if (this.state == 0){
+      if (mouseInRect(380,16,116,32)){
+        this.startBattle();
+      }
+    }
+  }
 
   render(){
     if (this.state == 0){
+      buttonRect(380,16,116,32); // Battle button
       ctx.fillStyle = COLOR.TEXT;
       ctx.textAlign = "left";
-      ctx.font = "40px wendy";
-      ctx.fillText("Fleet Formation",16,32);
+      ctx.font = "64px wendy";
+      ctx.fillText("FLEET FORMATION",16,32);
+      ctx.font = "24px tiny";
+      ctx.fillText("BATTLE!",388,40);
       for (let i=0; i<this.fleet.length; i++){
         this.fleet[i].layoutDraw();
         if (mouseIsDown && this.heldShip == null){
@@ -87,20 +101,28 @@ class Game{
       }
       if (this.heldShip != null){
         if (mouseIsDown){
-          this.heldShip.attributes.fleetx = (mouseX)/4-this.heldShip.dragX;
-          this.heldShip.attributes.fleety = (mouseY)/4-this.heldShip.dragY;
+          this.heldShip.attributes.fleetx = Math.min(Math.max(mouseX-this.heldShip.dragX*4, this.FORMATION_SCREEN.x), this.FORMATION_SCREEN.x + this.FORMATION_SCREEN.w)/4;
+          this.heldShip.attributes.fleety = Math.min(Math.max(mouseY-this.heldShip.dragY*4, this.FORMATION_SCREEN.y), this.FORMATION_SCREEN.y + this.FORMATION_SCREEN.h)/4;
+
         }else{
           this.heldShip = null;
         }
+        ctx.globalAlpha = 0.5;
+        uiRect(this.FORMATION_SCREEN.x, this.FORMATION_SCREEN.y, this.FORMATION_SCREEN.w, this.FORMATION_SCREEN.h);
+        ctx.globalAlpha = 1;
       }
+
+      
       uiRect(16, 320, 480, 176);
+      
+
     }else if (this.state == 1){
 
       for (let i=0; i<this.fleet.length; i++){
         this.fleet[i].battleDraw(Math.min(0, this.battleFrames-48));
         this.fleet[i].update();
       }
-      
+
       this.battleFrames ++;
     }
   }
