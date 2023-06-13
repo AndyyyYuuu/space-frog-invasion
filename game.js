@@ -87,8 +87,22 @@ class Game{
   startBattle(){
     this.state = 1;
     this.battleFrames = 0;
+    this.heldShip = null;
+    this.selectedShip = null;
     for (let i=0; i<this.fleet.length; i++){
       this.fleet[i].startBattle();
+    }
+  }
+
+  mouseMove(){
+    for (let i=0; i<this.fleet.length; i++){
+      if (mouseIsDown && this.heldShip == null){
+        if (this.fleet[i].attributeInRect()){
+          this.heldShip = this.fleet[i];
+          this.heldShip.dragX = mouseX - this.heldShip.attributes.fleetx;
+          this.heldShip.dragY = mouseY - this.heldShip.attributes.fleety;
+        }
+      }
     }
   }
 
@@ -105,7 +119,6 @@ class Game{
           }
         }
         this.selectedShip = null;
-        
       }
     }
   }
@@ -119,13 +132,7 @@ class Game{
       drawText("BATTLE!",97,10,"small");
       for (let i=0; i<this.fleet.length; i++){
         this.fleet[i].layoutDraw();
-        if (mouseIsDown && this.heldShip == null){
-          if (this.fleet[i].attributeInRect()){
-            this.heldShip = this.fleet[i];
-            this.heldShip.dragX = mouseX - this.heldShip.attributes.fleetx;
-            this.heldShip.dragY = mouseY - this.heldShip.attributes.fleety;
-          }
-        }
+        
       }
       if (this.selectedShip != null){// draw box around selected ship
         selectRect(Math.round(this.selectedShip.attributes.fleetx-this.selectedShip.attributes.width/2), Math.round(this.selectedShip.attributes.fleety-this.selectedShip.attributes.height/2), this.selectedShip.attributes.width, this.selectedShip.attributes.height);
@@ -153,6 +160,7 @@ class Game{
         drawText("DMG: ", 8, 104, "small")
         drawText(this.selectedShip.attributes.damage, 26, 104, "large");
         drawText("Lvl. "+this.selectedShip.attributes.lvl, 88, 88, "small");
+        
       }
       
 

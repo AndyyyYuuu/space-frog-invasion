@@ -101,6 +101,7 @@ function getMousePos(canvas, evt) {
 
 // Updates mouse position to mouseX and mouseY
 canvas.addEventListener('mousemove', function(evt) {
+
   var mousePos = getMousePos(canvas, evt);
   mouseX = mousePos.x/4;
   mouseY = mousePos.y/4;
@@ -109,6 +110,12 @@ canvas.addEventListener('mousemove', function(evt) {
 // Checks if mouse is inside a rectangle
 function mouseInRect(x, y, w, h){
   return mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h;
+}
+
+canvas.onmousemove=function(){
+  if (mode == "game"){
+    game.mouseMove();
+  }
 }
 
 
