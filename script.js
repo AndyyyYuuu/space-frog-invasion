@@ -2,7 +2,7 @@
 // June 9th, 2023
 // Super Space Frog Invasion
 
-const VERSION = "Beta";
+const VERSION = "Alpha";
 const canvas = document.querySelector("canvas");
 canvas.setAttribute('width', 512);
 canvas.setAttribute('height', 512);
