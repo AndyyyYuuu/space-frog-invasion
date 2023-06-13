@@ -1,12 +1,51 @@
-class Ship{
+class Star{
+  constructor(){
+    x = Math.random() * 128;
+    y = Math.random() * 128;
+    opacity = Math.random()*0.5+0.25;
+  }
+  draw(){
+    ctx.globalAlpha = opacity;
+    ctx.fillStyle = "white";
+    ctx.fillRect(x*PIXEL, y*PIXEL, PIXEL, PIXEL);
+    ctx.globalAlpha = 1;
+  }
+}
+
+
+class Entity{
   constructor(attributes){
     this.x = -1;
-    this.y = -1;
-    this.dx = 
-    this.attributes = attributes;
+    this.y = -1; 
     this.dx = 0;
     this.dy = 0;
     this.dead = false;
+    this.attributes = attributes;
+  }
+  draw(offset){
+    drawImage(this.attributes.image, this.x-this.attributes.image.naturalWidth/2, this.y+offset-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
+  }
+
+}
+
+class Frog extends Entity{
+  constructor(attributes){
+    super(attributes);
+  }
+
+  draw(){
+    drawImage(this.attributes.image, this.attributes.fleetx-this.attributes.image.naturalWidth/2, this.attributes.fleety-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight)
+  }
+
+
+}
+
+
+
+class Ship extends Entity{
+  constructor(attributes){
+    super(attributes);
+    
     this.dragX = -1;
     this.dragY = -1;
   }
@@ -68,6 +107,7 @@ class BasicShip extends Ship{
     })
   }
 }
+
 
 class Game{
   constructor(name){
@@ -160,7 +200,7 @@ class Game{
         drawText("DMG: ", 8, 104, "small")
         drawText(this.selectedShip.attributes.damage, 26, 104, "large");
         drawText("Lvl. "+this.selectedShip.attributes.lvl, 88, 88, "small");
-        
+
       }
       
 
