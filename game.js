@@ -35,7 +35,7 @@ class Ship{
   }
 
   attributeInRect(){
-    return mouseInRect(Math.round(this.attributes.fleetx-this.attributes.width/2)*PIXEL, Math.round(this.attributes.fleety-this.attributes.height/2)*PIXEL, this.attributes.width*PIXEL, this.attributes.height*PIXEL)
+    return mouseInRect(Math.round(this.attributes.fleetx-this.attributes.width/2), Math.round(this.attributes.fleety-this.attributes.height/2), this.attributes.width, this.attributes.height)
   }
 }
 
@@ -61,7 +61,7 @@ class Game{
     this.battleFrames = 0;
 
     this.FORMATION_SCREEN = {
-      x: 32, y: 96, w: 448, h: 192
+      x: 8, y: 24, w: 112, h: 48
     }
   }
 
@@ -74,7 +74,7 @@ class Game{
 
   click(){
     if (this.state == 0){
-      if (mouseInRect(380,16,116,32)){
+      if (mouseInRect(95,4,29,8)){
         this.startBattle();
       }
     }
@@ -82,27 +82,26 @@ class Game{
 
   render(){
     if (this.state == 0){
-      buttonRect(380,16,116,32); // Battle button
+      buttonRect(95,4,29,8); // Battle button
       ctx.fillStyle = COLOR.TEXT;
       ctx.textAlign = "left";
       ctx.font = "64px wendy";
-      ctx.fillText("FLEET FORMATION",16,32);
-      ctx.font = "24px tiny";
-      ctx.fillText("BATTLE!",388,40);
+      ctx.fillText("FLEET FORMATION",4,8,"");
+      drawText("BATTLE!",97,10,"small");
       for (let i=0; i<this.fleet.length; i++){
         this.fleet[i].layoutDraw();
         if (mouseIsDown && this.heldShip == null){
           if (this.fleet[i].attributeInRect()){
             this.heldShip = this.fleet[i];
-            this.heldShip.dragX = mouseX/4 - this.heldShip.attributes.fleetx;
-            this.heldShip.dragY = mouseY/4 - this.heldShip.attributes.fleety;
+            this.heldShip.dragX = mouseX - this.heldShip.attributes.fleetx;
+            this.heldShip.dragY = mouseY - this.heldShip.attributes.fleety;
           }
         }
       }
       if (this.heldShip != null){
         if (mouseIsDown){
-          this.heldShip.attributes.fleetx = Math.min(Math.max(mouseX-this.heldShip.dragX*4, this.FORMATION_SCREEN.x), this.FORMATION_SCREEN.x + this.FORMATION_SCREEN.w)/4;
-          this.heldShip.attributes.fleety = Math.min(Math.max(mouseY-this.heldShip.dragY*4, this.FORMATION_SCREEN.y), this.FORMATION_SCREEN.y + this.FORMATION_SCREEN.h)/4;
+          this.heldShip.attributes.fleetx = Math.min(Math.max(mouseX-this.heldShip.dragX, this.FORMATION_SCREEN.x+Math.floor(this.heldShip.attributes.width/2)), this.FORMATION_SCREEN.x + this.FORMATION_SCREEN.w - Math.ceil(this.heldShip.attributes.width/2));
+          this.heldShip.attributes.fleety = Math.min(Math.max(mouseY-this.heldShip.dragY, this.FORMATION_SCREEN.y+Math.floor(this.heldShip.attributes.height/2)), this.FORMATION_SCREEN.y + this.FORMATION_SCREEN.h - Math.ceil(this.heldShip.attributes.height/2));
 
         }else{
           this.heldShip = null;
@@ -113,7 +112,7 @@ class Game{
       }
 
       
-      uiRect(16, 320, 480, 176);
+      uiRect(4, 80, 120, 44);
       
 
     }else if (this.state == 1){
