@@ -181,12 +181,13 @@ function buttonRect(x, y, w, h){
 
 function drawText(txt, x, y, size){
   if (size == "small"){
-    ctx.font = "24px tiny";
+    ctx.font = "24px small";
+  }else if (size == "display"){
+    ctx.font = "32px display";
+  }else if (size == "large"){
+    ctx.font = "48px large";
   }
-  else if (size == "display"){
-    ctx.font = "32px pixel-advanced";
-  }
-  ctx.fillText(txt, x*PIXEL, y*PIXEL)
+  ctx.fillText(txt, Math.round(x)*PIXEL, Math.round(y)*PIXEL)
 }
 
 function drawImage(img, x, y){
@@ -214,12 +215,10 @@ function renderLoop(currentDelta){
     game.render(); // runs render loop of the game
 
   }else if (mode == "start"){
-    ctx.font = "32px pixel-advanced";
     ctx.fillStyle = COLOR.TEXT;
     ctx.textAlign = "center";
-    drawText("SPACE FROG",64,24);
-    drawText("INVASION",64,36);
-    ctx.font = "24px tiny";
+    drawText("SPACE FROG",64,24,"display");
+    drawText("INVASION",64,36,"display");
     ctx.textAlign = "left";
     if (newGameWindow.createdSlot == -1){ // Home page, not creating save
       ctx.strokeStyle = COLOR.UI;

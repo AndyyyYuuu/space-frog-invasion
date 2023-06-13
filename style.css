@@ -1,15 +1,15 @@
 @font-face{
-  font-family: tiny;
+  font-family: small;
   src: url(assets/font/tiny/tiny.otf);
 }
 
 @font-face{
-  font-family: wendy;
+  font-family: large;
   src: url(assets/font/pixel_maz.otf);
 }
 
 @font-face{
-  font-family: pixel-advanced;
+  font-family: display;
   src: url(assets/font/pixel-bit-advanced.ttf);
 }
 

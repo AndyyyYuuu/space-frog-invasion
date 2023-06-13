@@ -12,11 +12,9 @@ class Ship{
   }
 
   layoutDraw(){
-    ctx.drawImage(this.attributes.image, Math.round(this.attributes.fleetx-this.attributes.image.naturalWidth/2)*PIXEL, Math.round(this.attributes.fleety-this.attributes.image.naturalHeight/2)*PIXEL, this.attributes.image.naturalWidth*PIXEL, this.attributes.image.naturalHeight*PIXEL);
+    drawImage(this.attributes.image, this.attributes.fleetx-this.attributes.image.naturalWidth/2, this.attributes.fleety-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
     
   }
-
-  
 
   startBattle(){
     this.x = this.attributes.fleetx;
@@ -31,7 +29,7 @@ class Ship{
   }
 
   battleDraw(offset){
-    ctx.drawImage(this.attributes.image, Math.round(this.x-this.attributes.image.naturalWidth/2)*PIXEL, Math.round(this.y+offset-this.attributes.image.naturalHeight/2)*PIXEL, this.attributes.image.naturalWidth*PIXEL, this.attributes.image.naturalHeight*PIXEL);
+    drawImage(this.attributes.image, this.x-this.attributes.image.naturalWidth/2, this.y+offset-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
   }
 
   attributeInRect(){
@@ -63,6 +61,7 @@ class Game{
     this.FORMATION_SCREEN = {
       x: 16, y: 24, w: 96, h: 48
     }
+
   }
 
   startBattle(){
@@ -85,8 +84,7 @@ class Game{
       buttonRect(95,4,29,8); // Battle button
       ctx.fillStyle = COLOR.TEXT;
       ctx.textAlign = "left";
-      ctx.font = "64px wendy";
-      ctx.fillText("FLEET FORMATION",4,8,"");
+      drawText("FLEET FORMATION",4,8,"large");
       drawText("BATTLE!",97,10,"small");
       for (let i=0; i<this.fleet.length; i++){
         this.fleet[i].layoutDraw();
