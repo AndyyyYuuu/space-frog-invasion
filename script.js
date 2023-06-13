@@ -71,6 +71,10 @@ var IMAGE = {
   },
   debug: {
     pixelChecker: newImage("misc/pixel-checker.png")
+  },
+  ui: {
+    selectCorner: newImage("misc/select-corner.png"),
+    selectFrame: newImage("misc/select-frame.png")
   }
 }
 
@@ -179,6 +183,13 @@ function buttonRect(x, y, w, h){
   }
 }
 
+function selectRect(x, y, w, h){
+  ctx.drawImage(IMAGE.ui.selectFrame, 0, 0, 2, 2, Math.round(x)*PIXEL, Math.round(y)*PIXEL, 2*PIXEL, 2*PIXEL);
+  ctx.drawImage(IMAGE.ui.selectFrame, 0, 2, 2, 2, Math.round(x)*PIXEL, (Math.round(y)+h)*PIXEL, 2*PIXEL, 2*PIXEL);
+  ctx.drawImage(IMAGE.ui.selectFrame, 2, 2, 2, 2, (Math.round(x)+w)*PIXEL, (Math.round(y)+h)*PIXEL, 2*PIXEL, 2*PIXEL);
+  ctx.drawImage(IMAGE.ui.selectFrame, 2, 0, 2, 2, (Math.round(x)+w)*PIXEL, Math.round(y)*PIXEL, 2*PIXEL, 2*PIXEL);
+}
+
 function drawText(txt, x, y, size){
   if (size == "small"){
     ctx.font = "24px small";
@@ -187,7 +198,7 @@ function drawText(txt, x, y, size){
   }else if (size == "large"){
     ctx.font = "64px large";
   }
-  ctx.fillText(txt, Math.round(x)*PIXEL, Math.round(y)*PIXEL)
+  ctx.fillText(txt, Math.round(x)*PIXEL, Math.round(y)*PIXEL);
 }
 
 function drawImage(img, x, y){
@@ -201,6 +212,7 @@ var updateId,
 
 function renderLoop(currentDelta){
 
+
   // Limit FPS under FPS_LIMIT
   updateId = requestAnimationFrame(renderLoop);
   var delta = currentDelta-previousDelta;
@@ -210,7 +222,6 @@ function renderLoop(currentDelta){
 
   ctx.clearRect(0,0,1000,1000);
   frames+=1;
-
   if(mode == "game"){
     game.render(); // runs render loop of the game
 
