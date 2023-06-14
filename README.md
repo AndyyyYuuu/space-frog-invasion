@@ -9,3 +9,4 @@
 #### Planned Frog Types:
 - Collider Frog
 - Tongue Frog
+- Spawner Frog
