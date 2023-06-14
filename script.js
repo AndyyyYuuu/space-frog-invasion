@@ -75,6 +75,10 @@ var IMAGE = {
   ui: {
     selectCorner: newImage("misc/select-corner.png"),
     selectFrame: newImage("misc/select-frame.png")
+  },
+  currency: {
+    biomatter: newImage("item/debris-frog.png"),
+    metal: newImage("item/debris-ship.png")
   }
 }
 

@@ -113,11 +113,17 @@ class Game{
   constructor(name){
     this.name = name;
     this.state = 0;
-    this.fleet = [new ShooterShip(32, 32, 1),new BasicShip(64, 32),new BasicShip(32, 64),new BasicShip(64, 64)];
+    this.fleet = [new BasicShip(64, 32),new BasicShip(48, 48),new BasicShip(80, 48)];
+    this.frogs = [];
+    this.entities = this.fleet.concat(this.frogs); // All entities, frogs and ships
     this.heldShip = null;
     this.selectedShip = null;
     this.battleFrames = 0;
-
+    this.gameOverFrames = 0;
+    this.currency = {
+      biomatter:0,
+      metal:0
+    }
     this.starMap = [];
     for (var i=0;i<100;i++){
       this.starMap.push(new Star());
@@ -172,11 +178,18 @@ class Game{
     for (let i=0;i<this.starMap.length;i++){
       this.starMap[i].draw(Math.min(Math.round(this.battleFrames/2),24));
     }
+    // Bottom UI menu
+    uiRect(4, 80+Math.min(64,this.battleFrames*3), 120, 44);
+
     if (this.state == 0){
       buttonRect(95,4,29,8); // Battle button
       ctx.fillStyle = COLOR.TEXT;
       ctx.textAlign = "left";
-      drawText("FLEET FORMATION",4,8,"large");
+      drawImage(IMAGE.currency.metal, 2, 2);
+      drawText(this.currency.metal, 12, 8);
+      drawImage(IMAGE.currency.biomatter, 32, 2);
+      drawText(this.currency.biomatter, 42, 8);
+      drawText("FLEET FORMATION",this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y - 4,"small");
       drawText("BATTLE!",97,10,"small");
       for (let i=0; i<this.fleet.length; i++){
         this.fleet[i].layoutDraw();
@@ -199,8 +212,7 @@ class Game{
       }
 
 
-      // Bottom UI menu
-      uiRect(4, 80, 120, 44);
+      // Bottom ui, text
       if (this.selectedShip!=null){
         drawText(this.selectedShip.attributes.typeName+" Ship", 8, 88, "large");
         drawText("HP: ", 8, 96, "small");
@@ -221,6 +233,7 @@ class Game{
 
       this.battleFrames ++;
     }
+
   }
 }
 
