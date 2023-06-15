@@ -168,7 +168,7 @@ class Game{
   }
 
   newLevel(num){
-    num = 1;
+    //num = 1;
     var level = [];
     var randX, randY;
     var spaceIsTaken;
