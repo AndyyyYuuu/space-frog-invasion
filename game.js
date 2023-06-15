@@ -22,10 +22,12 @@ class Entity{
     this.dead = false;
     this.attributes = attributes;
   }
-  draw(offset){
+  battleDraw(offset){
     drawImage(this.attributes.image, this.x-this.attributes.image.naturalWidth/2, this.y+offset-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
   }
-
+  isTouching(entity){
+    return Math.round(Math.abs(this.attributes.fleetx - entity.attributes.fleetx)) <= Math.round((this.attributes.width+entity.attributes.width)/2) && Math.round(Math.abs(this.attributes.fleety - entity.attributes.fleety)) < Math.round((this.attributes.height+entity.attributes.height)/2);
+  }
 }
 
 class Frog extends Entity{
@@ -36,8 +38,25 @@ class Frog extends Entity{
   draw(){
     drawImage(this.attributes.image, this.attributes.fleetx-this.attributes.image.naturalWidth/2, this.attributes.fleety-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight)
   }
+  startBattle(){
+    this.x = this.attributes.fleetx;
+    this.y = this.attributes.fleety;
+  }
 
+}
 
+class ColliderFrog extends Frog{
+  constructor(x, y, lvl){
+    super({
+      fleetx:x,
+      fleety:y,
+      image:IMAGE.frog.collider[lvl],
+      health: 1+lvl*2,
+      damage: 1+lvl,
+      width: 5, 
+      height: 8,
+    })
+  }
 }
 
 
@@ -45,7 +64,7 @@ class Frog extends Entity{
 class Ship extends Entity{
   constructor(attributes){
     super(attributes);
-    
+    this.thrust = 0;
     this.dragX = -1;
     this.dragY = -1;
   }
@@ -60,17 +79,25 @@ class Ship extends Entity{
     this.y = this.attributes.fleety + 48;
   }
 
-  update(){
+  update(targetThrust){
     this.x += this.dx*0.5;
     this.y += this.dy*0.5;
-    this.dx *= 0.99;
-    this.dy *= 0.99;
-  }
+    this.dx *= 0.95;
+    this.dy *= 0.95;
+    if (this.dy >= -targetThrust){
+      this.thrust = 20;
+    }
 
+    if (this.thrust > 0){
+      this.thrust --;
+      this.dy -= 0.1;
+    }
+  }
+  /*
   battleDraw(offset){
     drawImage(this.attributes.image, this.x-this.attributes.image.naturalWidth/2, this.y+offset-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
-  }
-
+  }*/
+  
   attributeInRect(){
     return mouseInRect(Math.round(this.attributes.fleetx-this.attributes.width/2), Math.round(this.attributes.fleety-this.attributes.height/2), this.attributes.width, this.attributes.height)
   }
@@ -125,6 +152,8 @@ class Game{
       metal:0
     }
     this.starMap = [];
+    this.frogLevels = [];
+    this.currentLevel = 0;
     for (var i=0;i<100;i++){
       this.starMap.push(new Star());
     }
@@ -135,13 +164,47 @@ class Game{
 
   }
 
+  newLevel(num){
+    var level = [];
+    var randX, randY;
+    var spaceIsTaken;
+    
+    for (let i=0;i<num+1;i++){
+      level.push(new ColliderFrog(0, 0, 0));
+      spaceIsTaken = true;
+      while (spaceIsTaken){
+
+        level[level.length-1].attributes.fleetx = 28+Math.random()*32;
+        level[level.length-1].attributes.fleety = 8+Math.random()*32;
+        spaceIsTaken = false;
+        for (let j=0;j<level.length;j++){
+
+          if (j != level.length-1 && level[level.length-1].isTouching(level[j])){
+            spaceIsTaken = true;
+          }
+        }
+        console.log("*")
+      }
+      level.push(new ColliderFrog(128-level[level.length-1].attributes.fleetx, level[level.length-1].attributes.fleety, 0));
+      
+      
+    }
+    //level.push(new ColliderFrog(Math.round(64), Math.round(8+Math.random()*32), 0));
+    return level;
+  }
+
   startBattle(){
     this.state = 1;
     this.battleFrames = 0;
     this.heldShip = null;
     this.selectedShip = null;
-    for (let i=0; i<this.fleet.length; i++){
-      this.fleet[i].startBattle();
+    if (this.frogLevels.length <= this.currentLevel){
+      this.frogLevels.push(this.newLevel(this.currentLevel))
+    }
+    this.frogs = this.frogLevels[this.currentLevel];
+    console.log(this.frogLevels, this.currentLevel);
+    for (let i=0; i<this.fleet.concat(this.frogs).length; i++){
+      this.fleet.concat(this.frogs)[i].startBattle();
     }
   }
 
@@ -228,7 +291,15 @@ class Game{
 
       for (let i=0; i<this.fleet.length; i++){
         this.fleet[i].battleDraw(Math.min(0, this.battleFrames-48));
-        this.fleet[i].update();
+        if (this.battleFrames > 64){
+          this.fleet[i].update(0.1);
+        }
+      }
+
+      for (let i=0; i<this.frogs.length; i++){
+
+        this.frogs[i].battleDraw(Math.min(0, this.battleFrames-48));
+        //this.frogs[i].update();
       }
 
       this.battleFrames ++;
