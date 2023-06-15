@@ -42,6 +42,9 @@ class Frog extends Entity{
     this.x = this.attributes.fleetx;
     this.y = this.attributes.fleety;
   }
+  update(){
+    this.y += 0.1;
+  }
 
 }
 
@@ -165,16 +168,17 @@ class Game{
   }
 
   newLevel(num){
+    num = 1;
     var level = [];
     var randX, randY;
     var spaceIsTaken;
     
-    for (let i=0;i<num+1;i++){
+    for (let i=0;i<num/2+1;i++){
       level.push(new ColliderFrog(0, 0, 0));
       spaceIsTaken = true;
       while (spaceIsTaken){
 
-        level[level.length-1].attributes.fleetx = 28+Math.random()*32;
+        level[level.length-1].attributes.fleetx = (56-4*num)+Math.random()*(1+4*num);
         level[level.length-1].attributes.fleety = 8+Math.random()*32;
         spaceIsTaken = false;
         for (let j=0;j<level.length;j++){
@@ -189,6 +193,7 @@ class Game{
       
       
     }
+    console.log(level)
     //level.push(new ColliderFrog(Math.round(64), Math.round(8+Math.random()*32), 0));
     return level;
   }
@@ -299,7 +304,7 @@ class Game{
       for (let i=0; i<this.frogs.length; i++){
 
         this.frogs[i].battleDraw(Math.min(0, this.battleFrames-48));
-        //this.frogs[i].update();
+        this.frogs[i].update();
       }
 
       this.battleFrames ++;
