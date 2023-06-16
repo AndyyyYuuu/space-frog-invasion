@@ -145,6 +145,7 @@ class Game{
     this.state = 0;
     this.fleet = [new BasicShip(64, 32),new BasicShip(48, 48),new BasicShip(80, 48)];
     this.frogs = [];
+    this.bullets = [];
     this.entities = this.fleet.concat(this.frogs); // All entities, frogs and ships
     this.heldShip = null;
     this.selectedShip = null;
@@ -167,13 +168,37 @@ class Game{
 
   }
 
+  getNewFrogs(level,frog1,frog2,num){
+    var newFrog = frog1;
+    var mirroredFrog = frog2;
+    var spaceIsTaken = true;
+    while (spaceIsTaken){
+
+      newFrog.attributes.fleetx = (56-4*num)+Math.random()*(1+4*num);
+      newFrog.attributes.fleety = 8+Math.random()*32;
+      mirroredFrog.attributes.fleetx = 128-newFrog.attributes.fleetx;
+      mirroredFrog.attributes.fleety = newFrog.attributes.fleety;
+      spaceIsTaken = false;
+      for (let j=0;j<level.length;j++){
+
+        if (newFrog.isTouching(level[j])){
+          spaceIsTaken = true;
+        }
+      }
+    }
+    return [newFrog, mirroredFrog]
+  }
+
   newLevel(num){
-    //num = 1;
+    num = 10;
     var level = [];
     var randX, randY;
     var spaceIsTaken;
     
+    // Horrible, messy, ostrich algorithm
     for (let i=0;i<num/2+1;i++){
+      level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,0), new ColliderFrog(0,0,0), num))
+      /*
       level.push(new ColliderFrog(0, 0, 0));
       spaceIsTaken = true;
       while (spaceIsTaken){
@@ -187,13 +212,12 @@ class Game{
             spaceIsTaken = true;
           }
         }
-        console.log("*")
       }
       level.push(new ColliderFrog(128-level[level.length-1].attributes.fleetx, level[level.length-1].attributes.fleety, 0));
-      
+      */
       
     }
-    console.log(level)
+    
     //level.push(new ColliderFrog(Math.round(64), Math.round(8+Math.random()*32), 0));
     return level;
   }
@@ -207,7 +231,6 @@ class Game{
       this.frogLevels.push(this.newLevel(this.currentLevel))
     }
     this.frogs = this.frogLevels[this.currentLevel];
-    console.log(this.frogLevels, this.currentLevel);
     for (let i=0; i<this.fleet.concat(this.frogs).length; i++){
       this.fleet.concat(this.frogs)[i].startBattle();
     }
