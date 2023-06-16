@@ -63,15 +63,18 @@ class Entity{
     this.dy = 0;
     this.dead = false;
     this.attributes = attributes;
+    this.health = -1;
   }
   battleDraw(offset){
-    drawImage(this.attributes.image, this.x-this.attributes.image.naturalWidth/2, this.y+offset-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
+    if (!this.dead){
+      drawImage(this.attributes.image, this.x-this.attributes.image.naturalWidth/2, this.y+offset-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
+    }
   }
   isTouching(entity){
     return Math.round(Math.abs(this.attributes.fleetx - entity.attributes.fleetx)) <= Math.round((this.attributes.width+entity.attributes.width)/2) && Math.round(Math.abs(this.attributes.fleety - entity.attributes.fleety)) < Math.round((this.attributes.height+entity.attributes.height)/2);
   }
   isInRect(x,y){
-    return (x > this.x && x < this.attributes.width && y > this.y && y < this.attributes.height);
+    return (Math.abs(x - this.x) < this.attributes.width/2 && Math.abs(y - this.y) < this.attributes.height/2);
   }
 }
 
@@ -81,14 +84,20 @@ class Frog extends Entity{
   }
 
   draw(){
-    drawImage(this.attributes.image, this.attributes.fleetx-this.attributes.image.naturalWidth/2, this.attributes.fleety-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight)
+    if (!this.dead){
+      drawImage(this.attributes.image, this.attributes.fleetx-this.attributes.image.naturalWidth/2, this.attributes.fleety-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
+    }
   }
   startBattle(){
     this.x = this.attributes.fleetx;
     this.y = this.attributes.fleety;
+    this.health = this.attributes.health;
   }
   update(){
     this.y += 0.1;
+    if (this.health <= 0){
+      this.dead = true;
+    }
   }
 
 }
@@ -126,6 +135,7 @@ class Ship extends Entity{
   startBattle(){
     this.x = this.attributes.fleetx;
     this.y = this.attributes.fleety + 48;
+    this.health = this.attributes.health;
   }
 
   update(targetThrust){
@@ -247,7 +257,7 @@ class Game{
   }
 
   newLevel(num){
-    num = 10;
+    num = 1;
     var level = [];
     var randX, randY;
     var spaceIsTaken;
@@ -291,6 +301,11 @@ class Game{
     for (let i=0; i<this.fleet.concat(this.frogs).length; i++){
       this.fleet.concat(this.frogs)[i].startBattle();
     }
+  }
+
+  endBattle(){
+    this.state = 0;
+    this.battleFrames = 0;
   }
 
   mouseMove(){
@@ -396,7 +411,13 @@ class Game{
         this.bullets[i].update();
         if (Math.random() < 0.5){
           this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, (Math.random()-0.5)/2, (Math.random()-0.5)/2, 20));
-        } 
+        }
+        for (let j=0; j<this.frogs.length; j++){
+          if (this.frogs[j].isInRect(this.bullets[i].x, this.bullets[i].y)){
+            this.frogs[j].health -= 1;
+            this.bullets[i].life = 0;
+          }
+        }
       }
 
       for (let i=0;i<this.particles.length; i++){
