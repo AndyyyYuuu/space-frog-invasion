@@ -12,6 +12,48 @@ class Star{
   }
 }
 
+class Particle{
+  constructor(x, y, dx, dy, life){
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    this.life = life;
+  }
+
+  update(){
+    this.x += this.dx;
+    this.y += this.dy;
+    this.life --;
+  }
+
+  draw(){
+    ctx.fillStyle = `rgba(255, 0, 255, ${Math.min(50, this.life)/50})`;
+    ctx.fillRect(Math.round(this.x)*PIXEL, Math.round(this.y)*PIXEL, PIXEL, PIXEL);
+  }
+}
+
+class Bullet{
+  constructor(x, y, dx, dy){
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    this.life = 100;
+  }
+
+  update(){
+    this.x += this.dx;
+    this.y += this.dy;
+    this.life --;
+  }
+
+  draw(){
+    ctx.fillStyle = `rgba(255, 0, 255, ${Math.min(50, this.life)/50})`;
+    //ctx.fillRect(Math.round(this.x-1)*PIXEL, Math.round(this.y-1)*PIXEL, PIXEL*2, PIXEL*2);
+    ctx.fillRect(Math.round(this.x)*PIXEL, Math.round(this.y)*PIXEL, PIXEL, PIXEL);
+  }
+}
 
 class Entity{
   constructor(attributes){
@@ -27,6 +69,9 @@ class Entity{
   }
   isTouching(entity){
     return Math.round(Math.abs(this.attributes.fleetx - entity.attributes.fleetx)) <= Math.round((this.attributes.width+entity.attributes.width)/2) && Math.round(Math.abs(this.attributes.fleety - entity.attributes.fleety)) < Math.round((this.attributes.height+entity.attributes.height)/2);
+  }
+  isInRect(x,y){
+    return (x > this.x && x < this.attributes.width && y > this.y && y < this.attributes.height);
   }
 }
 
@@ -70,6 +115,7 @@ class Ship extends Entity{
     this.thrust = 0;
     this.dragX = -1;
     this.dragY = -1;
+    this.shootCooldown = 25+Math.random()*50;
   }
 
   layoutDraw(){
@@ -95,6 +141,16 @@ class Ship extends Entity{
       this.thrust --;
       this.dy -= 0.1;
     }
+    
+  }
+  attemptShoot(){
+    if (this.shootCooldown > 0){
+      this.shootCooldown --;
+      return false;
+    }
+    this.shootCooldown = Math.random()*25+25;
+    return true
+    
   }
   /*
   battleDraw(offset){
@@ -146,6 +202,7 @@ class Game{
     this.fleet = [new BasicShip(64, 32),new BasicShip(48, 48),new BasicShip(80, 48)];
     this.frogs = [];
     this.bullets = [];
+    this.particles = [];
     this.entities = this.fleet.concat(this.frogs); // All entities, frogs and ships
     this.heldShip = null;
     this.selectedShip = null;
@@ -321,6 +378,10 @@ class Game{
         this.fleet[i].battleDraw(Math.min(0, this.battleFrames-48));
         if (this.battleFrames > 64){
           this.fleet[i].update(0.1);
+          if (this.fleet[i].attemptShoot()){
+            this.bullets.push(new Bullet(this.fleet[i].x, this.fleet[i].y, 0, -2));
+          }
+          
         }
       }
 
@@ -328,6 +389,19 @@ class Game{
 
         this.frogs[i].battleDraw(Math.min(0, this.battleFrames-48));
         this.frogs[i].update();
+      }
+
+      for (let i=0;i<this.bullets.length; i++){
+        this.bullets[i].draw();
+        this.bullets[i].update();
+        if (Math.random() < 0.5){
+          this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, (Math.random()-0.5)/2, (Math.random()-0.5)/2, 20));
+        } 
+      }
+
+      for (let i=0;i<this.particles.length; i++){
+        this.particles[i].draw();
+        this.particles[i].update();
       }
 
       this.battleFrames ++;
