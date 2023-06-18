@@ -119,12 +119,25 @@ class ColliderFrog extends Frog{
       image:IMAGE.frog.collider[lvl],
       health: 1+lvl*2,
       damage: 1+lvl,
-      width: 5, 
-      height: 8,
+      width: IMAGE.frog.collider[lvl].naturalWidth, 
+      height: IMAGE.frog.collider[lvl].naturalHeight,
     })
   }
 }
 
+class ShooterFrog extends Frog{
+  constructor(x, y, lvl){
+    super({
+      fleetx:x,
+      fleety:y,
+      image:IMAGE.frog.shooter[lvl],
+      health: 1+lvl,
+      damage: 1+lvl,
+      width: IMAGE.frog.collider[lvl].naturalWidth, 
+      height: IMAGE.frog.collider[lvl].naturalHeight,
+    })
+  }
+}
 
 
 class Ship extends Entity{
@@ -186,9 +199,9 @@ class ShooterShip extends Ship{
     super({
       health: 2+lvl*2,
       damage: 1+lvl,
-      width: 5,
-      height: 6,
-      image: IMAGE.ship.collider[0], 
+      width: IMAGE.ship.shooter[lvl].naturalWidth,
+      height: IMAGE.ship.shooter[lvl].naturalHeight,
+      image: IMAGE.ship.shooter[lvl], 
       fleetx: x,
       fleety: y,
       typeName: "Shooter",
@@ -244,6 +257,8 @@ class Game{
 
   }
 
+  // Horrible, messy, ostrich algorithm
+  // Gets two mirrored frogs to append to a level
   getNewFrogs(level,frog1,frog2,num){
     var newFrog = frog1;
     var mirroredFrog = frog2;
@@ -266,35 +281,16 @@ class Game{
   }
 
   newLevel(num){
-    num = 1;
+    //num = 1;
     var level = [];
     var randX, randY;
     var spaceIsTaken;
-    
-    // Horrible, messy, ostrich algorithm
     for (let i=0;i<num/2+1;i++){
       level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,0), new ColliderFrog(0,0,0), num))
-      /*
-      level.push(new ColliderFrog(0, 0, 0));
-      spaceIsTaken = true;
-      while (spaceIsTaken){
-
-        level[level.length-1].attributes.fleetx = (56-4*num)+Math.random()*(1+4*num);
-        level[level.length-1].attributes.fleety = 8+Math.random()*32;
-        spaceIsTaken = false;
-        for (let j=0;j<level.length;j++){
-
-          if (j != level.length-1 && level[level.length-1].isTouching(level[j])){
-            spaceIsTaken = true;
-          }
-        }
-      }
-      level.push(new ColliderFrog(128-level[level.length-1].attributes.fleetx, level[level.length-1].attributes.fleety, 0));
-      */
-      
     }
-    
-    //level.push(new ColliderFrog(Math.round(64), Math.round(8+Math.random()*32), 0));
+    for (let i=0;i<num/2+1;i++){
+      level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,1), new ColliderFrog(0,0,0), num))
+    }
     return level;
   }
 
