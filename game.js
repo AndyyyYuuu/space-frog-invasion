@@ -139,6 +139,24 @@ class ShooterFrog extends Frog{
   }
 }
 
+class Upgrade {
+  constructor(name, price, currencyType, newLevel, assignment){
+    this.name = name;
+    this.price = price;
+    this.currencyType = currencyType;
+    this.newLevel = newLevel;
+    this.assignment = assignment;
+  }
+
+  upgrade(target){
+    target = this.assignment;
+  }
+
+  draw(x, y){
+    buttonRect(x, y, 48, 16);
+    drawText(this.name, x+2, y+6, "small");
+  }
+}
 
 class Ship extends Entity{
   constructor(attributes){
@@ -197,15 +215,37 @@ class Ship extends Entity{
 class ShooterShip extends Ship{
   constructor(x, y, lvl){
     super({
-      health: 2+lvl*2,
-      damage: 1+lvl,
+      health: 2+lvl,
+      damage: 1+lvl*2,
       width: IMAGE.ship.shooter[lvl].naturalWidth,
       height: IMAGE.ship.shooter[lvl].naturalHeight,
       image: IMAGE.ship.shooter[lvl], 
       fleetx: x,
       fleety: y,
       typeName: "Shooter",
-      lvl: lvl
+      lvl: lvl,
+      upgrades: [
+        new Upgrade("Strengthen", lvl*2, 1, lvl+1, "Shooter")
+      ]
+    })
+  }
+}
+
+class ColliderShip extends Ship{
+  constructor(x, y, lvl){
+    super({
+      health: 2+lvl*2,
+      damage: 1+lvl,
+      width: IMAGE.ship.collider[lvl].naturalWidth,
+      height: IMAGE.ship.collider[lvl].naturalHeight,
+      image: IMAGE.ship.collider[lvl], 
+      fleetx: x,
+      fleety: y,
+      typeName: "Collider",
+      lvl: lvl,
+      upgrades: [
+        new Upgrade("Fortify", lvl*2, 1, lvl+1, "Collider")
+      ]
     })
   }
 }
@@ -221,8 +261,14 @@ class BasicShip extends Ship{
       fleetx: x,
       fleety: y,
       typeName: "Basic",
-      lvl: 0
+      lvl: 0,
+      upgrades: [
+        new Upgrade("Artillary", 3, 0, new ShooterShip(x, y, 1)), 
+        new Upgrade("Hardness", 2, 0, new ColliderShip(x, y, 1)), 
+        new Upgrade("Repair", 5, 0, new ShooterShip(x, y, 1)), 
+      ]
     })
+
   }
 }
 
@@ -241,8 +287,8 @@ class Game{
     this.battleFrames = 0;
     this.gameOverFrames = 0;
     this.currency = {
-      biomatter:0,
-      metal:0
+      biomatter:99999,
+      metal:99999
     }
     this.starMap = [];
     this.frogLevels = [];
@@ -288,8 +334,8 @@ class Game{
     for (let i=0;i<num/2+1;i++){
       level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,0), new ColliderFrog(0,0,0), num))
     }
-    for (let i=0;i<num/2+1;i++){
-      level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,1), new ColliderFrog(0,0,0), num))
+    for (let i=0;i<num/2-1;i++){
+      level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,1), new ColliderFrog(0,0,1), num))
     }
     return level;
   }
@@ -388,7 +434,9 @@ class Game{
         drawText("DMG: ", 8, 104, "small")
         drawText(this.selectedShip.attributes.damage, 26, 104, "large");
         drawText("Lvl. "+this.selectedShip.attributes.lvl, 88, 88, "small");
-
+        drawText("Upgrade:", 64, 96, "small");
+        this.selectedShip.attributes.upgrades[0].draw(64, 100);
+        
       }
       
 
