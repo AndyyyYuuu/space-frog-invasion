@@ -40,6 +40,7 @@ class Bullet{
     this.dx = dx;
     this.dy = dy;
     this.life = 100;
+    this.damage = 1;
   }
 
   update(){
@@ -51,9 +52,17 @@ class Bullet{
   draw(){
     ctx.fillStyle = `rgba(255, 0, 255, ${Math.min(50, this.life)/50})`;
     //ctx.fillRect(Math.round(this.x-1)*PIXEL, Math.round(this.y-1)*PIXEL, PIXEL*2, PIXEL*2);
-    ctx.fillRect(Math.round(this.x)*PIXEL, Math.round(this.y)*PIXEL, PIXEL, PIXEL);
+    ctx.fillRect(Math.floor(this.x)*PIXEL, Math.floor(this.y)*PIXEL, PIXEL, PIXEL);
+  }
+
+  checkHit(entity){
+    if (!entity.dead && entity.isInRect(this.x, this.y)){
+      entity.health -= this.damage;
+      this.life = 0;
+    }
   }
 }
+
 
 class Entity{
   constructor(attributes){
@@ -401,9 +410,10 @@ class Game{
       }
 
       for (let i=0; i<this.frogs.length; i++){
-
-        this.frogs[i].battleDraw(Math.min(0, this.battleFrames-48));
-        this.frogs[i].update();
+        if (!this.frogs[i].dead){
+          this.frogs[i].battleDraw(Math.min(0, this.battleFrames-48));
+          this.frogs[i].update();
+        }
       }
 
       for (let i=0;i<this.bullets.length; i++){
@@ -413,10 +423,12 @@ class Game{
           this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, (Math.random()-0.5)/2, (Math.random()-0.5)/2, 20));
         }
         for (let j=0; j<this.frogs.length; j++){
-          if (this.frogs[j].isInRect(this.bullets[i].x, this.bullets[i].y)){
-            this.frogs[j].health -= 1;
-            this.bullets[i].life = 0;
-          }
+          this.bullets[i].checkHit(this.frogs[j]);
+          
+        }
+        if (this.bullets[i].life <= 0){
+          this.bullets.splice(i,1);
+          i--;
         }
       }
 
