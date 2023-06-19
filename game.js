@@ -149,12 +149,25 @@ class Upgrade {
   }
 
   upgrade(target){
-    target = this.assignment;
+    if (this.assignment == "Shooter"){
+      return new ShooterShip(target.x, target.y, target.attributes.lvl+1);
+    }else if (this.assignment == "Collider"){
+      return new ColliderShip(target.x, target.y, target.attributes.lvl+1);
+    }
+    return null;
   }
 
   draw(x, y){
+
     buttonRect(x, y, 48, 16);
+    
     drawText(this.name, x+2, y+6, "small");
+    drawText(this.price, x+10, y+14, "small");
+    if (this.currencyType == 0){
+      drawImage(IMAGE.currency.biomatter, x+1, y+7);
+    }else if (this.currencyType == 1){
+      drawImage(IMAGE.currency.metal, x+1, y+7);
+    }
   }
 }
 
@@ -217,16 +230,14 @@ class ShooterShip extends Ship{
     super({
       health: 2+lvl,
       damage: 1+lvl*2,
-      width: IMAGE.ship.shooter[lvl].naturalWidth,
-      height: IMAGE.ship.shooter[lvl].naturalHeight,
+      width: 5, //IMAGE.ship.shooter[lvl].naturalWidth,
+      height: 6, //IMAGE.ship.shooter[lvl].naturalHeight,
       image: IMAGE.ship.shooter[lvl], 
       fleetx: x,
       fleety: y,
       typeName: "Shooter",
       lvl: lvl,
-      upgrades: [
-        new Upgrade("Strengthen", lvl*2, 1, lvl+1, "Shooter")
-      ]
+      upgrade: new Upgrade("Strengthen", 2+lvl*2, 1, lvl+1, "Shooter")
     })
   }
 }
@@ -236,21 +247,19 @@ class ColliderShip extends Ship{
     super({
       health: 2+lvl*2,
       damage: 1+lvl,
-      width: IMAGE.ship.collider[lvl].naturalWidth,
-      height: IMAGE.ship.collider[lvl].naturalHeight,
+      width: 5, //IMAGE.ship.collider[lvl].naturalWidth,
+      height: 6, //IMAGE.ship.collider[lvl].naturalHeight,
       image: IMAGE.ship.collider[lvl], 
       fleetx: x,
       fleety: y,
       typeName: "Collider",
       lvl: lvl,
-      upgrades: [
-        new Upgrade("Fortify", lvl*2, 1, lvl+1, "Collider")
-      ]
+      upgrade: new Upgrade("Fortify", 2+lvl*2, 1, lvl+1, "Collider")
     })
   }
 }
 
-class BasicShip extends Ship{
+/*class BasicShip extends Ship{
   constructor(x, y){
     super({
       health: 3,
@@ -270,20 +279,21 @@ class BasicShip extends Ship{
     })
 
   }
-}
+}*/
 
 
 class Game{
   constructor(name){
     this.name = name;
     this.state = 0;
-    this.fleet = [new BasicShip(64, 32),new BasicShip(48, 48),new BasicShip(80, 48)];
+    this.fleet = [new ShooterShip(64, 32, 0),new ColliderShip(48, 48, 0),new ColliderShip(80, 48, 0)];
     this.frogs = [];
     this.bullets = [];
     this.particles = [];
     this.entities = this.fleet.concat(this.frogs); // All entities, frogs and ships
     this.heldShip = null;
     this.selectedShip = null;
+    this.selectedIndex = null;
     this.battleFrames = 0;
     this.gameOverFrames = 0;
     this.currency = {
@@ -380,10 +390,15 @@ class Game{
         for (let i=0; i<this.fleet.length; i++){
           if (this.fleet[i].attributeInRect()){
             this.selectedShip = this.fleet[i];
+            this.selectedIndex = i;
             return;
           }
         }
         this.selectedShip = null;
+      }else if (mouseInRect(64, 100, 48, 16)){
+        if (this.selectedShip!=null){
+          this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
+        }
       }
     }
   }
@@ -435,7 +450,7 @@ class Game{
         drawText(this.selectedShip.attributes.damage, 26, 104, "large");
         drawText("Lvl. "+this.selectedShip.attributes.lvl, 88, 88, "small");
         drawText("Upgrade:", 64, 96, "small");
-        this.selectedShip.attributes.upgrades[0].draw(64, 100);
+        this.selectedShip.attributes.upgrade.draw(64, 100);
         
       }
       
