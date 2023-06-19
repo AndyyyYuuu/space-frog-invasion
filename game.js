@@ -418,8 +418,20 @@ class Game{
       // Upgrade ship
       }else if (mouseInRect(64, 100, 48, 16)){
         if (this.selectedShip!=null){
-          this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
-          this.selectedShip = this.fleet[this.selectedIndex];
+          if (this.selectedShip.attributes.upgrade.currencyType == 0){
+            if (this.currency.biomatter >= this.selectedShip.attributes.upgrade.price){
+              this.currency.biomatter -= this.selectedShip.attributes.upgrade.price
+              this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
+              this.selectedShip = this.fleet[this.selectedIndex];
+            }
+          } else if (this.selectedShip.attributes.upgrade.currencyType == 1){
+
+            if (this.currency.metal >= this.selectedShip.attributes.upgrade.price){
+              this.currency.metal -= this.selectedShip.attributes.upgrade.price;
+              this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
+              this.selectedShip = this.fleet[this.selectedIndex];
+            }
+          }
         }
       }
     }
