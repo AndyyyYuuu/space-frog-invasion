@@ -64,6 +64,10 @@ class Bullet{
 }
 
 
+
+
+// ENTITIES
+
 class Entity{
   constructor(attributes){
     this.x = -1;
@@ -86,6 +90,10 @@ class Entity{
     return (Math.abs(x - this.x) < this.attributes.width/2 && Math.abs(y - this.y) < this.attributes.height/2);
   }
 }
+
+
+
+// FROG CLASSES
 
 class Frog extends Entity{
   constructor(attributes){
@@ -139,6 +147,10 @@ class ShooterFrog extends Frog{
   }
 }
 
+
+
+// SHIP UPGRADE
+
 class Upgrade {
   constructor(name, price, currencyType, newLevel, assignment){
     this.name = name;
@@ -170,6 +182,10 @@ class Upgrade {
     }
   }
 }
+
+
+
+// SHIP CLASSES
 
 class Ship extends Entity{
   constructor(attributes){
@@ -281,6 +297,10 @@ class ColliderShip extends Ship{
   }
 }*/
 
+
+
+
+// MAIN GAME CLASS
 
 class Game{
   constructor(name){
