@@ -162,9 +162,9 @@ class Upgrade {
 
   upgrade(target){
     if (this.assignment == "Shooter"){
-      return new ShooterShip(target.x, target.y, target.attributes.lvl+1);
+      return new ShooterShip(target.attributes.fleetx, target.attributes.fleety, target.attributes.lvl+1);
     }else if (this.assignment == "Collider"){
-      return new ColliderShip(target.x, target.y, target.attributes.lvl+1);
+      return new ColliderShip(target.attributes.fleetx, target.attributes.fleety, target.attributes.lvl+1);
     }
     return null;
   }
@@ -415,9 +415,11 @@ class Game{
           }
         }
         this.selectedShip = null;
+      // Upgrade ship
       }else if (mouseInRect(64, 100, 48, 16)){
         if (this.selectedShip!=null){
           this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
+          this.selectedShip = this.fleet[this.selectedIndex];
         }
       }
     }
