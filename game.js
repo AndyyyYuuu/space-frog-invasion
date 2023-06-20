@@ -34,13 +34,13 @@ class Particle{
 }
 
 class Bullet{
-  constructor(x, y, dx, dy){
+  constructor(x, y, dx, dy, damage){
     this.x = x;
     this.y = y;
     this.dx = dx;
     this.dy = dy;
     this.life = 100;
-    this.damage = 1;
+    this.damage = damage;
   }
 
   update(){
@@ -193,7 +193,7 @@ class Ship extends Entity{
     this.thrust = 0;
     this.dragX = -1;
     this.dragY = -1;
-    this.shootCooldown = 25+Math.random()*50;
+    this.shootCooldown = 10+Math.random()*50;
   }
 
   layoutDraw(){
@@ -222,15 +222,7 @@ class Ship extends Entity{
     }
     
   }
-  attemptShoot(){
-    if (this.shootCooldown > 0){
-      this.shootCooldown --;
-      return false;
-    }
-    this.shootCooldown = Math.random()*25+25;
-    return true
-    
-  }
+  
   /*
   battleDraw(offset){
     drawImage(this.attributes.image, this.x-this.attributes.image.naturalWidth/2, this.y+offset-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
@@ -253,8 +245,18 @@ class ShooterShip extends Ship{
       fleety: y,
       typeName: "Shooter",
       lvl: lvl,
-      upgrade: new Upgrade("Strengthen", 2+lvl*2, 1, lvl+1, "Shooter")
+      upgrade: new Upgrade("Strengthen", 2+lvl*2, 1, lvl+1, "Shooter"),
+      fireSpeed: 1000/(lvl+8)
     })
+  }
+  attemptShoot(){
+    if (this.shootCooldown > 0){
+      this.shootCooldown --;
+      return null;
+    }
+    this.shootCooldown = this.attributes.fireSpeed;
+    return new Bullet(this.x, this.y, 0, -2, this.attributes.damage);
+    
   }
 }
 
@@ -272,6 +274,9 @@ class ColliderShip extends Ship{
       lvl: lvl,
       upgrade: new Upgrade("Fortify", 2+lvl*2, 1, lvl+1, "Collider")
     })
+  }
+  attemptShoot(){
+    return null;
   }
 }
 
@@ -491,13 +496,15 @@ class Game{
 
     }else if (this.state == 1){
 
-      for (let i=0; i<this.fleet.length; i++){
+      for (var i=0; i<this.fleet.length; i++){
         this.fleet[i].battleDraw(Math.min(0, this.battleFrames-48));
         if (this.battleFrames > 64){
           this.fleet[i].update(0.1);
-          if (this.fleet[i].attemptShoot()){
-            this.bullets.push(new Bullet(this.fleet[i].x, this.fleet[i].y, 0, -2));
+          var nextBullet = this.fleet[i].attemptShoot();
+          if (nextBullet!=null){
+            this.bullets.push(nextBullet);
           }
+          
           
         }
       }
