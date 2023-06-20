@@ -83,11 +83,21 @@ class Entity{
       drawImage(this.attributes.image, this.x-this.attributes.image.naturalWidth/2, this.y+offset-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
     }
   }
-  isTouching(entity){
+  isTouchingLayout(entity){
     return Math.round(Math.abs(this.attributes.fleetx - entity.attributes.fleetx)) <= Math.round((this.attributes.width+entity.attributes.width)/2) && Math.round(Math.abs(this.attributes.fleety - entity.attributes.fleety)) < Math.round((this.attributes.height+entity.attributes.height)/2);
+  }
+  isTouching(entity){
+    return Math.round(Math.abs(this.x - entity.x)) <= Math.round((this.attributes.width+entity.attributes.width)/2) && Math.round(Math.abs(this.y - entity.y)) < Math.round((this.attributes.height+entity.attributes.height)/2);
   }
   isInRect(x,y){
     return (Math.abs(x - this.x) < this.attributes.width/2 && Math.abs(y - this.y) < this.attributes.height/2);
+  }
+  collideWith(other){
+    if (this.isTouching(other)){
+      console.log("Bump");
+      this.dx += (this.x-other.x)/5;
+      this.dy += (this.y-other.y)/5;
+    }
   }
 }
 
@@ -111,7 +121,16 @@ class Frog extends Entity{
     this.health = this.attributes.health;
   }
   update(){
-    this.y += 0.1;
+    this.y += this.dy;
+    this.x += this.dx;
+    this.dx *= 0.95;
+    this.dy *= 0.95;
+    if (this.dy < 0.1){
+      //this.dy *= 1.1;
+      this.dy += 0.02
+    }else if (this.dy > 0.13){
+      this.dy -= 0.02
+    }
     if (this.health <= 0){
       this.dead = true;
     }
@@ -223,6 +242,7 @@ class Ship extends Entity{
     
   }
   
+  
   /*
   battleDraw(offset){
     drawImage(this.attributes.image, this.x-this.attributes.image.naturalWidth/2, this.y+offset-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
@@ -321,6 +341,7 @@ class Game{
     this.selectedIndex = null;
     this.battleFrames = 0;
     this.gameOverFrames = 0;
+    this.frogCount = 0;
     this.currency = {
       biomatter:99999,
       metal:99999
@@ -353,7 +374,7 @@ class Game{
       spaceIsTaken = false;
       for (let j=0;j<level.length;j++){
 
-        if (newFrog.isTouching(level[j])){
+        if (newFrog.isTouchingLayout(level[j])){
           spaceIsTaken = true;
         }
       }
@@ -504,16 +525,25 @@ class Game{
           if (nextBullet!=null){
             this.bullets.push(nextBullet);
           }
-          
-          
+        }
+        for (var j=0;j<this.frogs.length;j++){
+          this.fleet[i].collideWith(this.frogs[j]);
+          this.frogs[j].collideWith(this.fleet[i]);
         }
       }
 
+      this.frogCount = 0;
       for (let i=0; i<this.frogs.length; i++){
         if (!this.frogs[i].dead){
+          this.frogCount++;
           this.frogs[i].battleDraw(Math.min(0, this.battleFrames-48));
           this.frogs[i].update();
         }
+      }
+
+      if (this.frogCount == 0){
+        this.state = 0;
+        this.currentLevel ++;
       }
 
       for (let i=0;i<this.bullets.length; i++){
