@@ -93,11 +93,14 @@ class Entity{
     return (Math.abs(x - this.x) < this.attributes.width/2 && Math.abs(y - this.y) < this.attributes.height/2);
   }
   collideWith(other){
-    if (this.isTouching(other)){
-      console.log("Bump");
-      this.dx += (this.x-other.x)/5;
-      this.dy += (this.y-other.y)/5;
+    if (!this.dead && !other.dead && this !== other && this.isTouching(other)){
+      this.dx += (this.x-other.x)/distance(this.x, this.y, other.x, other.y)//*Math.abs(other.dx/2);
+      this.dy += (this.y-other.y)/distance(this.x, this.y, other.x, other.y)//*Math.abs(other.dy/2);
+      if (Object.hasOwn(this, 'enginesStunned')){
+        this.enginesStunned = 50;
+      }
     }
+
   }
 }
 
@@ -213,6 +216,7 @@ class Ship extends Entity{
     this.dragX = -1;
     this.dragY = -1;
     this.shootCooldown = 10+Math.random()*50;
+    this.enginesStunned = 0;
   }
 
   layoutDraw(){
@@ -231,8 +235,12 @@ class Ship extends Entity{
     this.y += this.dy*0.5;
     this.dx *= 0.95;
     this.dy *= 0.95;
-    if (this.dy >= -targetThrust){
+    if (this.enginesStunned > 0){
+      this.enginesStunned --;
+    }else{
+      if (this.dy >= -targetThrust){
       this.thrust = 20;
+      }
     }
 
     if (this.thrust > 0){
@@ -520,7 +528,7 @@ class Game{
       for (var i=0; i<this.fleet.length; i++){
         this.fleet[i].battleDraw(Math.min(0, this.battleFrames-48));
         if (this.battleFrames > 64){
-          this.fleet[i].update(0.1);
+          this.fleet[i].update(0.05);
           var nextBullet = this.fleet[i].attemptShoot();
           if (nextBullet!=null){
             this.bullets.push(nextBullet);
@@ -529,6 +537,10 @@ class Game{
         for (var j=0;j<this.frogs.length;j++){
           this.fleet[i].collideWith(this.frogs[j]);
           this.frogs[j].collideWith(this.fleet[i]);
+        }
+
+        for (var j=0;j<this.fleet.length;j++){
+          this.fleet[i].collideWith(this.fleet[j]);
         }
       }
 
