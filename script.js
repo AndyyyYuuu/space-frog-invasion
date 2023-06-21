@@ -14,8 +14,8 @@ const PIXEL = 4;
 
 // Random word generator for save slot names
 const RANDWORDS = {
-  adj: ["Crunchy ", "Space ", "Froggy ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Slimy ", "Jazzy "],
-  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleet", "War", "Ships", "Pond", "Star", "Plasma"]
+  adj: ["Crunchy ", "Space ", "Froggy ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Slimy ", "Jazzy ", "Singing ", "Shooter "],
+  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleet", "War", "Ships", "Star", "Plasma", "Spheres"]
 }
 
 // Stores important colors in the game

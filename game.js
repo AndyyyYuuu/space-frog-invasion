@@ -13,23 +13,26 @@ class Star{
 }
 
 class Particle{
-  constructor(x, y, dx, dy, life){
+  constructor(x, y, dx, dy, life, color){
     this.x = x;
     this.y = y;
     this.dx = dx;
     this.dy = dy;
     this.life = life;
+    this.color = color;
   }
 
   update(){
     this.x += this.dx;
     this.y += this.dy;
-    this.life --;
+    this.life *=0.98;
   }
 
   draw(){
-    ctx.fillStyle = `rgba(255, 0, 255, ${Math.min(50, this.life)/50})`;
+    ctx.fillStyle = this.color;
+    ctx.globalAlpha = Math.max(0,Math.min(50, this.life)/50);
     ctx.fillRect(Math.round(this.x)*PIXEL, Math.round(this.y)*PIXEL, PIXEL, PIXEL);
+    ctx.globalAlpha = 1;
   }
 }
 
@@ -534,6 +537,10 @@ class Game{
             this.bullets.push(nextBullet);
           }
         }
+/*
+        if (Math.random() < this.fleet[i].thrust/15){
+          this.particles.push(new Particle(this.fleet[i].x, this.fleet[i].y, 0, this.fleet[i].dy/2, 10,"cyan"));
+        }*/
         for (var j=0;j<this.frogs.length;j++){
           this.fleet[i].collideWith(this.frogs[j]);
           this.frogs[j].collideWith(this.fleet[i]);
@@ -562,7 +569,7 @@ class Game{
         this.bullets[i].draw();
         this.bullets[i].update();
         if (Math.random() < 0.5){
-          this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, (Math.random()-0.5)/2, (Math.random()-0.5)/2, 20));
+          this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, (-this.bullets[i].dx+Math.random()-0.5)/2, (-this.bullets[i].dy+Math.random()-0.5)/2, 20, "magenta"));
         }
         for (let j=0; j<this.frogs.length; j++){
           this.bullets[i].checkHit(this.frogs[j]);
@@ -577,6 +584,10 @@ class Game{
       for (let i=0;i<this.particles.length; i++){
         this.particles[i].draw();
         this.particles[i].update();
+        if (this.life <= 0.05){
+          this.particles.splice(i,1);
+          i--;
+        }
       }
 
       this.battleFrames ++;
