@@ -27,6 +27,10 @@ const COLOR = {
   ]
 }
 
+const LEVEL_NAMES = [
+  ""
+]
+
 // Some settings
 var settings = {
   pixelChecker: false, 
@@ -79,7 +83,8 @@ var IMAGE = {
   },
   ui: {
     selectCorner: newImage("misc/select-corner.png"),
-    selectFrame: newImage("misc/select-frame.png")
+    selectFrame: newImage("misc/select-frame.png"),
+    settingsIcon: newImage("ui/settings.png")
   },
   currency: {
     biomatter: newImage("item/debris-frog.png"),

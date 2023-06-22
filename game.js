@@ -123,7 +123,7 @@ class Frog extends Entity{
   }
   startBattle(){
     this.x = this.attributes.fleetx;
-    this.y = this.attributes.fleety;
+    this.y = this.attributes.fleety-16;
     this.health = this.attributes.health;
   }
   update(){
@@ -231,6 +231,11 @@ class Ship extends Entity{
     this.x = this.attributes.fleetx;
     this.y = this.attributes.fleety + 48;
     this.health = this.attributes.health;
+    this.dx = 0;
+    this.dy = 0;
+    this.thrust = 0;
+    this.shootCooldown = 10+Math.random()*50;
+    this.enginesStunned = 0;
   }
 
   update(targetThrust){
@@ -277,7 +282,7 @@ class ShooterShip extends Ship{
       typeName: "Shooter",
       lvl: lvl,
       upgrade: new Upgrade("Strengthen", 2+lvl*2, 1, lvl+1, "Shooter"),
-      fireSpeed: 1000/(lvl+8)
+      fireSpeed: 300/(lvl+4)
     })
   }
   attemptShoot(){
@@ -342,7 +347,14 @@ class Game{
   constructor(name){
     this.name = name;
     this.state = 0;
-    this.fleet = [new ShooterShip(64, 32, 0),new ColliderShip(48, 48, 0),new ColliderShip(80, 48, 0)];
+    this.fleet = [new ShooterShip(64, 32, 0),new ColliderShip(48, 44, 0),new ColliderShip(80, 44, 0)];
+    /*this.fleet = [];
+    
+    for (var i=0;i<4;i++){
+      for (var j=0;j<16;j++){
+        this.fleet.push(new ShooterShip(18+j*6, 20+i*12, 2));
+      }
+    }*/
     this.frogs = [];
     this.bullets = [];
     this.particles = [];
@@ -354,8 +366,8 @@ class Game{
     this.gameOverFrames = 0;
     this.frogCount = 0;
     this.currency = {
-      biomatter:99999,
-      metal:99999
+      biomatter:99,
+      metal:999
     }
     this.starMap = [];
     this.frogLevels = [];
@@ -365,7 +377,7 @@ class Game{
     }
 
     this.FORMATION_SCREEN = {
-      x: 16, y: 24, w: 96, h: 48
+      x: 16, y: 16, w: 96, h: 48
     }
 
   }
@@ -412,6 +424,8 @@ class Game{
     this.battleFrames = 0;
     this.heldShip = null;
     this.selectedShip = null;
+    this.particles = [];
+    this.bullets = [];
     if (this.frogLevels.length <= this.currentLevel){
       this.frogLevels.push(this.newLevel(this.currentLevel))
     }
@@ -440,7 +454,7 @@ class Game{
 
   click(){
     if (this.state == 0){
-      if (mouseInRect(95,4,29,8)){ // Battle button
+      if (mouseInRect(83,68,29,8)){ // Battle button
         this.startBattle();
       }else if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
 
@@ -482,15 +496,19 @@ class Game{
     uiRect(4, 80+Math.min(64,this.battleFrames*3), 120, 44);
 
     if (this.state == 0){
-      buttonRect(95,4,29,8); // Battle button
+      
       ctx.fillStyle = COLOR.TEXT;
-      ctx.textAlign = "left";
-      drawImage(IMAGE.currency.metal, 2, 2);
-      drawText(this.currency.metal, 12, 8);
-      drawImage(IMAGE.currency.biomatter, 32, 2);
-      drawText(this.currency.biomatter, 42, 8);
+      drawImage(IMAGE.ui.settingsIcon, 4, 4);
+      drawImage(IMAGE.currency.metal, 2, 70);
+      drawText(this.currency.metal, 12, 76);
+      drawImage(IMAGE.currency.biomatter, 34, 70);
+      drawText(this.currency.biomatter, 44, 76);
+
+
       drawText("FLEET FORMATION",this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y - 4,"small");
-      drawText("BATTLE!",97,10,"small");
+      drawText("BATTLE!",85,74,"small");
+      buttonRect(83,68,29,8); // Battle button
+      
       for (let i=0; i<this.fleet.length; i++){
         this.fleet[i].layoutDraw();
         
@@ -537,7 +555,7 @@ class Game{
             this.bullets.push(nextBullet);
           }
         }
-/*
+        /*
         if (Math.random() < this.fleet[i].thrust/15){
           this.particles.push(new Particle(this.fleet[i].x, this.fleet[i].y, 0, this.fleet[i].dy/2, 10,"cyan"));
         }*/
@@ -569,7 +587,7 @@ class Game{
         this.bullets[i].draw();
         this.bullets[i].update();
         if (Math.random() < 0.5){
-          this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, (-this.bullets[i].dx+Math.random()-0.5)/2, (-this.bullets[i].dy+Math.random()-0.5)/2, 20, "magenta"));
+          this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, (-this.bullets[i].dx+Math.random()-0.5)/4, (-this.bullets[i].dy+Math.random()-0.5)/4, 20, "magenta"));
         }
         for (let j=0; j<this.frogs.length; j++){
           this.bullets[i].checkHit(this.frogs[j]);
