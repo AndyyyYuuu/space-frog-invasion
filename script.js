@@ -139,7 +139,24 @@ canvas.onmousemove=function(){
 
 canvas.onmousedown=function(){
   mouseIsDown = true;
-  if (mode == "start"){
+  if (mode == "game"){
+    game.click();
+  }else if (mode == "start"){
+    // If a slot is not being created / no slot creation window
+    if (newGameWindow.createdSlot == -1){
+    }else{
+      if (mouseInRect(52, 68, 56, 4)){ // Switch random name
+        newGameWindow.name = randName();
+      }
+    }
+  }
+}
+
+canvas.onmouseup=function(){ // You know what this does
+  mouseIsDown = false;
+  if (mode == "game"){
+    game.release();
+  }else if (mode == "start"){
     // If a slot is not being created / no slot creation window
     if (newGameWindow.createdSlot == -1){
       for (let i=0; i<3; i++){
@@ -160,17 +177,9 @@ canvas.onmousedown=function(){
       }else if (mouseInRect(64, 78, 28, 8)){ // Create new game button
         saveSlots[newGameWindow.createdSlot] = new Game(newGameWindow.name);
         newGameWindow.createdSlot = -1;
-      }else if (mouseInRect(52, 68, 56, 4)){ // Switch random name
-        newGameWindow.name = randName();
       }
     }
-  }else if (mode == "game"){
-    game.click();
   }
-}
-
-canvas.onmouseup=function(){ // You know what this does
-  mouseIsDown = false
 }
 
 document.addEventListener("keydown", event => {

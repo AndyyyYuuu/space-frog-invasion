@@ -483,9 +483,8 @@ class Game{
 
   click(){
     if (this.state == 0){
-      if (mouseInRect(83,68,29,8)){ // Battle button
-        this.startBattle();
-      }else if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
+      
+      if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
 
         for (let i=0; i<this.fleet.length; i++){
           if (this.fleet[i].attributeInRect()){
@@ -496,6 +495,14 @@ class Game{
         }
         this.selectedShip = null;
       // Upgrade ship
+      }
+    }
+  }
+
+  release(){
+    if (this.state == 0){
+      if (mouseInRect(83,68,29,8)){ // Battle button
+        this.startBattle();
       }else if (mouseInRect(64, 100, 48, 16)){
         if (this.selectedShip!=null){
           if (this.selectedShip.attributes.upgrade.currencyType == 0){
@@ -527,7 +534,7 @@ class Game{
     if (this.state == 0){
       
       ctx.fillStyle = COLOR.TEXT;
-      drawImage(IMAGE.ui.settingsIcon, 4, 4);
+      drawImage(IMAGE.ui.settingsIcon, 6, 6);
       drawImage(IMAGE.currency.metal, 2, 70);
       drawText(this.currency.metal, 12, 76);
       drawImage(IMAGE.currency.biomatter, 34, 70);
@@ -537,6 +544,7 @@ class Game{
       drawText("FLEET FORMATION",this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y - 4,"small");
       drawText("BATTLE!",85,74,"small");
       buttonRect(83,68,29,8); // Battle button
+      buttonRect(4, 4, 10, 10)
       
       for (let i=0; i<this.fleet.length; i++){
         this.fleet[i].layoutDraw();
