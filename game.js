@@ -95,15 +95,26 @@ class Entity{
   isInRect(x,y){
     return (Math.abs(x - this.x) < this.attributes.width/2 && Math.abs(y - this.y) < this.attributes.height/2);
   }
-  collideWith(other){
+  collideWith(other, particles){
     if (!this.dead && !other.dead && this !== other && this.isTouching(other)){
       this.dx += (this.x-other.x)/distance(this.x, this.y, other.x, other.y)//*Math.abs(other.dx/2);
       this.dy += (this.y-other.y)/distance(this.x, this.y, other.x, other.y)//*Math.abs(other.dy/2);
+      if (this.attributes.typeName == "Collider"){
+        other.health -= this.attributes.damage;
+      }
+      this.health *= 0.75;
+      this.health -= 0.25;
       if (Object.hasOwn(this, 'enginesStunned')){
         this.enginesStunned = 50;
       }
-    }
 
+      // Particles
+      for (var i=0;i<5;i++){
+        particles.push(other.newParticle((other.x+this.x)/2, (other.y+this.y)/2));
+      }
+      return true;
+    }
+    return false;
   }
 }
 
@@ -142,6 +153,10 @@ class Frog extends Entity{
     }
   }
 
+  newParticle(x,y){
+    return new Particle(x, y, Math.random()-0.5, Math.random()-0.5, 30, `hsl(${Math.random()*30+80}, 100%, ${Math.random()*10+50}%`);
+  }
+
 }
 
 class ColliderFrog extends Frog{
@@ -150,7 +165,7 @@ class ColliderFrog extends Frog{
       fleetx:x,
       fleety:y,
       image:IMAGE.frog.collider[lvl],
-      health: 1+lvl*2,
+      health: 2+lvl*2,
       damage: 1+lvl,
       width: IMAGE.frog.collider[lvl].naturalWidth, 
       height: IMAGE.frog.collider[lvl].naturalHeight,
@@ -255,7 +270,21 @@ class Ship extends Entity{
       this.thrust --;
       this.dy -= 0.1;
     }
+
+    if (this.health <= 0){
+      this.dead = true;
+    }
     
+  }
+  layoutCollide(){
+    if (this.isTouching(other)){
+      this.attributes.fleetx += (this.attributes.fleetx-other.attributes.fleetx)/distance(this.attributes.fleetx, this.attributes.fleety, other.attributes.fleetx, other.attributes.fleety)//*Math.abs(other.dx/2);
+      this.attributes.fleety += (this.attributes.fleety-other.attributes.fleety)/distance(this.attributes.fleetx, this.attributes.fleety, other.attributes.fleetx, other.attributes.fleety)//*Math.abs(other.dy/2);
+    }
+  }
+
+  newParticle(x,y){
+    return new Particle(x, y, Math.random()-0.5, Math.random()-0.5, 30, `hsl(${Math.random()*35+20}, 100%, ${Math.random()*10+40}%`);
   }
   
   
@@ -273,7 +302,7 @@ class ShooterShip extends Ship{
   constructor(x, y, lvl){
     super({
       health: 2+lvl,
-      damage: 1+lvl*2,
+      damage: 2+lvl*2,
       width: 5, //IMAGE.ship.shooter[lvl].naturalWidth,
       height: 6, //IMAGE.ship.shooter[lvl].naturalHeight,
       image: IMAGE.ship.shooter[lvl], 
@@ -560,12 +589,13 @@ class Game{
           this.particles.push(new Particle(this.fleet[i].x, this.fleet[i].y, 0, this.fleet[i].dy/2, 10,"cyan"));
         }*/
         for (var j=0;j<this.frogs.length;j++){
-          this.fleet[i].collideWith(this.frogs[j]);
-          this.frogs[j].collideWith(this.fleet[i]);
+          this.fleet[i].collideWith(this.frogs[j], this.particles);
+          this.frogs[j].collideWith(this.fleet[i], this.particles);
         }
 
         for (var j=0;j<this.fleet.length;j++){
-          this.fleet[i].collideWith(this.fleet[j]);
+          this.fleet[i].collideWith(this.fleet[j], this.particles);
+            
         }
       }
 
@@ -575,6 +605,9 @@ class Game{
           this.frogCount++;
           this.frogs[i].battleDraw(Math.min(0, this.battleFrames-48));
           this.frogs[i].update();
+        }
+        for (var j=0;j<this.frogs.length;j++){
+          this.frogs[i].collideWith(this.frogs[j], this.particles);
         }
       }
 
