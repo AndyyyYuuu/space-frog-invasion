@@ -28,9 +28,16 @@ const COLOR = {
   ]
 }
 
-const LEVEL_NAMES = [
-  ""
-]
+const LEVEL_NAMES = `I have eaten
+The plums
+That were in the icebox
+In which
+You were probably
+Saving for breakfast
+Forgive me
+They were delicious
+So sweet
+And so cold`.split(/\r?\n|\r|\n/g);
 
 // Some settings
 var settings = {

@@ -212,9 +212,9 @@ class Upgrade {
   draw(x, y, isTactile = true){
 
     buttonRect(x, y, 48, 16, isTactile);
-    
+    ctx.fillStyle = COLOR.TEXT;
     drawText(this.name, x+2, y+6, "small");
-    drawText(this.price, x+10, y+14, "small");
+    drawText(this.price, x+10, y+14, "large");
     if (this.currencyType == 0){
       drawImage(IMAGE.currency.biomatter, x+1, y+7);
     }else if (this.currencyType == 1){
@@ -251,6 +251,7 @@ class Ship extends Entity{
     this.thrust = 0;
     this.shootCooldown = 10+Math.random()*50;
     this.enginesStunned = 0;
+    this.dead = false;
   }
 
   update(targetThrust){
@@ -310,11 +311,14 @@ class ShooterShip extends Ship{
       fleety: y,
       typeName: "Shooter",
       lvl: lvl,
-      upgrade: new Upgrade("Strengthen", 2+lvl*2, 1, lvl+1, "Shooter"),
+      upgrade: new Upgrade("Strengthen", 2+lvl*2, 0, lvl+1, "Shooter"),
       fireSpeed: 300/(lvl+4)
     })
   }
   attemptShoot(){
+    if (this.dead){
+      return null;
+    }
     if (this.shootCooldown > 0){
       this.shootCooldown --;
       return null;
@@ -337,7 +341,7 @@ class ColliderShip extends Ship{
       fleety: y,
       typeName: "Collider",
       lvl: lvl,
-      upgrade: new Upgrade("Fortify", 2+lvl*2, 1, lvl+1, "Collider")
+      upgrade: new Upgrade("Fortify", 2+lvl*2, 0, lvl+1, "Collider")
     })
   }
   attemptShoot(){
@@ -465,9 +469,12 @@ class Game{
     }
   }
 
-  endBattle(){
+  endBattle(victory){
     this.state = 0;
     this.battleFrames = 0;
+    if (victory){
+      this.currentLevel ++;
+    }
   }
 
   mouseMove(){
@@ -549,9 +556,9 @@ class Game{
       ctx.fillStyle = COLOR.TEXT;
       drawImage(IMAGE.ui.settingsIcon, 6, 8);
       drawImage(IMAGE.currency.metal, 2, 70);
-      drawText(this.currency.metal, 12, 76);
+      drawText(this.currency.metal, 12, 76, "large");
       drawImage(IMAGE.currency.biomatter, 34, 70);
-      drawText(this.currency.biomatter, 44, 76);
+      drawText(this.currency.biomatter, 44, 76, "large");
 
 
       drawText("FLEET FORMATION",this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y - 4,"small");
@@ -592,7 +599,7 @@ class Game{
         this.selectedShip.attributes.upgrade.draw(64, 100, !this.inOptions);
         
       }
-
+ 
       if (this.inOptions){
         ctx.fillStyle = "rgba(0,0,0,0.7)";
         ctx.fillRect(0, 0, 512, 512);
@@ -603,7 +610,7 @@ class Game{
       
 
     }else if (this.state == 1){
-
+      this.battleFrames ++;
       for (var i=0; i<this.fleet.length; i++){
         this.fleet[i].battleDraw(Math.min(0, this.battleFrames-48));
         if (this.battleFrames > 64){
@@ -641,8 +648,8 @@ class Game{
       }
 
       if (this.frogCount == 0){
-        this.state = 0;
-        this.currentLevel ++;
+        this.endBattle(true);
+        
       }
 
       for (let i=0;i<this.bullets.length; i++){
@@ -669,8 +676,13 @@ class Game{
           i--;
         }
       }
-
-      this.battleFrames ++;
+      ctx.globalAlpha = Math.max(0,Math.round((48-Math.abs(this.battleFrames-48))/6)*6/48);
+      ctx.textAlign = "center";
+      ctx.fillStyle = COLOR.TEXT;
+      drawText(LEVEL_NAMES[this.currentLevel], 64, 64);
+      ctx.textAlign = "left";
+      ctx.globalAlpha = 1;
+      
     }
 
   }
