@@ -209,9 +209,9 @@ class Upgrade {
     return null;
   }
 
-  draw(x, y){
+  draw(x, y, isTactile = true){
 
-    buttonRect(x, y, 48, 16);
+    buttonRect(x, y, 48, 16, isTactile);
     
     drawText(this.name, x+2, y+6, "small");
     drawText(this.price, x+10, y+14, "small");
@@ -394,6 +394,7 @@ class Game{
     this.battleFrames = 0;
     this.gameOverFrames = 0;
     this.frogCount = 0;
+    this.inOptions = false;
     this.currency = {
       biomatter:99,
       metal:999
@@ -483,43 +484,54 @@ class Game{
 
   click(){
     if (this.state == 0){
-      
-      if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
-
-        for (let i=0; i<this.fleet.length; i++){
-          if (this.fleet[i].attributeInRect()){
-            this.selectedShip = this.fleet[i];
-            this.selectedIndex = i;
-            return;
-          }
+      if (this.inOptions){
+        if (!mouseInRect(32, 32, 64, 80)){
+          this.inOptions = false;
         }
-        this.selectedShip = null;
-      // Upgrade ship
+      }else{
+        if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
+
+          for (let i=0; i<this.fleet.length; i++){
+            if (this.fleet[i].attributeInRect()){
+              this.selectedShip = this.fleet[i];
+              this.selectedIndex = i;
+              return;
+            }
+          }
+          this.selectedShip = null;
+        // Upgrade ship
+        }
       }
     }
   }
 
   release(){
     if (this.state == 0){
-      if (mouseInRect(83,68,29,8)){ // Battle button
-        this.startBattle();
-      }else if (mouseInRect(64, 100, 48, 16)){
-        if (this.selectedShip!=null){
-          if (this.selectedShip.attributes.upgrade.currencyType == 0){
-            if (this.currency.biomatter >= this.selectedShip.attributes.upgrade.price){
-              this.currency.biomatter -= this.selectedShip.attributes.upgrade.price
-              this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
-              this.selectedShip = this.fleet[this.selectedIndex];
-            }
-          } else if (this.selectedShip.attributes.upgrade.currencyType == 1){
+      if (!this.inOptions){
+        if (mouseInRect(83,68,29,8)){ // Battle button
+          this.startBattle();
+        }else if (mouseInRect(64, 100, 48, 16)){
+          if (this.selectedShip!=null){
+            if (this.selectedShip.attributes.upgrade.currencyType == 0){
+              if (this.currency.biomatter >= this.selectedShip.attributes.upgrade.price){
+                this.currency.biomatter -= this.selectedShip.attributes.upgrade.price
+                this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
+                this.selectedShip = this.fleet[this.selectedIndex];
+              }
+            } else if (this.selectedShip.attributes.upgrade.currencyType == 1){
 
-            if (this.currency.metal >= this.selectedShip.attributes.upgrade.price){
-              this.currency.metal -= this.selectedShip.attributes.upgrade.price;
-              this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
-              this.selectedShip = this.fleet[this.selectedIndex];
+              if (this.currency.metal >= this.selectedShip.attributes.upgrade.price){
+                this.currency.metal -= this.selectedShip.attributes.upgrade.price;
+                this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
+                this.selectedShip = this.fleet[this.selectedIndex];
+              }
             }
           }
+        }else if (mouseInRect(4, 6, 9, 9)){
+          this.inOptions = true;
         }
+      }else{
+
       }
     }
   }
@@ -532,9 +544,10 @@ class Game{
     uiRect(4, 80+Math.min(64,this.battleFrames*3), 120, 44);
 
     if (this.state == 0){
-      
+      buttonRect(83, 68, 29, 8, !this.inOptions); // Battle button
+      buttonRect2(4, 6, 9, 9, !this.inOptions)
       ctx.fillStyle = COLOR.TEXT;
-      drawImage(IMAGE.ui.settingsIcon, 6, 6);
+      drawImage(IMAGE.ui.settingsIcon, 6, 8);
       drawImage(IMAGE.currency.metal, 2, 70);
       drawText(this.currency.metal, 12, 76);
       drawImage(IMAGE.currency.biomatter, 34, 70);
@@ -543,8 +556,7 @@ class Game{
 
       drawText("FLEET FORMATION",this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y - 4,"small");
       drawText("BATTLE!",85,74,"small");
-      buttonRect(83,68,29,8); // Battle button
-      buttonRect(4, 4, 10, 10)
+      
       
       for (let i=0; i<this.fleet.length; i++){
         this.fleet[i].layoutDraw();
@@ -562,13 +574,14 @@ class Game{
           this.heldShip = null;
         }
         ctx.globalAlpha = 0.5;
-        uiRect(this.FORMATION_SCREEN.x, this.FORMATION_SCREEN.y, this.FORMATION_SCREEN.w, this.FORMATION_SCREEN.h);
+        uiRect(this.FORMATION_SCREEN.x, this.FORMATION_SCREEN.y, this.FORMATION_SCREEN.w, this.FORMATION_SCREEN.h, true);
         ctx.globalAlpha = 1;
       }
 
 
       // Bottom ui, text
       if (this.selectedShip!=null){
+        ctx.fillStyle = COLOR.TEXT;
         drawText(this.selectedShip.attributes.typeName+" Ship", 8, 88, "large");
         drawText("HP: ", 8, 96, "small");
         drawText(this.selectedShip.attributes.health, 20, 96, "large");
@@ -576,8 +589,16 @@ class Game{
         drawText(this.selectedShip.attributes.damage, 26, 104, "large");
         drawText("Lvl. "+this.selectedShip.attributes.lvl, 88, 88, "small");
         drawText("Upgrade:", 64, 96, "small");
-        this.selectedShip.attributes.upgrade.draw(64, 100);
+        this.selectedShip.attributes.upgrade.draw(64, 100, !this.inOptions);
         
+      }
+
+      if (this.inOptions){
+        ctx.fillStyle = "rgba(0,0,0,0.7)";
+        ctx.fillRect(0, 0, 512, 512);
+        uiRect(32, 32, 64, 80);
+        ctx.fillStyle = COLOR.TEXT;
+        drawText("OPTIONS", 48, 28, "small");
       }
       
 

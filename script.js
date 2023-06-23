@@ -23,7 +23,8 @@ const COLOR = {
   TEXT: "#98C1E3", 
   UI: [
     "#6A76C9", 
-    "#362B87"
+    "#362B87",
+    "#CCDDFF"
   ]
 }
 
@@ -187,7 +188,11 @@ document.addEventListener("keydown", event => {
 });
 
 // Draws a rectangle in UI style
-function uiRect(x, y, w, h){
+function uiRect(x, y, w, h, hollow = false){
+  if (!hollow){
+    ctx.fillStyle = "black";
+    ctx.fillRect(x*PIXEL,y*PIXEL,w*PIXEL,h*PIXEL);
+  }
   ctx.lineWidth = 4;
   ctx.strokeStyle = COLOR.UI[0];
   ctx.beginPath();
@@ -200,11 +205,13 @@ function uiRect(x, y, w, h){
 }
 
 // Draws a tactile rectangle in UI style
-function buttonRect(x, y, w, h){
-  if (mouseInRect(x, y, w, h) && !mouseIsDown){
+function buttonRect(x, y, w, h, isTactile = true){
+  
+  if (mouseInRect(x, y, w, h) && !mouseIsDown && isTactile){
     uiRect(x, y, w, h);
   }else{
-    
+    ctx.fillStyle = "black";
+    ctx.fillRect(x*PIXEL,y*PIXEL,w*PIXEL,h*PIXEL);
     ctx.lineWidth = 4;
     ctx.strokeStyle = COLOR.UI[1];
     ctx.beginPath();
@@ -214,6 +221,18 @@ function buttonRect(x, y, w, h){
     ctx.beginPath();
     ctx.rect(x*PIXEL+2, y*PIXEL+2, w*PIXEL-4, h*PIXEL-4);
     ctx.stroke();
+  }
+}
+
+function buttonRect2(x, y, w, h, isTactile = true){
+  if (mouseInRect(x, y, w, h) && !mouseIsDown && isTactile){
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = COLOR.UI[2];
+    ctx.fillStyle = COLOR.UI[2];
+    ctx.fillRect(x*PIXEL, y*PIXEL, w*PIXEL, h*PIXEL);
+    ctx.fillStyle = "black";
+    ctx.fillRect(x*PIXEL+4, y*PIXEL+4, w*PIXEL-8, h*PIXEL-8);
+    
   }
 }
 
@@ -304,6 +323,7 @@ function renderLoop(currentDelta){
       
       buttonRect(32, 78, 28, 8);
       buttonRect(64, 78, 28, 8);
+      ctx.fillStyle = COLOR.TEXT;
       drawText(" Cancel", 32, 84, "small");
       drawText(" Create", 64, 84, "small");
     }
