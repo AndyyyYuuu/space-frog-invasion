@@ -28,12 +28,15 @@ const COLOR = {
   ]
 }
 
-const LEVEL_NAMES = `I have eaten
+const LEVEL_NAMES = `This is just to say
+I have eaten
 The plums
-That were in the icebox
-In which
+That were in 
+the icebox
+And which 
 You were probably
-Saving for breakfast
+Saving
+For breakfast
 Forgive me
 They were delicious
 So sweet
