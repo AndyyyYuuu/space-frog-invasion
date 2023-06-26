@@ -116,6 +116,13 @@ class Entity{
     }
     return false;
   }
+  
+  startBattle(){
+    this.dx = 0;
+    this.dy = 0;
+    this.health = this.attributes.health;
+    this.dead = false;
+  }
 }
 
 
@@ -135,7 +142,7 @@ class Frog extends Entity{
   startBattle(){
     this.x = this.attributes.fleetx;
     this.y = this.attributes.fleety-16;
-    this.health = this.attributes.health;
+    super.startBattle();
   }
   update(){
     this.y += this.dy;
@@ -246,12 +253,10 @@ class Ship extends Entity{
     this.x = this.attributes.fleetx;
     this.y = this.attributes.fleety + 48;
     this.health = this.attributes.health;
-    this.dx = 0;
-    this.dy = 0;
     this.thrust = 0;
     this.shootCooldown = 10+Math.random()*50;
     this.enginesStunned = 0;
-    this.dead = false;
+    super.startBattle();
   }
 
   update(targetThrust){
@@ -667,13 +672,19 @@ class Game{
       }
 
       // Game over checks
-      if (this.frogCount == 0){
-        this.endBattle(true);
-        
-      }else if (this.shipCount == 0 || this.frogsPassed){
-        
-        this.endBattle(false);
+      if (this.frogCount == 0 || this.shipCount == 0 || this.frogsPassed){
+        this.gameOverFrames ++; 
+        if (this.gameOverFrames > 120){
+          this.gameOverFrames = 0;
+          this.endBattle(this.frogCount == 0);
+        }
+        ctx.globalAlpha = Math.round(this.gameOverFrames/8)*8/100;
+        ctx.fillStyle = COLOR.TEXT;
+        drawText(this.frogCount == 0 ? "Victory" : "Defeat", 48, 64, "large");
+        ctx.globalAlpha = 1;
       }
+        
+        
 
       for (let i=0;i<this.bullets.length; i++){
         this.bullets[i].draw();
