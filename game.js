@@ -398,6 +398,8 @@ class Game{
     this.battleFrames = 0;
     this.gameOverFrames = 0;
     this.frogCount = 0;
+    this.shipCount = 0;
+    this.frogsPassed = false;
     this.inOptions = false;
     this.currency = {
       biomatter:99,
@@ -619,45 +621,58 @@ class Game{
 
     }else if (this.state == 1){
       this.battleFrames ++;
+      this.shipCount = 0;
       for (var i=0; i<this.fleet.length; i++){
-        this.fleet[i].battleDraw(Math.min(0, this.battleFrames-48));
-        if (this.battleFrames > 64){
-          this.fleet[i].update(0.05);
-          var nextBullet = this.fleet[i].attemptShoot();
-          if (nextBullet!=null){
-            this.bullets.push(nextBullet);
+        if (!this.fleet[i].dead){
+          this.shipCount++;
+          this.fleet[i].battleDraw(Math.min(0, this.battleFrames-48));
+          if (this.battleFrames > 64){
+            this.fleet[i].update(0.05);
+            var nextBullet = this.fleet[i].attemptShoot();
+            if (nextBullet!=null){
+              this.bullets.push(nextBullet);
+            }
           }
-        }
-        /*
-        if (Math.random() < this.fleet[i].thrust/15){
-          this.particles.push(new Particle(this.fleet[i].x, this.fleet[i].y, 0, this.fleet[i].dy/2, 10,"cyan"));
-        }*/
-        for (var j=0;j<this.frogs.length;j++){
-          this.fleet[i].collideWith(this.frogs[j], this.particles);
-          this.frogs[j].collideWith(this.fleet[i], this.particles);
-        }
+          /*
+          if (Math.random() < this.fleet[i].thrust/15){
+            this.particles.push(new Particle(this.fleet[i].x, this.fleet[i].y, 0, this.fleet[i].dy/2, 10,"cyan"));
+          }*/
+          for (var j=0;j<this.frogs.length;j++){
+            this.fleet[i].collideWith(this.frogs[j], this.particles);
+            this.frogs[j].collideWith(this.fleet[i], this.particles);
+          }
 
-        for (var j=0;j<this.fleet.length;j++){
-          this.fleet[i].collideWith(this.fleet[j], this.particles);
-            
+          for (var j=0;j<this.fleet.length;j++){
+            this.fleet[i].collideWith(this.fleet[j], this.particles);
+          }
         }
       }
 
       this.frogCount = 0;
+      this.frogsPassed = false;
       for (let i=0; i<this.frogs.length; i++){
         if (!this.frogs[i].dead){
           this.frogCount++;
           this.frogs[i].battleDraw(Math.min(0, this.battleFrames-48));
           this.frogs[i].update();
+          for (var j=0;j<this.frogs.length;j++){
+            this.frogs[i].collideWith(this.frogs[j], this.particles);
+          }
+
+          if (this.frogs[i].y > 132){
+            this.frogsPassed = true;
+          }
         }
-        for (var j=0;j<this.frogs.length;j++){
-          this.frogs[i].collideWith(this.frogs[j], this.particles);
-        }
+        
       }
 
+      // Game over checks
       if (this.frogCount == 0){
         this.endBattle(true);
         
+      }else if (this.shipCount == 0 || this.frogsPassed){
+        
+        this.endBattle(false);
       }
 
       for (let i=0;i<this.bullets.length; i++){
