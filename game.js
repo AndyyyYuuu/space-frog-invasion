@@ -492,7 +492,7 @@ class Game{
   click(){
     if (this.state == 0){
       if (this.inOptions){
-        if (!mouseInRect(32, 32, 64, 80)){
+        if (!mouseInRect(32, 32, 64, 64)){
           this.inOptions = false;
         }
       }else{
@@ -537,8 +537,12 @@ class Game{
         }else if (mouseInRect(4, 6, 9, 9)){
           this.inOptions = true;
         }
-      }else{
-
+      }else{ // Options screen clicking
+        if (mouseInRect(36, 84, 56, 8)){
+          this.inOptions = false;
+          game = null;
+          mode = "start";
+        }
       }
     }
   }
@@ -603,9 +607,13 @@ class Game{
       if (this.inOptions){
         ctx.fillStyle = "rgba(0,0,0,0.7)";
         ctx.fillRect(0, 0, 512, 512);
-        uiRect(32, 32, 64, 80);
+        uiRect(32, 32, 64, 64);
         ctx.fillStyle = COLOR.TEXT;
         drawText("OPTIONS", 48, 28, "small");
+        buttonRect(36, 84, 56, 8);
+        buttonRect(36, 72, 56, 8);
+        ctx.fillStyle = COLOR.TEXT;
+        drawText("SAVE & EXIT", 42, 90, "small");
       }
       
 
