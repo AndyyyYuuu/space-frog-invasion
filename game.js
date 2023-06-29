@@ -143,7 +143,7 @@ class Frog extends Entity{
   }
   startBattle(){
     this.x = this.attributes.fleetx;
-    this.y = this.attributes.fleety-16;
+    this.y = this.attributes.fleety-TRANSITION_MOVE+48;
     super.startBattle();
   }
   update(){
@@ -151,11 +151,8 @@ class Frog extends Entity{
     this.x += this.dx;
     this.dx *= 0.95;
     this.dy *= 0.95;
-    if (this.dy < 0.1){
-      //this.dy *= 1.1;
-      this.dy += 0.02
-    }else if (this.dy > 0.13){
-      this.dy -= 0.02
+    if (this.dy < 0.2){
+      this.dy += 0.02;
     }
     if (this.health <= 0){
       this.dead = true;
@@ -254,7 +251,7 @@ class Ship extends Entity{
 
   startBattle(){
     this.x = this.attributes.fleetx;
-    this.y = this.attributes.fleety + 48;
+    this.y = this.attributes.fleety + TRANSITION_MOVE;
     this.health = this.attributes.health;
     this.thrust = 0;
     this.shootCooldown = 10+Math.random()*50;
@@ -633,7 +630,7 @@ class Game{
       for (var i=0; i<this.fleet.length; i++){
         if (!this.fleet[i].dead){
           this.shipCount++;
-          this.fleet[i].battleDraw(Math.min(0, this.battleFrames-48));
+          this.fleet[i].battleDraw(Math.min(0, this.battleFrames-TRANSITION_MOVE));
           if (this.battleFrames > 64){
             this.fleet[i].update(0.05);
             var nextBullet = this.fleet[i].attemptShoot();
@@ -661,7 +658,7 @@ class Game{
       for (let i=0; i<this.frogs.length; i++){
         if (!this.frogs[i].dead){
           this.frogCount++;
-          this.frogs[i].battleDraw(Math.min(0, this.battleFrames-48));
+          this.frogs[i].battleDraw(Math.min(0, this.battleFrames-TRANSITION_MOVE));
           this.frogs[i].update();
           for (var j=0;j<this.frogs.length;j++){
             this.frogs[i].collideWith(this.frogs[j], this.particles);
