@@ -152,11 +152,8 @@ class Frog extends Entity{
     this.dx *= 0.95;
     this.dy *= 0.95;
     if (this.dy < 0.2){
-      //this.dy *= 1.1;
       this.dy += 0.02
-    }/*else if (this.dy > 0.2){
-      this.dy -= 0.02
-    }*/
+    }
     if (this.health <= 0){
       this.dead = true;
     }
