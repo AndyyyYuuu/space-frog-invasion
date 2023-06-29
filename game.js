@@ -143,7 +143,7 @@ class Frog extends Entity{
   }
   startBattle(){
     this.x = this.attributes.fleetx;
-    this.y = this.attributes.fleety-16;
+    this.y = this.attributes.fleety-TRANSITION_MOVE+48;
     super.startBattle();
   }
   update(){
@@ -151,12 +151,12 @@ class Frog extends Entity{
     this.x += this.dx;
     this.dx *= 0.95;
     this.dy *= 0.95;
-    if (this.dy < 0.1){
+    if (this.dy < 0.2){
       //this.dy *= 1.1;
       this.dy += 0.02
-    }else if (this.dy > 0.13){
+    }/*else if (this.dy > 0.2){
       this.dy -= 0.02
-    }
+    }*/
     if (this.health <= 0){
       this.dead = true;
     }
@@ -254,7 +254,7 @@ class Ship extends Entity{
 
   startBattle(){
     this.x = this.attributes.fleetx;
-    this.y = this.attributes.fleety + 48;
+    this.y = this.attributes.fleety + TRANSITION_MOVE;
     this.health = this.attributes.health;
     this.thrust = 0;
     this.shootCooldown = 10+Math.random()*50;
@@ -405,6 +405,7 @@ class Game{
     this.selectedIndex = null;
     this.battleFrames = 0;
     this.gameOverFrames = 0;
+    this.uiFadeFrames = 32;
     this.frogCount = 0;
     this.shipCount = 0;
     this.frogsPassed = false;
@@ -423,6 +424,7 @@ class Game{
     this.FORMATION_SCREEN = {
       x: 16, y: 16, w: 96, h: 48
     }
+    
 
   }
 
@@ -465,6 +467,7 @@ class Game{
 
   startBattle(){
     this.state = 1;
+    this.gameOverFrames = 0;
     this.battleFrames = 0;
     this.heldShip = null;
     this.selectedShip = null;
@@ -482,6 +485,8 @@ class Game{
   endBattle(victory){
     this.state = 0;
     this.battleFrames = 0;
+    this.gameOverFrames = 0;
+    this.uiFadeFrames = 0;
     if (victory){
       this.currentLevel ++;
     }
@@ -558,13 +563,20 @@ class Game{
   }
 
   render(){
+    console.log(this.uiFadeFrames)
     for (let i=0;i<this.starMap.length;i++){
-      this.starMap[i].draw(Math.min(Math.round(this.battleFrames/2),24));
+      this.starMap[i].draw(Math.min(Math.round(Math.min(0,this.battleFrames/2-this.uiFadeFrames/2)),TRANSITION_MOVE/2));
+    }
+    if (this.state == 0 && this.uiFadeFrames < TRANSITION_MOVE){
+      this.uiFadeFrames ++;
     }
     // Bottom UI menu
+    ctx.globalAlpha = Math.round(this.uiFadeFrames/4)/8; 
     uiRect(4, 80+Math.min(64,this.battleFrames*3), 120, 44);
+    ctx.globalAlpha = 1;
 
     if (this.state == 0){
+      ctx.globalAlpha = Math.round(this.uiFadeFrames/4)/8; 
       buttonRect(83, 68, 29, 8, !this.inOptions); // Battle button
       buttonRect2(4, 6, 9, 9, !this.inOptions)
       ctx.fillStyle = COLOR.TEXT;
@@ -594,9 +606,9 @@ class Game{
         }else{
           this.heldShip = null;
         }
-        ctx.globalAlpha = 0.5;
+        ctx.globalAlpha *= 0.5;
         uiRect(this.FORMATION_SCREEN.x, this.FORMATION_SCREEN.y, this.FORMATION_SCREEN.w, this.FORMATION_SCREEN.h, true);
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha *= 2;
       }
 
 
@@ -613,7 +625,8 @@ class Game{
         this.selectedShip.attributes.upgrade.draw(64, 100, !this.inOptions);
         
       }
- 
+      ctx.globalAlpha = 1;
+
       if (this.inOptions){
         ctx.fillStyle = "rgba(0,0,0,0.7)";
         ctx.fillRect(0, 0, 512, 512);
@@ -626,6 +639,7 @@ class Game{
         drawText("SAVE & EXIT", 42, 90, "small");
       }
       
+      
 
     }else if (this.state == 1){
       this.battleFrames ++;
@@ -633,7 +647,7 @@ class Game{
       for (var i=0; i<this.fleet.length; i++){
         if (!this.fleet[i].dead){
           this.shipCount++;
-          this.fleet[i].battleDraw(Math.min(0, this.battleFrames-48));
+          this.fleet[i].battleDraw(Math.min(0, this.battleFrames-TRANSITION_MOVE));
           if (this.battleFrames > 64){
             this.fleet[i].update(0.05);
             var nextBullet = this.fleet[i].attemptShoot();
@@ -661,7 +675,7 @@ class Game{
       for (let i=0; i<this.frogs.length; i++){
         if (!this.frogs[i].dead){
           this.frogCount++;
-          this.frogs[i].battleDraw(Math.min(0, this.battleFrames-48));
+          this.frogs[i].battleDraw(Math.min(0, this.battleFrames-TRANSITION_MOVE));
           this.frogs[i].update();
           for (var j=0;j<this.frogs.length;j++){
             this.frogs[i].collideWith(this.frogs[j], this.particles);
@@ -678,7 +692,6 @@ class Game{
       if (this.frogCount == 0 || this.shipCount == 0 || this.frogsPassed){
         this.gameOverFrames ++; 
         if (this.gameOverFrames > 120){
-          this.gameOverFrames = 0;
           this.endBattle(this.frogCount == 0);
         }
         ctx.globalAlpha = Math.round(this.gameOverFrames/8)*8/100;

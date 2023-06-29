@@ -11,6 +11,7 @@ ctx.imageSmoothingEnabled = false;
 
 
 const PIXEL = 4;
+const TRANSITION_MOVE = 56;
 
 // Random word generator for save slot names
 const RANDWORDS = {
