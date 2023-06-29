@@ -80,6 +80,7 @@ class Entity{
     this.dead = false;
     this.attributes = attributes;
     this.health = -1;
+    this.isShip = attributes.isShip;
   }
   battleDraw(offset){
     if (!this.dead){
@@ -99,7 +100,7 @@ class Entity{
     if (!this.dead && !other.dead && this !== other && this.isTouching(other)){
       this.dx += (this.x-other.x)/distance(this.x, this.y, other.x, other.y)//*Math.abs(other.dx/2);
       this.dy += (this.y-other.y)/distance(this.x, this.y, other.x, other.y)//*Math.abs(other.dy/2);
-      if (this.attributes.typeName == "Collider"){
+      if (this.attributes.typeName == "Collider" && other.isShip != this.isShip){
         other.health -= this.attributes.damage;
       }
       this.health *= 0.75;
@@ -116,7 +117,7 @@ class Entity{
     }
     return false;
   }
-  
+
   startBattle(){
     this.dx = 0;
     this.dy = 0;
@@ -131,6 +132,7 @@ class Entity{
 
 class Frog extends Entity{
   constructor(attributes){
+    attributes.isShip = false;
     super(attributes);
   }
 
@@ -236,6 +238,7 @@ class Upgrade {
 
 class Ship extends Entity{
   constructor(attributes){
+    attributes.isShip = true;
     super(attributes);
     this.thrust = 0;
     this.dragX = -1;
