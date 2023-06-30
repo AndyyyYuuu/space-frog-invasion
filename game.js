@@ -402,7 +402,7 @@ class Game{
     this.selectedIndex = null;
     this.battleFrames = 0;
     this.gameOverFrames = 0;
-    this.uiFadeFrames = 32;
+    this.uiFadeFrames = 56;
     this.frogCount = 0;
     this.shipCount = 0;
     this.frogsPassed = false;
@@ -525,7 +525,7 @@ class Game{
   }
 
   release(){
-    if (this.state == 0){
+    if (this.state == 0 && this.uiFadeFrames >= 56){
       if (!this.inOptions){
         if (mouseInRect(83,68,29,8)){ // Battle button
           this.startBattle();
@@ -639,6 +639,9 @@ class Game{
       
 
     }else if (this.state == 1){
+      if (this.gameOverFrames > 60){
+        ctx.globalAlpha = (160-this.gameOverFrames)/240;
+      }
       this.battleFrames ++;
       this.shipCount = 0;
       for (var i=0; i<this.fleet.length; i++){
@@ -691,7 +694,7 @@ class Game{
         if (this.gameOverFrames > 120){
           this.endBattle(this.frogCount == 0);
         }
-        ctx.globalAlpha = Math.round(this.gameOverFrames/8)*8/100;
+        ctx.globalAlpha = Math.max(0,Math.round((48-Math.abs(this.gameOverFrames-48))/6)*6/48); // Math.round(this.gameOverFrames/8)*8/100
         ctx.fillStyle = COLOR.TEXT;
         drawText(this.frogCount == 0 ? "Victory" : "Defeat", 48, 64, "large");
         ctx.globalAlpha = 1;
@@ -731,6 +734,7 @@ class Game{
       ctx.globalAlpha = 1;
       
     }
+    ctx.globalAlpha = 1;
 
   }
 }
