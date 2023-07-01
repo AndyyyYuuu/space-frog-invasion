@@ -640,7 +640,7 @@ class Game{
 
     }else if (this.state == 1){
       if (this.gameOverFrames > 60){
-        ctx.globalAlpha = (160-this.gameOverFrames)/240;
+        ctx.globalAlpha = Math.round(20-this.gameOverFrames/8)/30;
       }
       this.battleFrames ++;
       this.shipCount = 0;
