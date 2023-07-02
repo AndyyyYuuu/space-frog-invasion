@@ -29,19 +29,26 @@ const COLOR = {
   ]
 }
 
-const LEVEL_NAMES = `This is just to say
-I have eaten
-The plums
-That were in 
-the icebox
-And which 
-You were probably
-Saving
-For breakfast
-Forgive me
-They were delicious
-So sweet
-And so cold`.split(/\r?\n|\r|\n/g);
+const LEVEL_NAMES = `They descend
+Upon another world
+Green glow
+Slowly approaches
+They ascend
+To greet another kind
+Golden light
+Streaks across
+Th'ethereal sky
+The first meeting
+Of two civilizations
+No time to negotiate
+For we fear the other
+Seeks to conquer
+Fear we'd do the same
+To strike first
+Is to survive
+To destroy
+Is to eliminate
+All threat`.split(/\r?\n|\r|\n/g);
 
 // Some settings
 var settings = {
