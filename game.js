@@ -518,7 +518,6 @@ class Game{
             }
           }
           this.selectedShip = null;
-        // Upgrade ship
         }
       }
     }
@@ -622,17 +621,18 @@ class Game{
         this.selectedShip.attributes.upgrade.draw(64, 100, !this.inOptions);
         
       }else{
-        
-        
-        /*buttonRect(48, 102, 32, 16);
-        buttonRect(86, 102, 32, 16);*/
         ctx.fillStyle = COLOR.TEXT;
         drawText("Build new ship...", 8, 88, "large");
         drawText("Collider", 12, 112, "small");
         drawText("Shooter", 50, 112, "small");
         drawText("Healer", 88, 112, "small");
         for (let i=0; i<3; i++){
-          selectRect(20+i*38, 96, 7, 7);
+          if (mouseIsDown && mouseInRect(20+i*38, 96, 7, 7)){
+            selectRect(21+i*38, 97, 5, 5);
+          }else{
+            selectRect(20+i*38, 96, 7, 7);
+          }
+          
           drawImage(IMAGE.currency.metal, 12+i*38, 113);
           drawText(i+1, 22+i*38, 119, "large")
         }
@@ -640,6 +640,7 @@ class Game{
       }
       ctx.globalAlpha = 1;
 
+      // Options window
       if (this.inOptions){
         ctx.fillStyle = "rgba(0,0,0,0.7)";
         ctx.fillRect(0, 0, 512, 512);
