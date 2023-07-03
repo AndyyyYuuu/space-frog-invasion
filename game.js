@@ -610,7 +610,7 @@ class Game{
 
 
       // Bottom ui, text
-      if (this.selectedShip!=null){
+      if (this.selectedShip != null){
         ctx.fillStyle = COLOR.TEXT;
         drawText(this.selectedShip.attributes.typeName+" Ship", 8, 88, "large");
         drawText("HP: ", 8, 96, "small");
@@ -621,6 +621,22 @@ class Game{
         drawText("Upgrade:", 64, 96, "small");
         this.selectedShip.attributes.upgrade.draw(64, 100, !this.inOptions);
         
+      }else{
+        
+        
+        /*buttonRect(48, 102, 32, 16);
+        buttonRect(86, 102, 32, 16);*/
+        ctx.fillStyle = COLOR.TEXT;
+        drawText("Build new ship...", 8, 88, "large");
+        drawText("Collider", 12, 112, "small");
+        drawText("Shooter", 50, 112, "small");
+        drawText("Healer", 88, 112, "small");
+        for (let i=0; i<3; i++){
+          selectRect(20+i*38, 96, 7, 7);
+          drawImage(IMAGE.currency.metal, 12+i*38, 113);
+          drawText(i+1, 22+i*38, 119, "large")
+        }
+
       }
       ctx.globalAlpha = 1;
 
