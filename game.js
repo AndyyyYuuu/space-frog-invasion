@@ -411,6 +411,11 @@ class Game{
       biomatter:99,
       metal:999
     }
+    this.newShip = {
+      type: null,
+      mouseX: null,
+      mouseY: null
+    }
     this.starMap = [];
     this.frogLevels = [];
     this.currentLevel = 0;
@@ -518,6 +523,24 @@ class Game{
             }
           }
           this.selectedShip = null;
+        }else{
+          for (let i=0; i<3; i++){
+            if (mouseInRect(20+i*38, 96, 7, 7)){
+              switch (i){
+              case 0:
+                this.newShip.type = new ColliderShip(-1, -1, 0);
+                break;
+              case 1:
+                this.newShip.type = new ShooterShip(-1, -1, 0);
+                break;
+              case 2:
+                this.newShip.type = new ColliderShip(-1, -1, 0);
+                break;
+              }
+              this.newShip.mouseX = mouseX-(20+i*38)-1;
+              this.newShip.mouseY = mouseY-96;
+            }
+          }
         }
       }
     }
@@ -526,6 +549,14 @@ class Game{
   release(){
     if (this.state == 0 && this.uiFadeFrames >= 56){
       if (!this.inOptions){
+        if (this.newShip.type != null){
+          if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
+            this.newShip.type.attributes.fleetx = mouseX;
+            this.newShip.type.attributes.fleety = mouseY;
+            this.fleet.push(this.newShip.type);
+          }
+          this.newShip.type = null;
+        }
         if (mouseInRect(83,68,29,8)){ // Battle button
           this.startBattle();
         }else if (mouseInRect(64, 100, 48, 16)){
@@ -548,6 +579,10 @@ class Game{
         }else if (mouseInRect(4, 6, 9, 9)){
           this.inOptions = true;
         }
+
+        this.newShip.type = null;
+        this.newShip.mouseX = null;
+        this.newShip.mouseY = null;
       }else{ // Options screen clicking
         if (mouseInRect(36, 84, 56, 8)){
           this.inOptions = false;
@@ -559,7 +594,7 @@ class Game{
   }
 
   render(){
-    console.log(this.uiFadeFrames)
+
     for (let i=0;i<this.starMap.length;i++){
       this.starMap[i].draw(Math.min(Math.round(Math.min(0,this.battleFrames/2-this.uiFadeFrames/2)),TRANSITION_MOVE/2));
     }
@@ -753,7 +788,9 @@ class Game{
       
     }
     ctx.globalAlpha = 1;
-
+    if (this.newShip.type != null){
+      drawImage(this.newShip.type.attributes.image, mouseX-this.newShip.mouseX, mouseY-this.newShip.mouseY)
+    }
   }
 }
 
