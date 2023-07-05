@@ -495,10 +495,12 @@ class Game{
   }
 
   mouseMove(){
+    
     for (let i=0; i<this.fleet.length; i++){
-      if (mouseIsDown && this.heldShip == null){
+      if (mouseIsDown && this.heldShip == null && this.newShip.type == null){
         if (this.fleet[i].attributeInRect()){
           this.heldShip = this.fleet[i];
+
           this.heldShip.dragX = mouseX - this.heldShip.attributes.fleetx;
           this.heldShip.dragY = mouseY - this.heldShip.attributes.fleety;
         }
@@ -551,11 +553,12 @@ class Game{
       if (!this.inOptions){
         if (this.newShip.type != null){
           if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
-            this.newShip.type.attributes.fleetx = mouseX;
-            this.newShip.type.attributes.fleety = mouseY;
+            this.newShip.type.attributes.fleetx = mouseX-this.newShip.mouseX+this.newShip.type.attributes.width/2;
+            this.newShip.type.attributes.fleety = mouseY-this.newShip.mouseY+this.newShip.type.attributes.height/2;
             this.fleet.push(this.newShip.type);
           }
           this.newShip.type = null;
+          return;
         }
         if (mouseInRect(83,68,29,8)){ // Battle button
           this.startBattle();
