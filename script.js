@@ -149,6 +149,10 @@ function distance(x1, y1, x2, y2){
   return Math.sqrt((x1-x2)**2 + (y1-y2)**2);
 }
 
+function round(num, denom = 1){
+  return Math.round(num/denom)*denom;
+}
+
 canvas.onmousemove=function(){
   if (mode == "game"){
     game.mouseMove();
