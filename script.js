@@ -280,7 +280,15 @@ function drawImage(img, x, y){
   ctx.drawImage(img, Math.round(x)*PIXEL, Math.round(y)*PIXEL, img.naturalWidth*PIXEL, img.naturalHeight*PIXEL);
 }
 
+function creditsOpacity(currentFrame, startAt, duration){
+  if (currentFrame-startAt <= duration*0.6){
+    return Math.min(round((currentFrame-startAt)/20, 8),1);
+  }
+  return Math.max(1-round((currentFrame-startAt-duration*0.6)/20, 8),0);
+}
+
 var frames = 1;
+var creditsFrames = 0;
 const FPS_LIMIT = 40;
 var updateId,
     previousDelta = 0;
@@ -350,7 +358,23 @@ function renderLoop(currentDelta){
       drawText(" Create", 64, 84, "small");
     }
   }else if (mode == "credits"){
+    creditsFrames ++;
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = COLOR.TEXT;
+
+    // creditsFrames - creditStart = how many frames since the start of this credit
     
+    if (creditsFrames >= 40 && creditsFrames <= 160){
+      ctx.globalAlpha = creditsOpacity(creditsFrames, 40, 120);
+      drawText("SPACE", 64, 64, "large");
+    }else if (creditsFrames >= 160 && creditsFrames <= 280){
+      ctx.globalAlpha = creditsOpacity(creditsFrames, 160, 120);
+      drawText("FROG", 64, 64, "large");
+    }else if (creditsFrames >= 280 && creditsFrames <= 400){
+      ctx.globalAlpha = creditsOpacity(creditsFrames, 280, 120);
+      drawText("INVASION!", 64, 64, "large");
+    }
   }
 
   if (settings.pixelChecker){ // Pixel checker tool
@@ -366,5 +390,12 @@ window.addEventListener("load",function(){
   renderLoop();
   console.log("------------------");
   console.log("SUPER SPACE-FROG INVASION:  "+VERSION);
+});
+
+window.addEventListener("keypress", (event) => {
+  if (event.key == "c" && mode == "start"){
+    mode = "credits";
+    creditsFrames = 0;
+  }
 });
 
