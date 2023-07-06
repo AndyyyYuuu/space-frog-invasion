@@ -150,7 +150,7 @@ function distance(x1, y1, x2, y2){
 }
 
 function round(num, denom = 1){
-  return Math.round(num/denom)*denom;
+  return Math.round(num*denom)/denom;
 }
 
 canvas.onmousemove=function(){
