@@ -281,6 +281,8 @@ function drawImage(img, x, y){
 }
 
 function creditsOpacity(currentFrame, startAt, duration){
+
+  // currentFrame - startAt = how many frames since the start of this credit
   if (currentFrame-startAt <= duration*0.6){
     return Math.min(round((currentFrame-startAt)/20, 8),1);
   }
@@ -362,18 +364,41 @@ function renderLoop(currentDelta){
 
     ctx.textAlign = "center";
     ctx.fillStyle = COLOR.TEXT;
-
-    // creditsFrames - creditStart = how many frames since the start of this credit
     
-    if (creditsFrames >= 40 && creditsFrames <= 160){
+    if (creditsFrames >= 40 && creditsFrames < 160){
       ctx.globalAlpha = creditsOpacity(creditsFrames, 40, 120);
-      drawText("SPACE", 64, 64, "large");
-    }else if (creditsFrames >= 160 && creditsFrames <= 280){
+
+      drawText("SPACE FROG INVASION", 64, 64, "large");
+
+    }else if (creditsFrames >= 160 && creditsFrames < 280){
       ctx.globalAlpha = creditsOpacity(creditsFrames, 160, 120);
-      drawText("FROG", 64, 64, "large");
-    }else if (creditsFrames >= 280 && creditsFrames <= 400){
+
+      drawText("Created by", 64, 56, "small");
+      drawText("BLUE SQUARE DUO", 64, 72, "large");
+
+    }else if (creditsFrames >= 280 && creditsFrames < 400){
       ctx.globalAlpha = creditsOpacity(creditsFrames, 280, 120);
-      drawText("INVASION!", 64, 64, "large");
+
+      drawText("Programmers", 64, 48, "small");
+      drawText("ANDY YU", 64, 64, "large");
+      drawText("BARRY YU", 64, 80, "large");
+
+    }else if (creditsFrames >= 400 && creditsFrames < 520){
+      ctx.globalAlpha = creditsOpacity(creditsFrames, 400, 120);
+
+      drawText("Gameplay Designer", 64, 56, "small");
+      drawText("ANDY YU", 64, 72, "large");
+
+    }else if (creditsFrames >= 520 && creditsFrames < 640){
+      ctx.globalAlpha = creditsOpacity(creditsFrames, 520, 120);
+
+      drawText("Assets", 64, 56, "small");
+      drawText("BARRY YU", 64, 72, "large");
+    }
+
+
+    else if (creditsFrames >= 680){
+      mode = "start";
     }
   }
 
@@ -392,10 +417,11 @@ window.addEventListener("load",function(){
   console.log("SUPER SPACE-FROG INVASION:  "+VERSION);
 });
 
-window.addEventListener("keypress", (event) => {
+window.addEventListener("keydown", (event) => {
   if (event.key == "c" && mode == "start"){
     mode = "credits";
     creditsFrames = 0;
+  }else if (event.key == "Escape" && mode == "credits"){
+    mode = "start";
   }
 });
-
