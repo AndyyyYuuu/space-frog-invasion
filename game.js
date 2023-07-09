@@ -146,7 +146,7 @@ class Frog extends Entity{
     this.y = this.attributes.fleety-TRANSITION_MOVE+48;
     super.startBattle();
   }
-  update(){
+  update(){ // Updates, returns true when frog dies
     this.y += this.dy;
     this.x += this.dx;
     this.dx *= 0.95;
@@ -154,9 +154,11 @@ class Frog extends Entity{
     if (this.dy < 0.2){
       this.dy += 0.02
     }
-    if (this.health <= 0){
+    if (this.health <= 0 && this.dead == false){
       this.dead = true;
+      return true;
     }
+    return false;
   }
 
   newParticle(x,y){
@@ -175,6 +177,7 @@ class ColliderFrog extends Frog{
       damage: 1+lvl,
       width: IMAGE.frog.collider[lvl].naturalWidth, 
       height: IMAGE.frog.collider[lvl].naturalHeight,
+      lvl:lvl
     })
   }
 }
@@ -189,6 +192,7 @@ class ShooterFrog extends Frog{
       damage: 1+lvl,
       width: IMAGE.frog.collider[lvl].naturalWidth, 
       height: IMAGE.frog.collider[lvl].naturalHeight,
+      lvl:lvl
     })
   }
 }
@@ -354,29 +358,6 @@ class ColliderShip extends Ship{
   }
 }
 
-/*class BasicShip extends Ship{
-  constructor(x, y){
-    super({
-      health: 3,
-      damage: 1,
-      width: 5,
-      height: 6,
-      image: IMAGE.ship.collider[0], 
-      fleetx: x,
-      fleety: y,
-      typeName: "Basic",
-      lvl: 0,
-      upgrades: [
-        new Upgrade("Artillary", 3, 0, new ShooterShip(x, y, 1)), 
-        new Upgrade("Hardness", 2, 0, new ColliderShip(x, y, 1)), 
-        new Upgrade("Repair", 5, 0, new ShooterShip(x, y, 1)), 
-      ]
-    })
-
-  }
-}*/
-
-
 
 
 // MAIN GAME CLASS
@@ -408,8 +389,8 @@ class Game{
     this.frogsPassed = false;
     this.inOptions = false;
     this.currency = {
-      biomatter:99,
-      metal:999
+      biomatter:0,
+      metal:0
     }
     this.newShip = {
       type: null,
@@ -491,6 +472,7 @@ class Game{
     this.uiFadeFrames = 0;
     if (victory){
       this.currentLevel ++;
+      this.currency.metal += 1;
     }
   }
 
@@ -528,19 +510,22 @@ class Game{
         }else{
           for (let i=0; i<3; i++){
             if (mouseInRect(20+i*38, 96, 7, 7)){
-              switch (i){
-              case 0:
-                this.newShip.type = new ColliderShip(-1, -1, 0);
-                break;
-              case 1:
-                this.newShip.type = new ShooterShip(-1, -1, 0);
-                break;
-              case 2:
-                this.newShip.type = new ColliderShip(-1, -1, 0);
-                break;
+              if (this.currency.metal >= i+1){
+
+                switch (i){
+                case 0:
+                  this.newShip.type = new ColliderShip(-1, -1, 0);
+                  break;
+                case 1:
+                  this.newShip.type = new ShooterShip(-1, -1, 0);
+                  break;
+                case 2:
+                  this.newShip.type = new ColliderShip(-1, -1, 0);
+                  break;
+                }
+                this.newShip.mouseX = mouseX-(20+i*38)-1;
+                this.newShip.mouseY = mouseY-96;
               }
-              this.newShip.mouseX = mouseX-(20+i*38)-1;
-              this.newShip.mouseY = mouseY-96;
             }
           }
         }
@@ -731,7 +716,9 @@ class Game{
         if (!this.frogs[i].dead){
           this.frogCount++;
           this.frogs[i].battleDraw(Math.min(0, this.battleFrames-TRANSITION_MOVE));
-          this.frogs[i].update();
+          if (this.frogs[i].update()){
+            this.currency.biomatter += this.frogs[i].attributes.lvl+1;
+          }
           for (var j=0;j<this.frogs.length;j++){
             this.frogs[i].collideWith(this.frogs[j], this.particles);
           }
