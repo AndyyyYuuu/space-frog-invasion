@@ -323,7 +323,7 @@ class ShooterShip extends Ship{
       fleety: y,
       typeName: "Shooter",
       lvl: lvl,
-      upgrade: new Upgrade("Strengthen", 2+lvl*2, 0, lvl+1, "Shooter"),
+      upgrade: new Upgrade("Strengthen", 3+lvl*2, 0, lvl+1, "Shooter"),
       fireSpeed: 300/(lvl+4)
     })
   }
@@ -375,7 +375,7 @@ class HealerShip extends Ship{
       fleety: y,
       typeName: "Healer",
       lvl: lvl,
-      upgrade: new Upgrade("Upgrade", 2+lvl*2, 0, lvl+1, "Healer")
+      upgrade: new Upgrade("Upgrade", 2+lvl*3, 0, lvl+1, "Healer")
     })
   }
   attemptShoot(){
@@ -391,7 +391,7 @@ class Game{
   constructor(name){
     this.name = name;
     this.state = 0;
-    this.fleet = [new ShooterShip(64, 32, 0),new ColliderShip(48, 44, 0),new HealerShip(80, 44, 0)];
+    this.fleet = [new ShooterShip(64, 32, 0),new ColliderShip(48, 44, 0),new ColliderShip(80, 44, 0)];
     /*this.fleet = [];
     
     for (var i=0;i<4;i++){
@@ -704,8 +704,8 @@ class Game{
       
 
     }else if (this.state == 1){
-      if (this.gameOverFrames > 60){
-        ctx.globalAlpha = Math.round(20-this.gameOverFrames/8)/30;
+      if (this.gameOverFrames > 64){
+        ctx.globalAlpha = Math.min(1,Math.round(20-(this.gameOverFrames-64)/8)/30);
       }
       this.battleFrames ++;
       this.shipCount = 0;
