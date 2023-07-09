@@ -311,6 +311,7 @@ class Ship extends Entity{
 class ShooterShip extends Ship{
   constructor(x, y, lvl){
     super({
+      price: 2,
       health: 2+lvl,
       damage: 2+lvl*2,
       width: 5, //IMAGE.ship.shooter[lvl].naturalWidth,
@@ -341,6 +342,7 @@ class ShooterShip extends Ship{
 class ColliderShip extends Ship{
   constructor(x, y, lvl){
     super({
+      price: 1,
       health: 2+lvl*2,
       damage: 1+lvl,
       width: 5, //IMAGE.ship.collider[lvl].naturalWidth,
@@ -389,8 +391,8 @@ class Game{
     this.frogsPassed = false;
     this.inOptions = false;
     this.currency = {
-      biomatter:0,
-      metal:0
+      biomatter:10,
+      metal:10
     }
     this.newShip = {
       type: null,
@@ -511,7 +513,6 @@ class Game{
           for (let i=0; i<3; i++){
             if (mouseInRect(20+i*38, 96, 7, 7)){
               if (this.currency.metal >= i+1){
-
                 switch (i){
                 case 0:
                   this.newShip.type = new ColliderShip(-1, -1, 0);
@@ -541,6 +542,7 @@ class Game{
             this.newShip.type.attributes.fleetx = mouseX-this.newShip.mouseX+this.newShip.type.attributes.width/2;
             this.newShip.type.attributes.fleety = mouseY-this.newShip.mouseY+this.newShip.type.attributes.height/2;
             this.fleet.push(this.newShip.type);
+            this.currency.metal -= this.newShip.type.attributes.price;
           }
           this.newShip.type = null;
           return;
