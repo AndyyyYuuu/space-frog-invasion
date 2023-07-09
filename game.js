@@ -215,6 +215,8 @@ class Upgrade {
       return new ShooterShip(target.attributes.fleetx, target.attributes.fleety, target.attributes.lvl+1);
     }else if (this.assignment == "Collider"){
       return new ColliderShip(target.attributes.fleetx, target.attributes.fleety, target.attributes.lvl+1);
+    }else if (this.assignment == "Healer"){
+      return new HealerShip(target.attributes.fleetx, target.attributes.fleety, target.attributes.lvl+1);
     }
     return null;
   }
@@ -360,6 +362,27 @@ class ColliderShip extends Ship{
   }
 }
 
+class HealerShip extends Ship{
+  constructor(x, y, lvl){
+    super({
+      price: 1,
+      health: 2+lvl*2,
+      damage: 1+lvl,
+      width: 5, //IMAGE.ship.collider[lvl].naturalWidth,
+      height: 6, //IMAGE.ship.collider[lvl].naturalHeight,
+      image: IMAGE.ship.collider[lvl], 
+      fleetx: x,
+      fleety: y,
+      typeName: "Healer",
+      lvl: lvl,
+      upgrade: new Upgrade("Upgrade", 2+lvl*2, 0, lvl+1, "Healer")
+    })
+  }
+  attemptShoot(){
+    return null;
+  }
+}
+
 
 
 // MAIN GAME CLASS
@@ -368,7 +391,7 @@ class Game{
   constructor(name){
     this.name = name;
     this.state = 0;
-    this.fleet = [new ShooterShip(64, 32, 0),new ColliderShip(48, 44, 0),new ColliderShip(80, 44, 0)];
+    this.fleet = [new ShooterShip(64, 32, 0),new ColliderShip(48, 44, 0),new HealerShip(80, 44, 0)];
     /*this.fleet = [];
     
     for (var i=0;i<4;i++){
@@ -521,7 +544,7 @@ class Game{
                   this.newShip.type = new ShooterShip(-1, -1, 0);
                   break;
                 case 2:
-                  this.newShip.type = new ColliderShip(-1, -1, 0);
+                  this.newShip.type = new HealerShip(-1, -1, 0);
                   break;
                 }
                 this.newShip.mouseX = mouseX-(20+i*38)-1;
