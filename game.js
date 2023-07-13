@@ -60,7 +60,7 @@ class Bullet{
 
   checkHit(entity){
     if (!entity.dead && entity.isInRect(this.x, this.y)){
-      entity.health -= this.damage;
+      entity.damage(this.damage);
       this.life = 0;
     }
   }
@@ -81,10 +81,16 @@ class Entity{
     this.attributes = attributes;
     this.health = -1;
     this.isShip = attributes.isShip;
+    this.damageCooldown = 0;
   }
   battleDraw(offset){
     if (!this.dead){
       drawImage(this.attributes.image, this.x-this.attributes.image.naturalWidth/2, this.y+offset-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
+    }
+  }
+  update(){
+    if (this.damageCooldown > 0){
+      this.damageCooldown --;
     }
   }
   isTouchingLayout(entity){
@@ -96,18 +102,24 @@ class Entity{
   isInRect(x,y){
     return (Math.abs(x - this.x) < this.attributes.width/2 && Math.abs(y - this.y) < this.attributes.height/2);
   }
+  damage(dmg){
+    if (this.damageCooldown <= 0){
+      this.health -= dmg;
+      this.damageCooldown = 16;
+    }
+  }
   collideWith(other, particles){
     if (!this.dead && !other.dead && this !== other && this.isTouching(other)){
       this.dx += (this.x-other.x)/distance(this.x, this.y, other.x, other.y)*0.75//*Math.abs(other.dx/2);
       this.dy += (this.y-other.y)/distance(this.x, this.y, other.x, other.y)*0.75//*Math.abs(other.dy/2);
       if (this.attributes.typeName == "Collider" && other.isShip != this.isShip){
-        other.health -= this.attributes.damage;
+        other.damage(this.attributes.damage);
         // Additional knockback
-        other.dx += (other.x-this.x)/distance(this.x, this.y, other.x, other.y)*this.knockback//*Math.abs(other.dx/2);
-        other.dy += (other.y-this.y)/distance(this.x, this.y, other.x, other.y)*this.knockback//*Math.abs(other.dy/2);
+        other.dx += (other.x-this.x)/distance(this.x, this.y, other.x, other.y)*this.attributes.knockback//*Math.abs(other.dx/2);
+        other.dy += (other.y-this.y)/distance(this.x, this.y, other.x, other.y)*this.attributes.knockback//*Math.abs(other.dy/2);
       }
       this.health *= 0.75;
-      this.health -= 0.25;
+      this.damage(0.25);
       if (Object.hasOwn(this, 'enginesStunned')){
         this.enginesStunned = 50;
       }
@@ -150,6 +162,7 @@ class Frog extends Entity{
     super.startBattle();
   }
   update(){ // Updates, returns true when frog dies
+    super.update();
     this.y += this.dy;
     this.x += this.dx;
     this.dx *= 0.95;
@@ -269,6 +282,7 @@ class Ship extends Entity{
   }
 
   update(targetThrust){
+    super.update();
     this.x += this.dx*0.5;
     this.y += this.dy*0.5;
     this.dx *= 0.95;
