@@ -98,10 +98,13 @@ class Entity{
   }
   collideWith(other, particles){
     if (!this.dead && !other.dead && this !== other && this.isTouching(other)){
-      this.dx += (this.x-other.x)/distance(this.x, this.y, other.x, other.y)//*Math.abs(other.dx/2);
-      this.dy += (this.y-other.y)/distance(this.x, this.y, other.x, other.y)//*Math.abs(other.dy/2);
+      this.dx += (this.x-other.x)/distance(this.x, this.y, other.x, other.y)*0.75//*Math.abs(other.dx/2);
+      this.dy += (this.y-other.y)/distance(this.x, this.y, other.x, other.y)*0.75//*Math.abs(other.dy/2);
       if (this.attributes.typeName == "Collider" && other.isShip != this.isShip){
         other.health -= this.attributes.damage;
+        // Additional knockback
+        other.dx += (other.x-this.x)/distance(this.x, this.y, other.x, other.y)*this.knockback//*Math.abs(other.dx/2);
+        other.dy += (other.y-this.y)/distance(this.x, this.y, other.x, other.y)*this.knockback//*Math.abs(other.dy/2);
       }
       this.health *= 0.75;
       this.health -= 0.25;
@@ -354,7 +357,8 @@ class ColliderShip extends Ship{
       fleety: y,
       typeName: "Collider",
       lvl: lvl,
-      upgrade: new Upgrade("Fortify", 2+lvl*2, 0, lvl+1, "Collider")
+      upgrade: new Upgrade("Fortify", 2+lvl*2, 0, lvl+1, "Collider"), 
+      knockback: lvl*0.15
     })
   }
   attemptShoot(){
@@ -365,7 +369,7 @@ class ColliderShip extends Ship{
 class HealerShip extends Ship{
   constructor(x, y, lvl){
     super({
-      price: 1,
+      price: 3,
       health: 2+lvl*2,
       damage: 1+lvl,
       width: 5, //IMAGE.ship.collider[lvl].naturalWidth,
