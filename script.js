@@ -127,6 +127,7 @@ var saveSlots = [
   null
 ]
 
+
 // Gets mouse position
 function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();
@@ -136,6 +137,7 @@ function getMousePos(canvas, evt) {
   };
 }
 
+
 // Updates mouse position to mouseX and mouseY
 canvas.addEventListener('mousemove', function(evt) {
 
@@ -144,45 +146,53 @@ canvas.addEventListener('mousemove', function(evt) {
   mouseY = mousePos.y/4;
 }, false);
 
+
 // Checks if mouse is inside a rectangle
 function mouseInRect(x, y, w, h){
   return mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h;
 }
 
+
+// Returns distance between (x1, y1) and (x2, y2)
 function distance(x1, y1, x2, y2){
   return Math.sqrt((x1-x2)**2 + (y1-y2)**2);
 }
 
+
+// Rounds a number to the nearest denom (default 1)
 function round(num, denom = 1){
   return Math.round(num*denom)/denom;
 }
 
-canvas.onmousemove=function(){
+
+canvas.onmousemove = function(){
   if (mode == "game"){
     game.mouseMove();
   }
 }
 
 
-canvas.onmousedown=function(){
+canvas.onmousedown = function(){
   mouseIsDown = true;
   if (mode == "game"){
     game.click();
   }else if (mode == "start"){
+
     // If a slot is not being created / no slot creation window
     if (newGameWindow.createdSlot == -1){
-    }else{
-      if (mouseInRect(52, 68, 56, 4)){ // Switch random name
+
+    }else{ // "new game" window is open
+      if (mouseInRect(52, 68, 56, 4)){ // mouse is on the change name button
         newGameWindow.name = randName();
       }
     }
   }
 }
 
-canvas.onmouseup=function(){ // You know what this does
+canvas.onmouseup = function(){ // You know what this does
   mouseIsDown = false;
   if (mode == "game"){
-    game.release();
+    game.release(); // trigger mouseup in game class
   }else if (mode == "start"){
     // If a slot is not being created / no slot creation window
     if (newGameWindow.createdSlot == -1){
@@ -213,6 +223,7 @@ document.addEventListener("keydown", event => {
   
 });
 
+
 // Draws a rectangle in UI style
 function uiRect(x, y, w, h, hollow = false){
   if (!hollow){
@@ -229,6 +240,7 @@ function uiRect(x, y, w, h, hollow = false){
   ctx.rect(x*PIXEL+2, y*PIXEL+2, w*PIXEL-4, h*PIXEL-4);
   ctx.stroke();
 }
+
 
 // Draws a tactile rectangle in UI style
 function buttonRect(x, y, w, h, isTactile = true){
@@ -250,6 +262,8 @@ function buttonRect(x, y, w, h, isTactile = true){
   }
 }
 
+
+// Alternate style for buttonRect
 function buttonRect2(x, y, w, h, isTactile = true){
   if (mouseInRect(x, y, w, h) && !mouseIsDown && isTactile){
     ctx.lineWidth = 4;
@@ -262,12 +276,17 @@ function buttonRect2(x, y, w, h, isTactile = true){
   }
 }
 
+
+// Draws a selection frame in specified rect
 function selectRect(x, y, w, h){
   ctx.drawImage(IMAGE.ui.selectFrame, 0, 0, 2, 2, Math.round(x-1)*PIXEL, Math.round(y-1)*PIXEL, 2*PIXEL, 2*PIXEL);
   ctx.drawImage(IMAGE.ui.selectFrame, 0, 2, 2, 2, Math.round(x-1)*PIXEL, (Math.round(y-1)+h)*PIXEL, 2*PIXEL, 2*PIXEL);
   ctx.drawImage(IMAGE.ui.selectFrame, 2, 2, 2, 2, (Math.round(x-1)+w)*PIXEL, (Math.round(y-1)+h)*PIXEL, 2*PIXEL, 2*PIXEL);
   ctx.drawImage(IMAGE.ui.selectFrame, 2, 0, 2, 2, (Math.round(x-1)+w)*PIXEL, Math.round(y-1)*PIXEL, 2*PIXEL, 2*PIXEL);
 }
+
+
+
 
 function drawText(txt, x, y, size){
   if (size == "small"){
@@ -284,6 +303,8 @@ function drawImage(img, x, y){
   ctx.drawImage(img, Math.round(x)*PIXEL, Math.round(y)*PIXEL, img.naturalWidth*PIXEL, img.naturalHeight*PIXEL);
 }
 
+
+// Return the opacity the credits are supposed to be right now
 function creditsOpacity(currentFrame, startAt, duration){
 
   // currentFrame - startAt = how many frames since the start of this credit
@@ -310,9 +331,9 @@ function renderLoop(currentDelta){
   }
 
   ctx.clearRect(0,0,1000,1000);
-  frames+=1;
+  frames += 1;
   if(mode == "game"){
-    game.render(); // runs render loop of the game
+    game.render(); // runs (1 tick of) render loop of the game 
 
   }else if (mode == "start"){
     ctx.fillStyle = COLOR.TEXT;
@@ -320,11 +341,11 @@ function renderLoop(currentDelta){
     drawText("SPACE FROG",64,24,"display");
     drawText("INVASION",64,36,"display");
     ctx.textAlign = "left";
-    if (newGameWindow.createdSlot == -1){ // Home page, not creating save
+    if (newGameWindow.createdSlot == -1){ // Home page, "create save" window not open
       ctx.strokeStyle = COLOR.UI;
       
-      for (let i=0; i<3; i++){
-        uiRect(32, 64+20*i, 64, 16);
+      for (let i = 0; i < 3; i ++){
+        uiRect(32, 64 + 20 * i, 64, 16);
         //ctx.rect(128, 256+80*i, 256, 64);
         //ctx.lineWidth = 4;
         //ctx.stroke();
@@ -349,7 +370,7 @@ function renderLoop(currentDelta){
         }
       }
 
-    }else{ // Home page, with create save 
+    }else{ // Home page, with "create save" window open
       drawText("Create game in Slot "+(newGameWindow.createdSlot+1), 32, 64, "small");
       if (mouseInRect(52, 68, 56, 4)){ // Tactile name switcher
         drawText("Name: < "+newGameWindow.name+" >", 32, 72, "small");
