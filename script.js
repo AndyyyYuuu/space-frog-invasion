@@ -108,6 +108,10 @@ var IMAGE = {
   currency: {
     biomatter: newImage("item/debris-frog.png"),
     metal: newImage("item/debris-ship.png")
+  },
+  credits: {
+    andy: newImage("credits/andy.png"),
+    barry: newImage("credits/barry.png")
   }
 }
 
