@@ -1,9 +1,14 @@
+
+// Background Star class
 class Star{
+
   constructor(){
     this.x = Math.random() * 128;
     this.y = Math.random() * 192 - 64;
     this.opacity = Math.random()*0.5+0.25;
   }
+
+  // Draw the star. Offset is used during paralex scrolling. 
   draw(offset){
     ctx.globalAlpha = this.opacity;
     ctx.fillStyle = "white";
@@ -12,7 +17,10 @@ class Star{
   }
 }
 
+
+// Particle class (during battle)
 class Particle{
+
   constructor(x, y, dx, dy, life, color){
     this.x = x;
     this.y = y;
@@ -36,6 +44,7 @@ class Particle{
   }
 }
 
+// Bullet class (during battle)
 class Bullet{
   constructor(x, y, dx, dy, damage){
     this.x = x;
@@ -46,18 +55,21 @@ class Bullet{
     this.damage = damage;
   }
 
+  // Updates the bullet
   update(){
     this.x += this.dx;
     this.y += this.dy;
     this.life --;
   }
 
+  // Draws the bullet
   draw(){
     ctx.fillStyle = `rgba(255, 0, 255, ${Math.min(50, this.life)/50})`;
     //ctx.fillRect(Math.round(this.x-1)*PIXEL, Math.round(this.y-1)*PIXEL, PIXEL*2, PIXEL*2);
     ctx.fillRect(Math.floor(this.x)*PIXEL, Math.floor(this.y)*PIXEL, PIXEL, PIXEL);
   }
 
+  // Checks if this has hit entity and applies damage
   checkHit(entity){
     if (!entity.dead && entity.isInRect(this.x, this.y)){
       entity.damage(this.damage);
@@ -83,31 +95,45 @@ class Entity{
     this.isShip = attributes.isShip;
     this.damageCooldown = 0;
   }
+
+  // Draws an entity during battle. Offset is used during paralex scrolling. 
   battleDraw(offset){
     if (!this.dead){
       drawImage(this.attributes.image, this.x-this.attributes.image.naturalWidth/2, this.y+offset-this.attributes.image.naturalHeight/2, this.attributes.image.naturalWidth, this.attributes.image.naturalHeight);
     }
   }
+
+  // Runs every frame during battle. 
   update(){
     if (this.damageCooldown > 0){
       this.damageCooldown --;
     }
   }
+
+  // Returns whether the bounding boxes of `this` and `entity` overlap in the formation screen
   isTouchingLayout(entity){
     return Math.round(Math.abs(this.attributes.fleetx - entity.attributes.fleetx)) <= Math.round((this.attributes.width+entity.attributes.width)/2) && Math.round(Math.abs(this.attributes.fleety - entity.attributes.fleety)) < Math.round((this.attributes.height+entity.attributes.height)/2);
   }
+
+  // Returns whether the bounding boxes of `this` and `entity` overlap in battle
   isTouching(entity){
     return Math.round(Math.abs(this.x - entity.x)) <= Math.round((this.attributes.width+entity.attributes.width)/2) && Math.round(Math.abs(this.y - entity.y)) < Math.round((this.attributes.height+entity.attributes.height)/2);
   }
+
+  // Returns whether (x,y) is inside the Entity's bounding box
   isInRect(x,y){
     return (Math.abs(x - this.x) < this.attributes.width/2 && Math.abs(y - this.y) < this.attributes.height/2);
   }
+
+  // Damages the Entity
   damage(dmg){
     if (this.damageCooldown <= 0){
       this.health -= dmg;
       this.damageCooldown = 16;
     }
   }
+
+  // Returns whether Entity and other are colliding. If so, emits collision particles and applies knockback and damage. 
   collideWith(other, particles){
     if (!this.dead && !other.dead && this !== other && this.isTouching(other)){
       this.dx += (this.x-other.x)/distance(this.x, this.y, other.x, other.y)*0.75//*Math.abs(other.dx/2);
@@ -133,6 +159,9 @@ class Entity{
     return false;
   }
 
+
+  // Starts the battle for the Entity
+  // Runs on every entity at the beginning of a battle
   startBattle(){
     this.dx = 0;
     this.dy = 0;
@@ -161,7 +190,9 @@ class Frog extends Entity{
     this.y = this.attributes.fleety-TRANSITION_MOVE+48;
     super.startBattle();
   }
-  update(){ // Updates, returns true when frog dies
+
+  // Updates from during battle, returns true when frog dies
+  update(){
     super.update();
     this.y += this.dy;
     this.x += this.dx;
@@ -177,11 +208,13 @@ class Frog extends Entity{
     return false;
   }
 
+  // Returns a new collision particle unique to Frogs
   newParticle(x,y){
     return new Particle(x, y, Math.random()-0.5, Math.random()-0.5, 30, `hsl(${Math.random()*30+80}, 100%, ${Math.random()*10+50}%`);
   }
 
 }
+
 
 class ColliderFrog extends Frog{
   constructor(x, y, lvl){
@@ -197,6 +230,7 @@ class ColliderFrog extends Frog{
     })
   }
 }
+
 
 class ShooterFrog extends Frog{
   constructor(x, y, lvl){
@@ -450,9 +484,8 @@ class Game{
     this.FORMATION_SCREEN = {
       x: 16, y: 16, w: 96, h: 48
     }
-    
-
   }
+
 
   // Horrible, messy, ostrich algorithm
   // Gets two mirrored frogs to append to a level
@@ -461,7 +494,6 @@ class Game{
     var mirroredFrog = frog2;
     var spaceIsTaken = true;
     while (spaceIsTaken){
-
       newFrog.attributes.fleetx = (56-4*num)+Math.random()*(1+4*num);
       newFrog.attributes.fleety = 8+Math.random()*32;
       mirroredFrog.attributes.fleetx = 128-newFrog.attributes.fleetx;
@@ -477,6 +509,7 @@ class Game{
     return [newFrog, mirroredFrog]
   }
 
+  // Creates new level with difficulty of num
   newLevel(num){
     //num = 1;
     var level = [];
@@ -491,6 +524,7 @@ class Game{
     return level;
   }
 
+  // Starts battle
   startBattle(){
     this.state = 1;
     this.gameOverFrames = 0;
@@ -508,6 +542,8 @@ class Game{
     }
   }
 
+
+  // Ends battle. If victory, apply rewards and advance level. 
   endBattle(victory){
     this.state = 0;
     this.battleFrames = 0;
@@ -519,8 +555,8 @@ class Game{
     }
   }
 
+  // Runs on mousemove event
   mouseMove(){
-    
     for (let i=0; i<this.fleet.length; i++){
       if (mouseIsDown && this.heldShip == null && this.newShip.type == null){
         if (this.fleet[i].attributeInRect()){
@@ -533,6 +569,7 @@ class Game{
     }
   }
 
+  // Runs on mousedown event
   click(){
     if (this.state == 0){
       if (this.inOptions){
@@ -575,6 +612,8 @@ class Game{
     }
   }
 
+
+  // Runs on mouse release event
   release(){
     if (this.state == 0 && this.uiFadeFrames >= 56){
       if (!this.inOptions){
@@ -624,6 +663,7 @@ class Game{
     }
   }
 
+  // Game render loop
   render(){
 
     for (let i=0;i<this.starMap.length;i++){
