@@ -191,7 +191,7 @@ class Frog extends Entity{
     super.startBattle();
   }
 
-  // Updates from during battle, returns true when frog dies
+  // Updates from during battle, returns false when frog dies
   update(){
     super.update();
     this.y += this.dy;
@@ -203,9 +203,9 @@ class Frog extends Entity{
     }
     if (this.health <= 0 && this.dead == false){
       this.dead = true;
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   // Returns a new collision particle unique to Frogs
@@ -793,19 +793,25 @@ class Game{
         }
       }
 
+      // Count frogs + update frogs
       this.frogCount = 0;
       this.frogsPassed = false;
       for (let i=0; i<this.frogs.length; i++){
         if (!this.frogs[i].dead){
           this.frogCount++;
           this.frogs[i].battleDraw(Math.min(0, this.battleFrames-TRANSITION_MOVE));
-          if (this.frogs[i].update()){
+
+          // Frog dead condition: update returns false -- > add to currency
+          if (!this.frogs[i].update()){
             this.currency.biomatter += this.frogs[i].attributes.lvl+1;
           }
+
+          // Collide with other frogs
           for (var j=0;j<this.frogs.length;j++){
             this.frogs[i].collideWith(this.frogs[j], this.particles);
           }
 
+          // Check if frogs have won
           if (this.frogs[i].y > 132){
             this.frogsPassed = true;
           }
@@ -826,23 +832,29 @@ class Game{
       }
         
         
-
+      // Draw and update bullets
       for (let i=0;i<this.bullets.length; i++){
         this.bullets[i].draw();
         this.bullets[i].update();
+
+        // Bullet trail particles
         if (Math.random() < 0.5){
           this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, (-this.bullets[i].dx+Math.random()-0.5)/4, (-this.bullets[i].dy+Math.random()-0.5)/4, 20, "magenta"));
         }
+
+        // Check if bullet hits a frog
         for (let j=0; j<this.frogs.length; j++){
           this.bullets[i].checkHit(this.frogs[j]);
-          
         }
+
+        // Remove dead bullets
         if (this.bullets[i].life <= 0){
           this.bullets.splice(i,1);
           i--;
         }
       }
 
+      // Draw and update particles
       for (let i=0;i<this.particles.length; i++){
         this.particles[i].draw();
         this.particles[i].update();
@@ -851,6 +863,8 @@ class Game{
           i--;
         }
       }
+
+      // Draw start battle title text
       ctx.globalAlpha = Math.max(0,Math.round((48-Math.abs(this.battleFrames-48))/6)*6/48);
       ctx.textAlign = "center";
       ctx.fillStyle = COLOR.TEXT;
@@ -860,6 +874,8 @@ class Game{
       ctx.globalAlpha = 1;
       
     }
+
+    // Draw purchased ship held by mouse
     ctx.globalAlpha = 1;
     if (this.newShip.type != null){
       drawImage(this.newShip.type.attributes.image, mouseX-this.newShip.mouseX, mouseY-this.newShip.mouseY)
@@ -867,4 +883,5 @@ class Game{
   }
 }
 
+// Export Game as global class
 window.Game = Game;
