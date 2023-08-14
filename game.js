@@ -112,17 +112,17 @@ class Entity{
 
   // Returns whether the bounding boxes of `this` and `entity` overlap in the formation screen
   isTouchingLayout(entity){
-    return Math.round(Math.abs(this.attributes.fleetx - entity.attributes.fleetx)) <= Math.round((this.attributes.width+entity.attributes.width)/2) && Math.round(Math.abs(this.attributes.fleety - entity.attributes.fleety)) < Math.round((this.attributes.height+entity.attributes.height)/2);
+    return Math.round(Math.abs(this.attributes.fleetx - entity.attributes.fleetx)) <= Math.round((this.getWidth()+entity.getWidth())/2) && Math.round(Math.abs(this.attributes.fleety - entity.attributes.fleety)) < Math.round((this.getHeight()+entity.getHeight())/2);
   }
 
   // Returns whether the bounding boxes of `this` and `entity` overlap in battle
   isTouching(entity){
-    return Math.round(Math.abs(this.x - entity.x)) <= Math.round((this.attributes.width+entity.attributes.width)/2) && Math.round(Math.abs(this.y - entity.y)) < Math.round((this.attributes.height+entity.attributes.height)/2);
+    return Math.round(Math.abs(this.x - entity.x)) <= Math.round((this.getWidth()+entity.getWidth())/2) && Math.round(Math.abs(this.y - entity.y)) < Math.round((this.getHeight()+entity.getHeight())/2);
   }
 
   // Returns whether (x,y) is inside the Entity's bounding box
   isInRect(x,y){
-    return (Math.abs(x - this.x) < this.attributes.width/2 && Math.abs(y - this.y) < this.attributes.height/2);
+    return (Math.abs(x - this.x) < this.getWidth()/2 && Math.abs(y - this.y) < this.getHeight()/2);
   }
 
   // Damages the Entity
@@ -159,6 +159,13 @@ class Entity{
     return false;
   }
 
+  getWidth(){
+    return this.attributes.image.naturalWidth
+  }
+
+  getHeight(){
+    return this.attributes.image.naturalHeight
+  }
 
   // Starts the battle for the Entity
   // Runs on every entity at the beginning of a battle
@@ -357,7 +364,7 @@ class Ship extends Entity{
   }*/
   
   attributeInRect(){
-    return mouseInRect(Math.round(this.attributes.fleetx-this.attributes.width/2), Math.round(this.attributes.fleety-this.attributes.height/2), this.attributes.width, this.attributes.height)
+    return mouseInRect(Math.round(this.attributes.fleetx-this.getWidth()/2), Math.round(this.attributes.fleety-this.getHeight()/2), this.getWidth(), this.getHeight())
   }
 }
 
@@ -619,8 +626,8 @@ class Game{
       if (!this.inOptions){
         if (this.newShip.type != null){
           if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
-            this.newShip.type.attributes.fleetx = mouseX-this.newShip.mouseX+this.newShip.type.attributes.width/2;
-            this.newShip.type.attributes.fleety = mouseY-this.newShip.mouseY+this.newShip.type.attributes.height/2;
+            this.newShip.type.attributes.fleetx = mouseX-this.newShip.mouseX+this.newShip.type.getWidth()/2;
+            this.newShip.type.attributes.fleety = mouseY-this.newShip.mouseY+this.newShip.type.getHeight()/2;
             this.fleet.push(this.newShip.type);
             this.currency.metal -= this.newShip.type.attributes.price;
           }
@@ -697,13 +704,15 @@ class Game{
         this.fleet[i].layoutDraw();
         
       }
+
       if (this.selectedShip != null){// draw box around selected ship
-        selectRect(Math.round(this.selectedShip.attributes.fleetx-this.selectedShip.attributes.width/2), Math.round(this.selectedShip.attributes.fleety-this.selectedShip.attributes.height/2), this.selectedShip.attributes.width, this.selectedShip.attributes.height);
+        selectRect(Math.round(this.selectedShip.attributes.fleetx-this.selectedShip.getWidth()/2), Math.round(this.selectedShip.attributes.fleety-this.selectedShip.getHeight()/2), this.selectedShip.getWidth(), this.selectedShip.getHeight());
       }
+
       if (this.heldShip != null){
         if (mouseIsDown){
-          this.heldShip.attributes.fleetx = Math.min(Math.max(mouseX-this.heldShip.dragX, this.FORMATION_SCREEN.x+Math.floor(this.heldShip.attributes.width/2)), this.FORMATION_SCREEN.x + this.FORMATION_SCREEN.w - Math.ceil(this.heldShip.attributes.width/2));
-          this.heldShip.attributes.fleety = Math.min(Math.max(mouseY-this.heldShip.dragY, this.FORMATION_SCREEN.y+Math.floor(this.heldShip.attributes.height/2)), this.FORMATION_SCREEN.y + this.FORMATION_SCREEN.h - Math.ceil(this.heldShip.attributes.height/2));
+          this.heldShip.attributes.fleetx = Math.min(Math.max(mouseX-this.heldShip.dragX, this.FORMATION_SCREEN.x+Math.floor(this.heldShip.getWidth()/2)), this.FORMATION_SCREEN.x + this.FORMATION_SCREEN.w - Math.ceil(this.heldShip.getWidth()/2));
+          this.heldShip.attributes.fleety = Math.min(Math.max(mouseY-this.heldShip.dragY, this.FORMATION_SCREEN.y+Math.floor(this.heldShip.getHeight()/2)), this.FORMATION_SCREEN.y + this.FORMATION_SCREEN.h - Math.ceil(this.heldShip.getHeight()/2));
 
         }else{
           this.heldShip = null;
