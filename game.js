@@ -108,6 +108,10 @@ class Entity{
 
   // Runs every frame during battle. 
   update(){
+    this.y += this.dy;
+    this.x += this.dx;
+    this.dx *= 0.95;
+    this.dy *= 0.95;
     if (this.damageCooldown > 0){
       this.damageCooldown --;
     }
@@ -204,10 +208,7 @@ class Frog extends Entity{
   // Updates from during battle, returns false when frog dies
   update(){
     super.update();
-    this.y += this.dy;
-    this.x += this.dx;
-    this.dx *= 0.95;
-    this.dy *= 0.95;
+    
     if (this.dy < 0.2){
       this.dy += 0.02
     }
@@ -328,15 +329,11 @@ class Ship extends Entity{
   // Updates ship during battle. Returns false when ship dies. 
   update(targetThrust){
     super.update();
-    this.x += this.dx*0.5;
-    this.y += this.dy*0.5;
-    this.dx *= 0.95;
-    this.dy *= 0.95;
     if (this.enginesStunned > 0){
       this.enginesStunned --;
     }else{
-      if (this.dy >= -targetThrust){
-      this.thrust = 20;
+      if (this.dy >= -0.05){
+      this.thrust = 7;
       }
     }
 
@@ -388,7 +385,7 @@ class ShooterShip extends Ship{
       typeName: "Shooter",
       lvl: lvl,
       upgrade: new Upgrade("Strengthen", 3+lvl*2, 0, lvl+1, "Shooter"),
-      fireSpeed: 300/(lvl+4)
+      fireSpeed: 200/(lvl+4)+25
     })
   }
   attemptShoot(){
@@ -782,12 +779,14 @@ class Game{
       }
       this.battleFrames ++;
       this.shipCount = 0;
+
+      // Update fleet
       for (var i=0; i<this.fleet.length; i++){
         if (!this.fleet[i].dead){
           this.shipCount++;
           this.fleet[i].battleDraw(Math.min(0, this.battleFrames-TRANSITION_MOVE));
           if (this.battleFrames > 64){
-            if (this.fleet[i].update(0.05) == false){
+            if (this.fleet[i].update(0.02) == false){
               for (let k=0;k<20;k++){
                 this.particles.push(this.fleet[i].newParticle(this.fleet[i].x+this.fleet[i].getWidth()*(Math.random()-0.5), this.fleet[i].y+this.fleet[i].getHeight()*(Math.random()-0.5)))
               }
