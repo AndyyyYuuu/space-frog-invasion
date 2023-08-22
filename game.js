@@ -21,19 +21,20 @@ class Star{
 // Particle class (during battle)
 class Particle{
 
-  constructor(x, y, dx, dy, life, color){
+  constructor(x, y, dx, dy, life, color, dim = 1){
     this.x = x;
     this.y = y;
     this.dx = dx;
     this.dy = dy;
     this.life = life;
     this.color = color;
+    this.dim = dim;
   }
 
   update(){
     this.x += this.dx;
     this.y += this.dy;
-    this.life *=0.98;
+    this.life -= 1;
   }
 
   draw(){
@@ -74,7 +75,9 @@ class Bullet{
     if (!entity.dead && entity.isInRect(this.x, this.y)){
       entity.damage(this.damage);
       this.life = 0;
+      return true
     }
+    return false
   }
 }
 
@@ -322,6 +325,7 @@ class Ship extends Entity{
     super.startBattle();
   }
 
+  // Updates ship during battle. Returns false when ship dies. 
   update(targetThrust){
     super.update();
     this.x += this.dx*0.5;
@@ -343,7 +347,9 @@ class Ship extends Entity{
 
     if (this.health <= 0){
       this.dead = true;
+      return false;
     }
+    return true;
     
   }
   layoutCollide(){
@@ -781,7 +787,11 @@ class Game{
           this.shipCount++;
           this.fleet[i].battleDraw(Math.min(0, this.battleFrames-TRANSITION_MOVE));
           if (this.battleFrames > 64){
-            this.fleet[i].update(0.05);
+            if (this.fleet[i].update(0.05) == false){
+              for (let k=0;k<20;k++){
+                this.particles.push(this.fleet[i].newParticle(this.fleet[i].x+this.fleet[i].getWidth()*(Math.random()-0.5), this.fleet[i].y+this.fleet[i].getHeight()*(Math.random()-0.5)))
+              }
+            }
             var nextBullet = this.fleet[i].attemptShoot();
             if (nextBullet!=null){
               this.bullets.push(nextBullet);
@@ -799,6 +809,8 @@ class Game{
           for (var j=0;j<this.fleet.length;j++){
             this.fleet[i].collideWith(this.fleet[j], this.particles);
           }
+
+
         }
       }
 
@@ -811,8 +823,12 @@ class Game{
           this.frogs[i].battleDraw(Math.min(0, this.battleFrames-TRANSITION_MOVE));
 
           // Frog dead condition: update returns false -- > add to currency
-          if (!this.frogs[i].update()){
+          if (this.frogs[i].update() == false){
             this.currency.biomatter += this.frogs[i].attributes.lvl+1;
+            for (let k=0;k<20;k++){
+              this.particles.push(this.frogs[i].newParticle(this.frogs[i].x+this.frogs[i].getWidth()*(Math.random()-0.5), this.frogs[i].y+this.frogs[i].getHeight()*(Math.random()-0.5)))
+            }
+            
           }
 
           // Collide with other frogs
@@ -848,12 +864,17 @@ class Game{
 
         // Bullet trail particles
         if (Math.random() < 0.5){
-          this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, (-this.bullets[i].dx+Math.random()-0.5)/4, (-this.bullets[i].dy+Math.random()-0.5)/4, 20, "magenta"));
+          this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, (-this.bullets[i].dx+Math.random()-0.5)/4, (-this.bullets[i].dy+Math.random()-0.5)/4, 15, "magenta"));
         }
 
         // Check if bullet hits a frog
         for (let j=0; j<this.frogs.length; j++){
-          this.bullets[i].checkHit(this.frogs[j]);
+          if (this.bullets[i].checkHit(this.frogs[j])){
+            // Bullet explosion particles
+            for (let k=0;k<20;k++){
+              this.particles.push(new Particle(this.bullets[i].x, this.bullets[i].y, (Math.random()-0.5), (Math.random()-0.5), 20, "magenta"));
+            }
+          }
         }
 
         // Remove dead bullets
