@@ -898,7 +898,7 @@ class Game{
       ctx.textAlign = "center";
       ctx.fillStyle = COLOR.TEXT;
       drawText("WAVE "+String(this.currentLevel+1), 64, 56, "large");
-      drawText(LEVEL_NAMES[this.currentLevel], 64, 64);
+      //drawText(LEVEL_NAMES[this.currentLevel], 64, 64);
       ctx.textAlign = "left";
       ctx.globalAlpha = 1;
       
