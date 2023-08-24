@@ -26,7 +26,8 @@ const COLOR = {
     "#6A76C9", 
     "#362B87",
     "#CCDDFF"
-  ]
+  ],
+  TITLE: "#fc8d3d"
 }
 
 const LEVEL_NAMES = `They descend
@@ -336,16 +337,17 @@ function renderLoop(currentDelta){
     game.render(); // runs (1 tick of) render loop of the game 
 
   }else if (mode == "start"){
-    ctx.fillStyle = COLOR.TEXT;
+    ctx.fillStyle = COLOR.TITLE;
     ctx.textAlign = "center";
-    drawText("SPACE FROG",64,24,"display");
-    drawText("INVASION",64,36,"display");
-    ctx.textAlign = "left";
+    drawText("SPACE FROG",64,30,"display");
+    drawText("INVASION",64,42,"display");
+    ctx.textAlign = "left"; 
+    // newGameWindow.createdSlot: the index of the slot the player is trying to create a game in
     if (newGameWindow.createdSlot == -1){ // Home page, "create save" window not open
       ctx.strokeStyle = COLOR.UI;
       
       for (let i = 0; i < 3; i ++){
-        uiRect(32, 64 + 20 * i, 64, 16);
+        buttonRect(32, 64 + 20 * i, 64, 16);
         //ctx.rect(128, 256+80*i, 256, 64);
         //ctx.lineWidth = 4;
         //ctx.stroke();
