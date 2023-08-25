@@ -77,9 +77,10 @@ function newImage(src){
 var mode = "start";
 var newGameWindow = {//Stores variables for creating a new game
   createdSlot: -1, // The slot the player is creating a game in, -1 when not creating slot
-  clickedSlot: -1,
   name:randName() // The currently selected name
-}
+};
+
+var clickedSlot = -1;
 
 var mouseX = -1;
 var mouseY = -1;
@@ -180,13 +181,14 @@ canvas.onmousedown = function(){
     game.click();
   }else if (mode == "start"){
 
-    // If a slot is not being created / no slot creation window
-    if (newGameWindow.createdSlot == -1){
-
-    }else{ // "new game" window is open
+    if (newGameWindow.createdSlot != -1){ // "new game" window is open
       if (mouseInRect(52, 68, 56, 4)){ // mouse is on the change name button
         newGameWindow.name = randName();
       }
+    }else if (clickedSlot != -1){
+
+    }else{ // If a slot is not being created / no slot creation window
+      
     }
   }
 }
@@ -206,13 +208,14 @@ canvas.onmouseup = function(){ // You know what this does
         newGameWindow.createdSlot = -1;
       }
 
-    }else if (newGameWindow.clickedSlot != -1){
+    }else if (clickedSlot != -1){ // Enter game window
       if (mouseInRect(32, 78, 28, 8)){ // Cancel button
-        newGameWindow.clickedSlot = -1;
+        clickedSlot = -1;
       }else if (mouseInRect(64, 78, 28, 8)){ // Play game button
         mode = "game"
-        newGameWindow.clickedSlot = -1;
+        clickedSlot = -1;
       }
+
     }else{ // Title screen
       for (let i=0; i<3; i++){
         if (mouseInRect(32, 64+20*i, 64, 16)){
@@ -222,7 +225,7 @@ canvas.onmouseup = function(){ // You know what this does
             break;
           }else{
             game = saveSlots[i];
-            newGameWindow.clickedSlot = i;
+            clickedSlot = i;
           }
         }
       }
@@ -352,19 +355,15 @@ function renderLoop(currentDelta){
     drawText("INVASION",64,42,"display");
     ctx.textAlign = "left"; 
     // newGameWindow.createdSlot: the index of the slot the player is trying to create a game in
-    if (newGameWindow.clickedSlot != -1){ // Open game page
-      drawText("Slot "+(newGameWindow.createdSlot+1), 32, 64, "small");
-      if (mouseInRect(52, 68, 56, 4)){ // Tactile name switcher
-        drawText("Name: < "+newGameWindow.name+" >", 32, 72, "small");
-      }else{
-        drawText("Name:   "+newGameWindow.name, 32, 72, "small");
-      }
+    if (clickedSlot != -1){ // Home page, with "enter game" window open
+      drawText("Slot "+(clickedSlot+1), 32, 64, "small");
+      drawText("Name:   "+saveSlots[clickedSlot].name, 32, 72, "small");
       
       buttonRect(32, 78, 28, 8);
       buttonRect(64, 78, 28, 8);
       ctx.fillStyle = COLOR.TEXT;
       drawText(" Cancel", 32, 84, "small");
-      drawText(" Play", 64, 84, "small");
+      drawText(" Play", 68, 84, "small");
 
     }else if (newGameWindow.createdSlot != -1){ // Home page, with "create save" window open
       drawText("Create game in Slot "+(newGameWindow.createdSlot+1), 32, 64, "small");
