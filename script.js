@@ -106,7 +106,8 @@ var IMAGE = {
   ui: {
     selectCorner: newImage("misc/select-corner.png"),
     selectFrame: newImage("misc/select-frame.png"),
-    settingsIcon: newImage("ui/settings.png")
+    settingsIcon: newImage("ui/settings.png"), 
+    title: newImage("ui/title.png")
   },
   currency: {
     biomatter: newImage("item/debris-frog.png"),
@@ -374,19 +375,15 @@ function renderLoop(currentDelta){
       ctx.fillStyle = COLOR.TEXT;
       drawText(" Cancel", 32, 84, "small");
       drawText(" Create", 64, 84, "small");
+
+    
     }else{ // Home page, "create save" window not open
-      ctx.fillStyle = COLOR.TITLE;
-      ctx.textAlign = "center";
-      drawText("SPACE FROG",64,30,"display");
-      drawText("INVASION",64,42,"display");
-      ctx.textAlign = "left"; 
+
+      ctx.drawImage(IMAGE.ui.title, 256 - IMAGE.ui.title.naturalWidth/2*PIXEL, 96, IMAGE.ui.title.naturalWidth*PIXEL, IMAGE.ui.title.naturalHeight*PIXEL);
+
       ctx.strokeStyle = COLOR.UI;
-      
       for (let i = 0; i < 3; i ++){
         buttonRect(32, 64 + 20 * i, 64, 16);
-        //ctx.rect(128, 256+80*i, 256, 64);
-        //ctx.lineWidth = 4;
-        //ctx.stroke();
 
         ctx.fillStyle = COLOR.TEXT;
         drawText("Save Slot "+(i+1), 36, 70+20*i, "small");
