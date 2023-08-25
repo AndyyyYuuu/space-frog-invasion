@@ -349,13 +349,9 @@ function renderLoop(currentDelta){
     game.render(); // runs (1 tick of) render loop of the game 
 
   }else if (mode == "start"){
-    ctx.fillStyle = COLOR.TITLE;
-    ctx.textAlign = "center";
-    drawText("SPACE FROG",64,30,"display");
-    drawText("INVASION",64,42,"display");
-    ctx.textAlign = "left"; 
     // newGameWindow.createdSlot: the index of the slot the player is trying to create a game in
     if (clickedSlot != -1){ // Home page, with "enter game" window open
+
       drawText("Slot "+(clickedSlot+1), 32, 64, "small");
       drawText("Name:   "+saveSlots[clickedSlot].name, 32, 72, "small");
       
@@ -379,6 +375,11 @@ function renderLoop(currentDelta){
       drawText(" Cancel", 32, 84, "small");
       drawText(" Create", 64, 84, "small");
     }else{ // Home page, "create save" window not open
+      ctx.fillStyle = COLOR.TITLE;
+      ctx.textAlign = "center";
+      drawText("SPACE FROG",64,30,"display");
+      drawText("INVASION",64,42,"display");
+      ctx.textAlign = "left"; 
       ctx.strokeStyle = COLOR.UI;
       
       for (let i = 0; i < 3; i ++){
