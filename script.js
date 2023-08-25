@@ -76,7 +76,8 @@ function newImage(src){
 
 var mode = "start";
 var newGameWindow = {//Stores variables for creating a new game
-  createdSlot:-1, // The slot the player is creating a game in, -1 when not creating slot
+  createdSlot: -1, // The slot the player is creating a game in, -1 when not creating slot
+  clickedSlot: -1,
   name:randName() // The currently selected name
 }
 
@@ -190,13 +191,29 @@ canvas.onmousedown = function(){
   }
 }
 
+
 canvas.onmouseup = function(){ // You know what this does
   mouseIsDown = false;
   if (mode == "game"){
     game.release(); // trigger mouseup in game class
   }else if (mode == "start"){
     // If a slot is not being created / no slot creation window
-    if (newGameWindow.createdSlot == -1){
+    if (newGameWindow.createdSlot != -1){ // If a slot is being created / slot creation window
+      if (mouseInRect(32, 78, 28, 8)){ // Cancel button
+        newGameWindow.createdSlot = -1;
+      }else if (mouseInRect(64, 78, 28, 8)){ // Create new game button
+        saveSlots[newGameWindow.createdSlot] = new Game(newGameWindow.name);
+        newGameWindow.createdSlot = -1;
+      }
+
+    }else if (newGameWindow.clickedSlot != -1){
+      if (mouseInRect(32, 78, 28, 8)){ // Cancel button
+        newGameWindow.clickedSlot = -1;
+      }else if (mouseInRect(64, 78, 28, 8)){ // Play game button
+        mode = "game"
+        newGameWindow.clickedSlot = -1;
+      }
+    }else{ // Title screen
       for (let i=0; i<3; i++){
         if (mouseInRect(32, 64+20*i, 64, 16)){
           if (saveSlots[i] == null){ // If slot is empty
@@ -205,16 +222,9 @@ canvas.onmouseup = function(){ // You know what this does
             break;
           }else{
             game = saveSlots[i];
-            mode = "game";
+            newGameWindow.clickedSlot = i;
           }
         }
-      }
-    }else{ // If a slot is being created / slot creation window
-      if (mouseInRect(32, 78, 28, 8)){ // Cancel button
-        newGameWindow.createdSlot = -1;
-      }else if (mouseInRect(64, 78, 28, 8)){ // Create new game button
-        saveSlots[newGameWindow.createdSlot] = new Game(newGameWindow.name);
-        newGameWindow.createdSlot = -1;
       }
     }
   }
@@ -323,7 +333,6 @@ var updateId,
 
 function renderLoop(currentDelta){
 
-
   // Limit FPS under FPS_LIMIT
   updateId = requestAnimationFrame(renderLoop);
   var delta = currentDelta-previousDelta;
@@ -343,7 +352,34 @@ function renderLoop(currentDelta){
     drawText("INVASION",64,42,"display");
     ctx.textAlign = "left"; 
     // newGameWindow.createdSlot: the index of the slot the player is trying to create a game in
-    if (newGameWindow.createdSlot == -1){ // Home page, "create save" window not open
+    if (newGameWindow.clickedSlot != -1){ // Open game page
+      drawText("Slot "+(newGameWindow.createdSlot+1), 32, 64, "small");
+      if (mouseInRect(52, 68, 56, 4)){ // Tactile name switcher
+        drawText("Name: < "+newGameWindow.name+" >", 32, 72, "small");
+      }else{
+        drawText("Name:   "+newGameWindow.name, 32, 72, "small");
+      }
+      
+      buttonRect(32, 78, 28, 8);
+      buttonRect(64, 78, 28, 8);
+      ctx.fillStyle = COLOR.TEXT;
+      drawText(" Cancel", 32, 84, "small");
+      drawText(" Play", 64, 84, "small");
+
+    }else if (newGameWindow.createdSlot != -1){ // Home page, with "create save" window open
+      drawText("Create game in Slot "+(newGameWindow.createdSlot+1), 32, 64, "small");
+      if (mouseInRect(52, 68, 56, 4)){ // Tactile name switcher
+        drawText("Name: < "+newGameWindow.name+" >", 32, 72, "small");
+      }else{
+        drawText("Name:   "+newGameWindow.name, 32, 72, "small");
+      }
+      
+      buttonRect(32, 78, 28, 8);
+      buttonRect(64, 78, 28, 8);
+      ctx.fillStyle = COLOR.TEXT;
+      drawText(" Cancel", 32, 84, "small");
+      drawText(" Create", 64, 84, "small");
+    }else{ // Home page, "create save" window not open
       ctx.strokeStyle = COLOR.UI;
       
       for (let i = 0; i < 3; i ++){
@@ -371,20 +407,6 @@ function renderLoop(currentDelta){
           }
         }
       }
-
-    }else{ // Home page, with "create save" window open
-      drawText("Create game in Slot "+(newGameWindow.createdSlot+1), 32, 64, "small");
-      if (mouseInRect(52, 68, 56, 4)){ // Tactile name switcher
-        drawText("Name: < "+newGameWindow.name+" >", 32, 72, "small");
-      }else{
-        drawText("Name:   "+newGameWindow.name, 32, 72, "small");
-      }
-      
-      buttonRect(32, 78, 28, 8);
-      buttonRect(64, 78, 28, 8);
-      ctx.fillStyle = COLOR.TEXT;
-      drawText(" Cancel", 32, 84, "small");
-      drawText(" Create", 64, 84, "small");
     }
   }else if (mode == "credits"){
     creditsFrames ++;
@@ -452,3 +474,5 @@ window.addEventListener("keydown", (event) => {
     mode = "start";
   }
 });
+
+
