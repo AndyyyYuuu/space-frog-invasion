@@ -15,8 +15,8 @@ const TRANSITION_MOVE = 56;
 
 // Random word generator for save slot names
 const RANDWORDS = {
-  adj: ["Crunchy ", "Space ", "Froggy ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Slimy ", "Jazzy ", "Singing ", "Shooter ", "Starry ", "Funky "],
-  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleet", "War", "Ships", "Stars", "Plasma", "Spheres", "Battle"]
+  adj: ["Crunchy ", "Space ", "Froggy ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Hyper", "Slimy ", "Jazzy ", "Singing ", "Shooter ", "Starry ", "Funky ", "Pixel ", "Swingin' ", "Bebop ", "Bluesy "],
+  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleet", "War", "Ships", "Stars", "Plasma", "Spheres", "Battle", "Slime", "Nebula", "Toads", "Amphibian", "Blast", "Force", "Aliens"]
 }
 
 // Stores important colors in the game
@@ -353,7 +353,7 @@ function renderLoop(currentDelta){
     if (clickedSlot != -1){ // Home page, with "enter game" window open
 
       drawText("Slot "+(clickedSlot+1), 32, 64, "small");
-      drawText("Name:   "+saveSlots[clickedSlot].name, 32, 72, "small");
+      drawText("- " + saveSlots[clickedSlot].name + " -", 32, 72, "small");
       
       buttonRect(32, 78, 28, 8);
       buttonRect(64, 78, 28, 8);
