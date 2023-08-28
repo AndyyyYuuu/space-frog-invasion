@@ -240,17 +240,19 @@ document.addEventListener("keydown", event => {
 
 
 // Draws a rectangle in UI style
-function uiRect(x, y, w, h, hollow = false){
+function uiRect(x, y, w, h, hollow = false, isRed = false){
   if (!hollow){
     ctx.fillStyle = "black";
     ctx.fillRect(x*PIXEL,y*PIXEL,w*PIXEL,h*PIXEL);
   }
   ctx.lineWidth = 4;
   ctx.strokeStyle = COLOR.UI[0];
+  if (isRed){ctx.strokeStyle = "#fc4e03"};
   ctx.beginPath();
   ctx.rect(x*PIXEL-2, y*PIXEL-2, w*PIXEL+4, h*PIXEL+4);
   ctx.stroke();
   ctx.strokeStyle = COLOR.UI[1];
+  if (isRed){ctx.strokeStyle = "#b52407"};
   ctx.beginPath();
   ctx.rect(x*PIXEL+2, y*PIXEL+2, w*PIXEL-4, h*PIXEL-4);
   ctx.stroke();
