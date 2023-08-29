@@ -210,11 +210,13 @@ canvas.onmouseup = function(){ // You know what this does
       }
 
     }else if (clickedSlot != -1){ // Enter game window
-      if (mouseInRect(32, 78, 28, 8)){ // Cancel button
+      if (mouseInRect(32, 68, 28, 8)){ // Cancel button
         clickedSlot = -1;
-      }else if (mouseInRect(64, 78, 28, 8)){ // Play game button
+      }else if (mouseInRect(64, 68, 28, 8)){ // Play game button
         mode = "game"
         clickedSlot = -1;
+      }else if (mouseInRect(32, 90, 48, 8)){
+        console.log("delete");
       }
 
     }else{ // Title screen
@@ -240,19 +242,17 @@ document.addEventListener("keydown", event => {
 
 
 // Draws a rectangle in UI style
-function uiRect(x, y, w, h, hollow = false, isRed = false){
+function uiRect(x, y, w, h, hollow = false){
   if (!hollow){
     ctx.fillStyle = "black";
     ctx.fillRect(x*PIXEL,y*PIXEL,w*PIXEL,h*PIXEL);
   }
   ctx.lineWidth = 4;
   ctx.strokeStyle = COLOR.UI[0];
-  if (isRed){ctx.strokeStyle = "#fc4e03"};
   ctx.beginPath();
   ctx.rect(x*PIXEL-2, y*PIXEL-2, w*PIXEL+4, h*PIXEL+4);
   ctx.stroke();
   ctx.strokeStyle = COLOR.UI[1];
-  if (isRed){ctx.strokeStyle = "#b52407"};
   ctx.beginPath();
   ctx.rect(x*PIXEL+2, y*PIXEL+2, w*PIXEL-4, h*PIXEL-4);
   ctx.stroke();
@@ -260,7 +260,7 @@ function uiRect(x, y, w, h, hollow = false, isRed = false){
 
 
 // Draws a tactile rectangle in UI style
-function buttonRect(x, y, w, h, isTactile = true){
+function buttonRect(x, y, w, h, isTactile = true, isRed = false){
   
   if (mouseInRect(x, y, w, h) && !mouseIsDown && isTactile){
     uiRect(x, y, w, h);
@@ -268,11 +268,21 @@ function buttonRect(x, y, w, h, isTactile = true){
     ctx.fillStyle = "black";
     ctx.fillRect(x*PIXEL,y*PIXEL,w*PIXEL,h*PIXEL);
     ctx.lineWidth = 4;
-    ctx.strokeStyle = COLOR.UI[1];
+
+    if (isRed){
+      ctx.strokeStyle = "#fc4e03"
+    }else{
+      ctx.strokeStyle = COLOR.UI[1];
+    }
     ctx.beginPath();
     ctx.rect(x*PIXEL-2, y*PIXEL-2, w*PIXEL+4, h*PIXEL+4);
     ctx.stroke();
-    ctx.strokeStyle = COLOR.UI[0];
+
+    if (isRed){
+      ctx.strokeStyle = "#b52407"
+    }else{
+
+    }ctx.strokeStyle = COLOR.UI[0];
     ctx.beginPath();
     ctx.rect(x*PIXEL+2, y*PIXEL+2, w*PIXEL-4, h*PIXEL-4);
     ctx.stroke();
@@ -355,14 +365,17 @@ function renderLoop(currentDelta){
     // newGameWindow.createdSlot: the index of the slot the player is trying to create a game in
     if (clickedSlot != -1){ // Home page, with "enter game" window open
 
-      drawText("Slot "+(clickedSlot+1), 32, 64, "small");
-      drawText("- " + saveSlots[clickedSlot].name + " -", 32, 72, "small");
+      drawText("Slot "+(clickedSlot+1), 32, 54, "small");
+      drawText("- " + saveSlots[clickedSlot].name + " -", 32, 62, "small");
       
-      buttonRect(32, 78, 28, 8);
-      buttonRect(64, 78, 28, 8);
+      buttonRect(32, 68, 28, 8);
+      buttonRect(64, 68, 28, 8);
+      buttonRect(32, 90, 48, 8);
+
       ctx.fillStyle = COLOR.TEXT;
-      drawText(" Cancel", 32, 84, "small");
-      drawText(" Play", 68, 84, "small");
+      drawText(" Cancel", 32, 74, "small");
+      drawText(" Play", 68, 74, "small");
+      drawText(" Delete Save", 33, 96, "small");
 
     }else if (newGameWindow.createdSlot != -1){ // Home page, with "create save" window open
       drawText("Create game in Slot "+(newGameWindow.createdSlot+1), 32, 64, "small");
