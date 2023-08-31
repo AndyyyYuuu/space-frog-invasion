@@ -397,25 +397,28 @@ function renderLoop(currentDelta){
       ctx.drawImage(IMAGE.ui.title, 256 - IMAGE.ui.title.naturalWidth/2*PIXEL, 96, IMAGE.ui.title.naturalWidth*PIXEL, IMAGE.ui.title.naturalHeight*PIXEL);
 
       ctx.strokeStyle = COLOR.UI;
+
+      const BUTTONS_Y = 56; // The Y level of home page slot buttons
+
       for (let i = 0; i < 3; i ++){
-        buttonRect(32, 64 + 20 * i, 64, 16);
+        buttonRect(32, BUTTONS_Y + 20 * i, 64, 16);
 
         ctx.fillStyle = COLOR.TEXT;
-        drawText("Save Slot "+(i+1), 36, 70+20*i, "small");
+        drawText("Save Slot "+(i+1), 36, BUTTONS_Y+6+20*i, "small");
         if (saveSlots[i] == null){
           ctx.globalAlpha = 0.6;
-          if (mouseInRect(32, 64+20*i, 64, 16)){ // Tactile save slot buttons
-            drawText("< Create New >", 36, 76+20*i, "small");
+          if (mouseInRect(32, BUTTONS_Y+20*i, 64, 16)){ // Tactile save slot buttons
+            drawText("< Create New >", 36, BUTTONS_Y+12+20*i, "small");
           }else{
-            drawText("  Empty Save  ", 36, 76+20*i, "small");
+            drawText("  Empty Save  ", 36, BUTTONS_Y+12+20*i, "small");
           }
           ctx.globalAlpha = 1;
         }else{
           
-          if (mouseInRect(32, 64+20*i, 64, 16)){
-            drawText("> "+saveSlots[i].name, 36, 76+20*i);
+          if (mouseInRect(32, BUTTONS_Y+20*i, 64, 16)){
+            drawText("> "+saveSlots[i].name, 36, BUTTONS_Y+12+20*i);
           }else{
-            drawText("  "+saveSlots[i].name, 36, 76+20*i);
+            drawText("  "+saveSlots[i].name, 36, BUTTONS_Y+12+20*i);
           }
         }
       }
@@ -456,11 +459,11 @@ function renderLoop(currentDelta){
       drawText("Assets", 64, 56, "small");
       drawText("BARRY YU", 64, 72, "large");
     }
-
-
     else if (creditsFrames >= 680){
       mode = "start";
+      ctx.textAlign = "left";
     }
+    ctx.textAlign = "left";
   }
 
   if (settings.pixelChecker){ // Pixel checker tool
