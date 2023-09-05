@@ -12,6 +12,7 @@ ctx.imageSmoothingEnabled = false;
 
 const PIXEL = 4;
 const TRANSITION_MOVE = 56;
+const BUTTONS_Y = 56; // The Y level of home page slot buttons
 
 // Random word generator for save slot names
 const RANDWORDS = {
@@ -187,7 +188,7 @@ canvas.onmousedown = function(){
       if (mouseInRect(52, 68, 56, 4)){ // mouse is on the change name button
         newGameWindow.name = randName();
       }
-    }else if (clickedSlot != -1){
+    }else if (clickedSlot != -1 && deletionStage == -1){
 
     }else{ // If a slot is not being created / no slot creation window
       
@@ -200,8 +201,11 @@ canvas.onmouseup = function(){ // You know what this does
   mouseIsDown = false;
   if (mode == "game"){
     game.release(); // trigger mouseup in game class
+
   }else if (mode == "start"){
     // If a slot is not being created / no slot creation window
+
+
     if (newGameWindow.createdSlot != -1){ // If a slot is being created / slot creation window
       if (mouseInRect(32, 78, 28, 8)){ // Cancel button
         newGameWindow.createdSlot = -1;
@@ -210,20 +214,21 @@ canvas.onmouseup = function(){ // You know what this does
         newGameWindow.createdSlot = -1;
       }
 
-    }else if (clickedSlot != -1){ // Enter game window
+    }else if (clickedSlot != -1 && deletionStage == -1){ // Enter game window
       if (mouseInRect(32, 68, 28, 8)){ // Cancel button
         clickedSlot = -1;
       }else if (mouseInRect(64, 68, 28, 8)){ // Play game button
         mode = "game"
         clickedSlot = -1;
       }else if (mouseInRect(32, 90, 48, 8)){ // Delete save button
-        saveSlots[clickedSlot] = null;
-        clickedSlot = -1;
+        //saveSlots[clickedSlot] = null;
+        //clickedSlot = -1;
+        deletionStage = 0;
       }
 
     }else{ // Title screen
       for (let i=0; i<3; i++){
-        if (mouseInRect(32, 64+20*i, 64, 16)){
+        if (mouseInRect(32, BUTTONS_Y+20*i, 64, 16)){
           if (saveSlots[i] == null){ // If slot is empty
             newGameWindow.createdSlot = i;
             newGameWindow.name = randName();
@@ -365,19 +370,37 @@ function renderLoop(currentDelta){
 
   }else if (mode == "start"){
     // newGameWindow.createdSlot: the index of the slot the player is trying to create a game in
+
     if (clickedSlot != -1){ // Home page, with "enter game" window open
 
       drawText("Slot "+(clickedSlot+1), 32, 54, "small");
       drawText("- " + saveSlots[clickedSlot].name + " -", 32, 62, "small");
       
-      buttonRect(32, 68, 28, 8);
-      buttonRect(64, 68, 28, 8);
-      buttonRect(32, 90, 48, 8);
+      if (deletionStage == -1){
+        buttonRect(32, 68, 28, 8, true);
+        buttonRect(64, 68, 28, 8, true);
+        buttonRect(32, 90, 48, 8, true);
+      }else{
+        buttonRect(32, 68, 28, 8, false);
+        buttonRect(64, 68, 28, 8, false);
+        buttonRect(32, 90, 48, 8, false);
+      }
 
       ctx.fillStyle = COLOR.TEXT;
       drawText(" Cancel", 32, 74, "small");
       drawText(" Play", 68, 74, "small");
       drawText(" Delete Save", 33, 96, "small");
+
+      if (deletionStage >= 0){ // "ARE YOU SURE???" window
+        ctx.fillStyle = "rgb(0, 0, 0, 0.5)";
+        ctx.fillRect(0, 0, 512, 512);
+        uiRect(32, 32, 64, 64);
+        ctx.fillStyle = COLOR.TEXT;
+        drawText("Are you SURE?", 38, 46, "small");
+        drawText("You will NEVER ", 38, 58, "small");
+        drawText("get your save", 38, 64, "small");
+        drawText("back!!!", 38, 70, "small");
+      }
 
     }else if (newGameWindow.createdSlot != -1){ // Home page, with "create save" window open
       drawText("Create game in Slot "+(newGameWindow.createdSlot+1), 32, 64, "small");
@@ -400,7 +423,7 @@ function renderLoop(currentDelta){
 
       ctx.strokeStyle = COLOR.UI;
 
-      const BUTTONS_Y = 56; // The Y level of home page slot buttons
+      
 
       for (let i = 0; i < 3; i ++){
         buttonRect(32, BUTTONS_Y + 20 * i, 64, 16);
