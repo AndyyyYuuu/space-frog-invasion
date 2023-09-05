@@ -81,6 +81,7 @@ var newGameWindow = {//Stores variables for creating a new game
 };
 
 var clickedSlot = -1;
+var deletionStage = -1;
 
 var mouseX = -1;
 var mouseY = -1;
@@ -215,8 +216,9 @@ canvas.onmouseup = function(){ // You know what this does
       }else if (mouseInRect(64, 68, 28, 8)){ // Play game button
         mode = "game"
         clickedSlot = -1;
-      }else if (mouseInRect(32, 90, 48, 8)){
-        console.log("delete");
+      }else if (mouseInRect(32, 90, 48, 8)){ // Delete save button
+        saveSlots[clickedSlot] = null;
+        clickedSlot = -1;
       }
 
     }else{ // Title screen
