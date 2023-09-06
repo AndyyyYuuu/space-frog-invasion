@@ -333,7 +333,7 @@ class Ship extends Entity{
       this.enginesStunned --;
     }else{
       if (this.dy >= -0.05){
-      this.thrust = 7;
+        this.thrust = 7;
       }
     }
 
