@@ -17,7 +17,7 @@ const BUTTONS_Y = 56; // The Y level of home page slot buttons
 // Random word generator for save slot names
 const RANDWORDS = {
   adj: ["Crunchy ", "Space ", "Froggy ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Hyper", "Slimy ", "Jazzy ", "Singing ", "Shooter ", "Starry ", "Funky ", "Pixel ", "Swingin' ", "Bebop ", "Bluesy "],
-  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleet", "War", "Ships", "Stars", "Plasma", "Spheres", "Battle", "Slime", "Nebula", "Toads", "Amphibian", "Blast", "Force", "Aliens"]
+  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleet", "War", "Ships", "Stars", "Plasma", "Spheres", "Battle", "Slime", "Nebula", "Toads", "Amphibian", "Blast", "Force", "Aliens", "Messangers", "Trek"]
 }
 
 // Stores important colors in the game
@@ -31,26 +31,17 @@ const COLOR = {
   TITLE: "#fc8d3d"
 }
 
-const LEVEL_NAMES = `They descend
-Upon another world
-Green glow
-Slowly approaches
-They ascend
-To greet another kind
-Golden light
-Streaks across
-Th'ethereal sky
-The first meeting
-Of two civilizations
-No time to negotiate
-For we fear the other
-Seeks to conquer
-Fear we'd do the same
-To strike first
-Is to survive
-To destroy
-Is to eliminate
-All threat`.split(/\r?\n|\r|\n/g);
+const LEVEL_NAMES = `I have eaten
+The plums
+That were in
+The icebox
+In which
+You were probably
+Saving for breakfast
+Forgive me
+They were delicious
+So sweet
+And so cold`.split(/\r?\n|\r|\n/g);
 
 // Some settings
 var settings = {
@@ -185,7 +176,7 @@ canvas.onmousedown = function(){
   }else if (mode == "start"){
 
     if (newGameWindow.createdSlot != -1){ // "new game" window is open
-      if (mouseInRect(52, 68, 56, 4)){ // mouse is on the change name button
+      if (mouseInRect(52, 67, ctx.measureText(newGameWindow.name).width/PIXEL+12, 6)){ // mouse is on the change name button
         newGameWindow.name = randName();
       }
     }else if (clickedSlot != -1 && deletionStage == -1){
@@ -404,7 +395,7 @@ function renderLoop(currentDelta){
 
     }else if (newGameWindow.createdSlot != -1){ // Home page, with "create save" window open
       drawText("Create game in Slot "+(newGameWindow.createdSlot+1), 32, 64, "small");
-      if (mouseInRect(52, 68, 56, 4)){ // Tactile name switcher
+      if (mouseInRect(52, 67, ctx.measureText(newGameWindow.name).width/PIXEL+12, 6)){ // Tactile name switcher
         drawText("Name: >"+newGameWindow.name+"<", 32, 72, "small");
       }else{
         drawText("Name:  "+newGameWindow.name, 32, 72, "small");
