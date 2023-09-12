@@ -251,8 +251,8 @@ class ShooterFrog extends Frog{
       image:IMAGE.frog.shooter[lvl],
       health: 1+lvl,
       damage: 1+lvl,
-      width: IMAGE.frog.collider[lvl].naturalWidth, 
-      height: IMAGE.frog.collider[lvl].naturalHeight,
+      width: IMAGE.frog.shooter[lvl].naturalWidth, 
+      height: IMAGE.frog.shooter[lvl].naturalHeight,
       lvl:lvl
     })
   }
@@ -526,10 +526,16 @@ class Game{
     var randX, randY;
     var spaceIsTaken;
     for (let i=0;i<num/2+1;i++){
-      level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,0), new ColliderFrog(0,0,0), num))
+      level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,0), new ColliderFrog(0,0,0), num));
     }
     for (let i=0;i<num/2-1;i++){
-      level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,1), new ColliderFrog(0,0,1), num))
+      level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,1), new ColliderFrog(0,0,1), num));
+    }
+    for (let i=0;i<num/3;i++){
+      level.push.apply(level,this.getNewFrogs(level, new ShooterFrog(0,0,0), new ShooterFrog(0,0,0), num));
+    }
+    for (let i=0;i<num/3-2;i++){
+      level.push.apply(level,this.getNewFrogs(level, new ShooterFrog(0,0,1), new ShooterFrog(0,0,1), num));
     }
     return level;
   }
