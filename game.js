@@ -81,7 +81,40 @@ class Bullet{
   }
 }
 
+class Phage{
+  constructor(x, y, dx, dy, damage){
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    this.life = 100;
+    this.damage = damage;
+  }
 
+  // Updates the bullet
+  update(){
+    this.x += this.dx;
+    this.y += this.dy;
+    this.dy += 0.2;
+    this.life --;
+  }
+
+  // Draws the bullet
+  draw(){
+    drawImage(IMAGE.frog.phage, this.x-Math.round(this.naturalWidth/2), this.y-Math.round(this.naturalHeight/2));
+
+  }
+
+  // Checks if this has hit entity and applies damage
+  checkHit(entity){
+    if (!entity.dead && entity.isInRect(this.x, this.y)){
+      entity.damage(this.damage);
+      this.life = 0;
+      return true
+    }
+    return false
+  }
+}
 
 
 // ENTITIES
@@ -245,6 +278,7 @@ class ColliderFrog extends Frog{
 
 class ShooterFrog extends Frog{
   constructor(x, y, lvl){
+    this.shootCooldown = Math.random()*100+25;
     super({
       fleetx:x,
       fleety:y,
@@ -255,6 +289,17 @@ class ShooterFrog extends Frog{
       height: IMAGE.frog.shooter[lvl].naturalHeight,
       lvl:lvl
     })
+  }
+  attemptShoot(){
+    if (this.dead){
+      return null;
+    }
+    if (this.shootCooldown > 0){
+      this.shootCooldown --;
+      return null;
+    }
+    this.shootCooldown = this.attributes.fireSpeed;
+    return new Bullet(this.x, this.y, 0, -2, this.attributes.damage);
   }
 }
 
@@ -464,6 +509,7 @@ class Game{
     this.frogs = [];
     this.bullets = [];
     this.particles = [];
+    this.phages = [];
     this.entities = this.fleet.concat(this.frogs); // All entities, frogs and ships
     this.heldShip = null;
     this.selectedShip = null;
@@ -497,7 +543,7 @@ class Game{
   }
 
 
-  // Horrible, messy, ostrich algorithm
+  // Horrible, messy, ostrich algorithm that should never had existed but does anyway
   // Gets two mirrored frogs to append to a level
   getNewFrogs(level,frog1,frog2,num){
     var newFrog = frog1;
