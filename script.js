@@ -206,16 +206,27 @@ canvas.onmouseup = function(){ // You know what this does
         newGameWindow.createdSlot = -1;
       }
 
-    }else if (clickedSlot != -1 && deletionStage == -1){ // Enter game window
-      if (mouseInRect(32, 68, 28, 8)){ // Cancel button
-        clickedSlot = -1;
-      }else if (mouseInRect(64, 68, 28, 8)){ // Play game button
-        mode = "game"
-        clickedSlot = -1;
-      }else if (mouseInRect(32, 90, 48, 8)){ // Delete save button
-        //saveSlots[clickedSlot] = null;
-        //clickedSlot = -1;
-        deletionStage = 0;
+    }else if (clickedSlot != -1){ // Enter game window
+      if (deletionStage == -1){
+        if (mouseInRect(32, 68, 28, 8)){ // Cancel button
+          clickedSlot = -1;
+        }else if (mouseInRect(64, 68, 28, 8)){ // Play game button
+          mode = "game"
+          clickedSlot = -1;
+        }else if (mouseInRect(32, 90, 48, 8)){ // Delete save button
+          //saveSlots[clickedSlot] = null;
+          //clickedSlot = -1;
+          deletionStage = 0;
+        }
+      }else if (deletionStage == 0){
+
+        if (mouseInRect(39, 78, 27, 8)){ // Delete button
+          saveSlots[clickedSlot] = null;
+          deletionStage = -1;
+          clickedSlot = -1;
+        }else if (mouseInRect(70, 78, 20, 8) || !mouseInRect(32, 32, 64, 64)){ // Cancel
+          deletionStage = -1;
+        }
       }
 
     }else{ // Title screen
@@ -392,6 +403,11 @@ function renderLoop(currentDelta){
         drawText("You will NEVER ", 38, 58, "small");
         drawText("get your save", 38, 64, "small");
         drawText("back!!!", 38, 70, "small");
+        buttonRect(39, 78, 27, 8, true);
+        buttonRect(70, 78, 20, 8, true);
+        ctx.fillStyle = COLOR.TEXT;
+        drawText("DELETE", 41, 84, "small");
+        drawText("nvm", 73, 84, "small");
       }
 
     }else if (newGameWindow.createdSlot != -1){ // Home page, with "create save" window open
