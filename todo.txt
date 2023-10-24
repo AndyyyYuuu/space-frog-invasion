@@ -1,0 +1,9 @@
+
+Known Bugs: 
+- If clicked on screen before victory text disappears, all future playthroughs show victory at the beginning (battlefield is not updated)
+
+To Be Added:
+
+
+Ideas:
+
