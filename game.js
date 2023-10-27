@@ -716,7 +716,9 @@ class Game{
         this.newShip.mouseX = null;
         this.newShip.mouseY = null;
       }else{ // Options screen clicking
-        if (mouseInRect(36, 84, 56, 8)){
+        if (mouseInRect(36, 72, 56, 8)){ // back to game
+          this.inOptions = false;
+        }else if (mouseInRect(36, 84, 56, 8)){ // save and quit
           this.inOptions = false;
           game = null;
           mode = "start";
@@ -742,7 +744,7 @@ class Game{
     if (this.state == 0){
       ctx.globalAlpha = Math.round(this.uiFadeFrames/4)/8; 
       buttonRect(83, 68, 29, 8, !this.inOptions); // Battle button
-      buttonRect2(4, 6, 9, 9, !this.inOptions)
+      buttonRect2(4, 6, 9, 9, !this.inOptions);
       ctx.fillStyle = COLOR.TEXT;
       drawImage(IMAGE.ui.settingsIcon, 6, 8);
       drawImage(IMAGE.currency.metal, 2, 70);
@@ -817,9 +819,10 @@ class Game{
         uiRect(32, 32, 64, 64);
         ctx.fillStyle = COLOR.TEXT;
         drawText("OPTIONS", 48, 28, "small");
-        buttonRect(36, 84, 56, 8);
-        buttonRect(36, 72, 56, 8);
+        buttonRect(36, 72, 56, 8); // Back to game
+        buttonRect(36, 84, 56, 8); // Save & exit
         ctx.fillStyle = COLOR.TEXT;
+        drawText("Back to Game", 40, 78, "small");
         drawText("SAVE & EXIT", 42, 90, "small");
       }
       
