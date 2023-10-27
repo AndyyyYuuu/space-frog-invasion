@@ -18,7 +18,6 @@ const BUTTONS_Y = 56; // The Y level of home page slot buttons
 
 const RANDWORDS = {
   adj: ["Crunchy ", "Space ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Hyper", "Slimy ", "Jazzy ", "Singing ", "Shooter ", "Starry ", "Funky ", "Pixel ", "Swingin' ", "Bebop ", "Bluesy ", "Shiny ", "Hairy "],
-  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleet", "War", "Ships", "Stars", "Plasma", "Spheres", "Battle", "Slime", "Nebula", "Toads", "Blast", "Force", "Aliens", "Trek"]
 }
 
 
@@ -233,7 +232,7 @@ canvas.onmouseup = function(){ // You know what this does
 
     }else{ // Title screen
       for (let i=0; i<3; i++){
-        if (mouseInRect(32, BUTTONS_Y+20*i, 64, 16)){
+        if (mouseInRect(26, BUTTONS_Y+20*i, 76, 16)){
           if (saveSlots[i] == null){ // If slot is empty
             newGameWindow.createdSlot = i;
             newGameWindow.name = randName();
@@ -436,13 +435,13 @@ function renderLoop(currentDelta){
       
 
       for (let i = 0; i < 3; i ++){
-        buttonRect(26, BUTTONS_Y + 20 * i, 70, 16);
+        buttonRect(26, BUTTONS_Y + 20 * i, 76, 16);
 
         ctx.fillStyle = COLOR.TEXT;
         drawText("Save Slot "+(i+1), 36, BUTTONS_Y+7+20*i, "small");
         if (saveSlots[i] == null){
           ctx.globalAlpha = 0.6;
-          if (mouseInRect(32, BUTTONS_Y+20*i, 64, 16)){ // Tactile save slot buttons
+          if (mouseInRect(26, BUTTONS_Y+20*i, 76, 16)){ // Tactile save slot buttons
             drawText("< Create New >", 36, BUTTONS_Y+13+20*i, "small");
           }else{
             drawText("  Empty Save  ", 36, BUTTONS_Y+13+20*i, "small");
@@ -450,7 +449,7 @@ function renderLoop(currentDelta){
           ctx.globalAlpha = 1;
         }else{
           
-          if (mouseInRect(32, BUTTONS_Y+20*i, 64, 16)){
+          if (mouseInRect(26, BUTTONS_Y+20*i, 76, 16)){
             drawText("> "+saveSlots[i].name, 36, BUTTONS_Y+13+20*i);
           }else{
             drawText("  "+saveSlots[i].name, 36, BUTTONS_Y+13+20*i);
