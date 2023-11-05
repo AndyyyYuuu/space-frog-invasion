@@ -104,7 +104,7 @@ class Phage{
     }else{
       this.x += this.dx;
       this.y += this.dy;
-      this.dy += 0.2;
+      this.dy += 0.1;
       this.life --;
     }
   }
@@ -124,6 +124,16 @@ class Phage{
         entity.dx = (entity.dx + this.dx)/2
         this.dx = 0;
         this.dy = 0;
+        return false; 
+      }
+    }else if (this.latching && this.latched_entity == entity){
+      if (this.latched_entity.health <= 0){
+        return true;
+      }
+      if (this.explosion_time <= 0){
+        entity.health -= this.damage;
+        entity.dx += this.latch_x;
+        entity.dy += this.latch_y;
         return true;
       }
     }
@@ -317,7 +327,7 @@ class ShooterFrog extends Frog{
       return null;
     }
     this.shootCooldown = this.attributes.fireSpeed;
-    return new Phage(this.x, this.y, 0, 0.2, this.attributes.damage);
+    return new Phage(this.x, this.y, 0, 0, this.attributes.damage);
   }
 }
 
@@ -558,12 +568,13 @@ class Game{
   // Horrible, messy, ostrich algorithm that should never had existed but does anyway
   // Gets two mirrored frogs to append to a level
   getNewFrogs(level,frog1,frog2,num){
+    const FROGS_PLACEMENT = -8; 
     var newFrog = frog1;
     var mirroredFrog = frog2;
     var spaceIsTaken = true;
     while (spaceIsTaken){
       newFrog.attributes.fleetx = (56-4*num)+Math.random()*(1+4*num);
-      newFrog.attributes.fleety = 8+Math.random()*32;
+      newFrog.attributes.fleety = FROGS_PLACEMENT+Math.random()*32;
       mirroredFrog.attributes.fleetx = 128-newFrog.attributes.fleetx;
       mirroredFrog.attributes.fleety = newFrog.attributes.fleety;
       spaceIsTaken = false;
@@ -967,8 +978,17 @@ class Game{
         // Check if phage hits a ship
         for (let j=0; j<this.fleet.length; j++){
           if (this.phages[i].checkHit(this.fleet[j])){
-            
+            this.phages[i].life = 0;
+            for (let k=0;k<20;k++){
+              this.particles.push(new Particle(this.phages[i].x, this.phages[i].y, (Math.random()), (Math.random()), 20, "green"));
+            }
           }
+        }
+
+        // Remove dead phages
+        if (this.phages[i].life <= 0){
+          this.phages.splice(i,1);
+          i--;
         }
       }
 
