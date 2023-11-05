@@ -30,7 +30,9 @@ const COLOR = {
     "#362B87",
     "#CCDDFF"
   ],
-  TITLE: "#fc8d3d"
+  TITLE: "#fc8d3d", 
+  GREEN: ["#ADFF94","#71ED66","#23B84A","#07734F","#023138","#011824"], 
+  GOLD: ["#240013","#4D041C","#822D11","#96561E","#C4A64B","#E0DE77"]
 }
 
 const LEVEL_NAMES = `I have eaten

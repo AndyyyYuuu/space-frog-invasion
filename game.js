@@ -1,4 +1,5 @@
 
+
 // Background Star class
 class Star{
 
@@ -279,7 +280,9 @@ class Frog extends Entity{
 
   // Returns a new collision particle unique to Frogs
   newParticle(x,y){
-    return new Particle(x, y, Math.random()-0.5, Math.random()-0.5, 30, `hsl(${Math.random()*30+80}, 100%, ${Math.random()*10+50}%`);
+    //return new Particle(x, y, Math.random()-0.5, Math.random()-0.5, 30, `hsl(${Math.random()*30+80}, 100%, ${Math.random()*10+50}%`);
+    return new Particle(x, y, Math.random()-0.5, Math.random()-0.5, 40, randChoice(COLOR.GREEN));
+    
   }
   attemptShoot(){
     return null;
@@ -430,7 +433,8 @@ class Ship extends Entity{
   }
 
   newParticle(x,y){
-    return new Particle(x, y, Math.random()-0.5, Math.random()-0.5, 30, `hsl(${Math.random()*35+20}, 100%, ${Math.random()*10+40}%`);
+    //return new Particle(x, y, Math.random()-0.5, Math.random()-0.5, 30, `hsl(${Math.random()*35+20}, 100%, ${Math.random()*10+40}%`);
+    return new Particle(x, y, Math.random()-0.5, Math.random()-0.5, 40, randChoice(COLOR.GOLD));
   }
   
   
@@ -980,7 +984,7 @@ class Game{
           if (this.phages[i].checkHit(this.fleet[j])){
             this.phages[i].life = 0;
             for (let k=0;k<20;k++){
-              this.particles.push(new Particle(this.phages[i].x, this.phages[i].y, (Math.random()), (Math.random()), 20, "green"));
+              this.particles.push(new Particle(this.phages[i].x, this.phages[i].y, (Math.random()), (Math.random()), 20, randChoice(COLOR.GREEN)));
             }
           }
         }
