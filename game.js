@@ -133,8 +133,8 @@ class Phage{
       }
       if (this.explosion_time <= 0){
         entity.health -= this.damage;
-        entity.dx += this.latch_x;
-        entity.dy += this.latch_y;
+        entity.dx += (entity.dx + this.latch_x)/2;
+        entity.dy += (entity.dy + this.latch_y)/2
         return true;
       }
     }
@@ -548,8 +548,8 @@ class Game{
     this.frogsPassed = false;
     this.inOptions = false;
     this.currency = {
-      biomatter:10,
-      metal:10
+      biomatter:0,
+      metal:0
     }
     this.newShip = {
       type: null,
@@ -576,7 +576,9 @@ class Game{
     var newFrog = frog1;
     var mirroredFrog = frog2;
     var spaceIsTaken = true;
-    while (spaceIsTaken){
+    var attempts = 0;
+    while (spaceIsTaken && attempts < 100){
+      attempts ++;
       newFrog.attributes.fleetx = (56-4*num)+Math.random()*(1+4*num);
       newFrog.attributes.fleety = FROGS_PLACEMENT+Math.random()*32;
       mirroredFrog.attributes.fleetx = 128-newFrog.attributes.fleetx;
@@ -598,7 +600,7 @@ class Game{
     var level = [];
     var randX, randY;
     var spaceIsTaken;
-    level.push.apply(level,this.getNewFrogs(level, new ShooterFrog(0,0,0), new ShooterFrog(0,0,0), num));
+    // level.push.apply(level,this.getNewFrogs(level, new ShooterFrog(0,0,0), new ShooterFrog(0,0,0), num)); // Test shooter frogs
     for (let i=0;i<num/2+1;i++){
       level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,0), new ColliderFrog(0,0,0), num));
     }
