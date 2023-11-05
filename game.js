@@ -91,7 +91,6 @@ class Phage{
     this.damage = damage;
   }
 
-  // Updates the bullet
   update(){
     this.x += this.dx;
     this.y += this.dy;
@@ -99,10 +98,8 @@ class Phage{
     this.life --;
   }
 
-  // Draws the bullet
   draw(){
-    drawImage(IMAGE.frog.phage, this.x-Math.round(this.naturalWidth/2), this.y-Math.round(this.naturalHeight/2));
-
+    drawImage(IMAGE.frog.phage, this.x-Math.round(IMAGE.frog.phage.naturalWidth/2), this.y-Math.round(IMAGE.frog.phage.naturalHeight/2));
   }
 
   // Checks if this has hit entity and applies damage
@@ -256,6 +253,9 @@ class Frog extends Entity{
   newParticle(x,y){
     return new Particle(x, y, Math.random()-0.5, Math.random()-0.5, 30, `hsl(${Math.random()*30+80}, 100%, ${Math.random()*10+50}%`);
   }
+  attemptShoot(){
+    return null;
+  }
 
 }
 
@@ -278,7 +278,7 @@ class ColliderFrog extends Frog{
 
 class ShooterFrog extends Frog{
   constructor(x, y, lvl){
-    this.shootCooldown = Math.random()*100+25;
+    
     super({
       fleetx:x,
       fleety:y,
@@ -287,19 +287,23 @@ class ShooterFrog extends Frog{
       damage: 1+lvl,
       width: IMAGE.frog.shooter[lvl].naturalWidth, 
       height: IMAGE.frog.shooter[lvl].naturalHeight,
+      fireSpeed: 200/(lvl+4)+25,
       lvl:lvl
     })
+    this.shootCooldown = Math.random()*100+25;
   }
   attemptShoot(){
+    
     if (this.dead){
       return null;
     }
+    
     if (this.shootCooldown > 0){
       this.shootCooldown --;
       return null;
     }
     this.shootCooldown = this.attributes.fireSpeed;
-    return new Bullet(this.x, this.y, 0, -2, this.attributes.damage);
+    return new Phage(this.x, this.y, 0, 0.2, this.attributes.damage);
   }
 }
 
@@ -571,6 +575,7 @@ class Game{
     var level = [];
     var randX, randY;
     var spaceIsTaken;
+    level.push.apply(level,this.getNewFrogs(level, new ShooterFrog(0,0,0), new ShooterFrog(0,0,0), num));
     for (let i=0;i<num/2+1;i++){
       level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,0), new ColliderFrog(0,0,0), num));
     }
@@ -595,6 +600,7 @@ class Game{
     this.selectedShip = null;
     this.particles = [];
     this.bullets = [];
+    this.phages = [];
     if (this.frogLevels.length <= this.currentLevel){
       this.frogLevels.push(this.newLevel(this.currentLevel))
     }
@@ -884,6 +890,12 @@ class Game{
             }
             
           }
+          
+          // Shoot phages
+          var nextPhage = this.frogs[i].attemptShoot();
+          if (nextPhage != null){
+            this.phages.push(nextPhage);
+          }
 
           // Collide with other frogs
           for (var j=0;j<this.frogs.length;j++){
@@ -936,6 +948,11 @@ class Game{
           this.bullets.splice(i,1);
           i--;
         }
+      }
+
+      for (let i=0;i<this.phages.length; i++){
+        this.phages[i].draw();
+        this.phages[i].update();
       }
 
       // Draw and update particles
