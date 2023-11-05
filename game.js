@@ -314,7 +314,7 @@ class ShooterFrog extends Frog{
       image:IMAGE.frog.shooter[lvl],
       health: 1+lvl,
       damage: 1+lvl,
-      fireSpeed: 200/(lvl+4)+25,
+      fireSpeed: 200/(lvl+4)+40,
       lvl:lvl
     })
     this.shootCooldown = Math.random()*100+25;
@@ -542,7 +542,7 @@ class Game{
     this.selectedIndex = null;
     this.battleFrames = 0;
     this.gameOverFrames = 0;
-    this.uiFadeFrames = 56;
+    this.endBattleFrames = 56;
     this.frogCount = 0;
     this.shipCount = 0;
     this.frogsPassed = false;
@@ -607,10 +607,10 @@ class Game{
     for (let i=0;i<num/2-1;i++){
       level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,1), new ColliderFrog(0,0,1), num));
     }
-    for (let i=0;i<num/3;i++){
+    for (let i=0;i<num/3-1;i++){
       level.push.apply(level,this.getNewFrogs(level, new ShooterFrog(0,0,0), new ShooterFrog(0,0,0), num));
     }
-    for (let i=0;i<num/3-2;i++){
+    for (let i=0;i<num/3-3;i++){
       level.push.apply(level,this.getNewFrogs(level, new ShooterFrog(0,0,1), new ShooterFrog(0,0,1), num));
     }
     return level;
@@ -641,7 +641,7 @@ class Game{
     this.state = 0;
     this.battleFrames = 0;
     this.gameOverFrames = 0;
-    this.uiFadeFrames = 0;
+    this.endBattleFrames = 0;
     if (victory){
       this.currentLevel ++;
       this.currency.metal += 1;
@@ -708,7 +708,7 @@ class Game{
 
   // Runs on mouse release event
   release(){
-    if (this.state == 0 && this.uiFadeFrames >= 56){
+    if (this.state == 0 && this.endBattleFrames >= 56){
       if (!this.inOptions){
         if (this.newShip.type != null){
           if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
@@ -762,18 +762,18 @@ class Game{
   render(){
 
     for (let i=0;i<this.starMap.length;i++){
-      this.starMap[i].draw(Math.min(Math.round(Math.min(0,this.battleFrames/2-this.uiFadeFrames/2)),TRANSITION_MOVE/2));
+      this.starMap[i].draw(Math.min(Math.round(Math.min(0,this.battleFrames/2-this.endBattleFrames/2)),TRANSITION_MOVE/2));
     }
-    if (this.state == 0 && this.uiFadeFrames < TRANSITION_MOVE){
-      this.uiFadeFrames ++;
+    if (this.state == 0 && this.endBattleFrames < TRANSITION_MOVE){
+      this.endBattleFrames ++;
     }
-    // Bottom UI menu
-    ctx.globalAlpha = Math.round(this.uiFadeFrames/4)/8; 
+    // Bottom UI menu 
+    ctx.globalAlpha = Math.round(Math.min(this.endBattleFrames)/4)/8; 
     uiRect(4, 80+Math.min(64,this.battleFrames*3), 120, 44);
     ctx.globalAlpha = 1;
 
     if (this.state == 0){
-      ctx.globalAlpha = Math.round(this.uiFadeFrames/4)/8; 
+      ctx.globalAlpha = Math.round(this.endBattleFrames/4)/8; 
       buttonRect(83, 68, 29, 8, !this.inOptions); // Battle button
       buttonRect2(4, 6, 9, 9, !this.inOptions);
       ctx.fillStyle = COLOR.TEXT;
