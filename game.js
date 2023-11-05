@@ -89,25 +89,43 @@ class Phage{
     this.dy = dy;
     this.life = 100;
     this.damage = damage;
+    this.latching = false;
+    this.latch_x = null;
+    this.latch_y = null;
+    this.latched_entity = null;
+    this.explosion_time = 64;
   }
 
   update(){
-    this.x += this.dx;
-    this.y += this.dy;
-    this.dy += 0.2;
-    this.life --;
+    if (this.latching){
+      this.x = this.latched_entity.x + this.latch_x;
+      this.y = this.latched_entity.y + this.latch_y;
+      this.explosion_time --;
+    }else{
+      this.x += this.dx;
+      this.y += this.dy;
+      this.dy += 0.2;
+      this.life --;
+    }
   }
 
   draw(){
-    drawImage(IMAGE.frog.phage, this.x-Math.round(IMAGE.frog.phage.naturalWidth/2), this.y-Math.round(IMAGE.frog.phage.naturalHeight/2));
+    drawImage(IMAGE.frog.phage, this.x-IMAGE.frog.phage.naturalWidth/2, this.y-IMAGE.frog.phage.naturalHeight/2);
   }
 
-  // Checks if this has hit entity and applies damage
   checkHit(entity){
-    if (!entity.dead && entity.isInRect(this.x, this.y)){
-      entity.damage(this.damage);
-      this.life = 0;
-      return true
+    if (!this.latching){
+      if (!entity.dead && entity.isInRect(this.x, this.y)){
+        this.latching = true;
+        this.latch_x = this.x - entity.x;
+        this.latch_y = this.y - entity.y;
+        this.latched_entity = entity;
+        entity.dy = (entity.dy + this.dy)/2
+        entity.dx = (entity.dx + this.dx)/2
+        this.dx = 0;
+        this.dy = 0;
+        return true;
+      }
     }
     return false
   }
@@ -197,11 +215,11 @@ class Entity{
   }
 
   getWidth(){
-    return this.attributes.image.naturalWidth
+    return this.attributes.image.naturalWidth;
   }
 
   getHeight(){
-    return this.attributes.image.naturalHeight
+    return this.attributes.image.naturalHeight;
   }
 
   // Starts the battle for the Entity
@@ -268,8 +286,6 @@ class ColliderFrog extends Frog{
       image:IMAGE.frog.collider[lvl],
       health: 2+lvl*2,
       damage: 1+lvl,
-      width: IMAGE.frog.collider[lvl].naturalWidth, 
-      height: IMAGE.frog.collider[lvl].naturalHeight,
       lvl:lvl
     })
   }
@@ -285,8 +301,6 @@ class ShooterFrog extends Frog{
       image:IMAGE.frog.shooter[lvl],
       health: 1+lvl,
       damage: 1+lvl,
-      width: IMAGE.frog.shooter[lvl].naturalWidth, 
-      height: IMAGE.frog.shooter[lvl].naturalHeight,
       fireSpeed: 200/(lvl+4)+25,
       lvl:lvl
     })
@@ -426,8 +440,6 @@ class ShooterShip extends Ship{
       price: 2,
       health: 2+lvl,
       damage: 2+lvl*2,
-      width: 5, //IMAGE.ship.shooter[lvl].naturalWidth,
-      height: 6, //IMAGE.ship.shooter[lvl].naturalHeight,
       image: IMAGE.ship.shooter[lvl], 
       fleetx: x,
       fleety: y,
@@ -457,8 +469,6 @@ class ColliderShip extends Ship{
       price: 1,
       health: 2+lvl*2,
       damage: 1+lvl,
-      width: 5, //IMAGE.ship.collider[lvl].naturalWidth,
-      height: 6, //IMAGE.ship.collider[lvl].naturalHeight,
       image: IMAGE.ship.collider[lvl], 
       fleetx: x,
       fleety: y,
@@ -479,8 +489,6 @@ class HealerShip extends Ship{
       price: 3,
       health: 2+lvl*2,
       damage: 1+lvl,
-      width: 5, //IMAGE.ship.collider[lvl].naturalWidth,
-      height: 6, //IMAGE.ship.collider[lvl].naturalHeight,
       image: IMAGE.ship.collider[lvl], 
       fleetx: x,
       fleety: y,
@@ -892,9 +900,11 @@ class Game{
           }
           
           // Shoot phages
-          var nextPhage = this.frogs[i].attemptShoot();
-          if (nextPhage != null){
-            this.phages.push(nextPhage);
+          if (this.battleFrames > 64){
+            var nextPhage = this.frogs[i].attemptShoot();
+            if (nextPhage != null){
+              this.phages.push(nextPhage);
+            }
           }
 
           // Collide with other frogs
@@ -953,6 +963,13 @@ class Game{
       for (let i=0;i<this.phages.length; i++){
         this.phages[i].draw();
         this.phages[i].update();
+
+        // Check if phage hits a ship
+        for (let j=0; j<this.fleet.length; j++){
+          if (this.phages[i].checkHit(this.fleet[j])){
+            
+          }
+        }
       }
 
       // Draw and update particles
