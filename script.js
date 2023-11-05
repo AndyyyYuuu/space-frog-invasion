@@ -49,7 +49,7 @@ And so cold`.split(/\r?\n|\r|\n/g);
 
 // Some settings
 var settings = {
-  pixelChecker: false, 
+  pixelChecker: true, 
   // Pixel checker: a pixel that follows the mouse, useful to make sure pixels are aligned
 }
 
@@ -78,6 +78,9 @@ var newGameWindow = {//Stores variables for creating a new game
 
 var clickedSlot = -1;
 var deletionStage = -1;
+
+var titleY = 96;
+var dTitleY = 4;
 
 var mouseX = -1;
 var mouseY = -1;
@@ -431,11 +434,16 @@ function renderLoop(currentDelta){
     
     }else{ // Home page, "create save" window not open
 
-      ctx.drawImage(IMAGE.ui.title, 256 - IMAGE.ui.title.naturalWidth/2*PIXEL, 96, IMAGE.ui.title.naturalWidth*PIXEL, IMAGE.ui.title.naturalHeight*PIXEL);
+      ctx.drawImage(IMAGE.ui.title, 256 - IMAGE.ui.title.naturalWidth/2*PIXEL, titleY, IMAGE.ui.title.naturalWidth*PIXEL, IMAGE.ui.title.naturalHeight*PIXEL);
 
       ctx.strokeStyle = COLOR.UI;
 
-      
+      if (frames % 10 == 0){
+        if (titleY == 88 || titleY == 100){
+          dTitleY = -dTitleY;
+        }
+        titleY += dTitleY;
+      }
 
       for (let i = 0; i < 3; i ++){
         buttonRect(26, BUTTONS_Y + 20 * i, 76, 16);
