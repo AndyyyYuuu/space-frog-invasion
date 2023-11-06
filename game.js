@@ -1,5 +1,6 @@
 
 
+
 // Background Star class
 class Star{
 
@@ -522,16 +523,12 @@ class HealerShip extends Ship{
 
 class Game{
   constructor(name){
+
+    this.TRANSITION_SPEED = 0.05;
+
     this.name = name;
     this.state = 0;
     this.fleet = [new ShooterShip(64, 32, 0),new ColliderShip(48, 44, 0),new ColliderShip(80, 44, 0)];
-    /*this.fleet = [];
-    
-    for (var i=0;i<4;i++){
-      for (var j=0;j<16;j++){
-        this.fleet.push(new ShooterShip(18+j*6, 20+i*12, 2));
-      }
-    }*/
     this.frogs = [];
     this.bullets = [];
     this.particles = [];
@@ -547,6 +544,7 @@ class Game{
     this.shipCount = 0;
     this.frogsPassed = false;
     this.inOptions = false;
+    this.uiAlpha = 1;
     this.currency = {
       biomatter:0,
       metal:0
@@ -767,13 +765,45 @@ class Game{
     if (this.state == 0 && this.endBattleFrames < TRANSITION_MOVE){
       this.endBattleFrames ++;
     }
-    // Bottom UI menu 
-    ctx.globalAlpha = Math.round(Math.min(this.endBattleFrames)/4)/8; 
-    uiRect(4, 80+Math.min(64,this.battleFrames*3), 120, 44);
-    ctx.globalAlpha = 1;
+    
 
-    if (this.state == 0){
-      ctx.globalAlpha = Math.round(this.endBattleFrames/4)/8; 
+    if (this.state == 0 || this.uiAlpha != 0){
+
+      ctx.globalAlpha = this.uiAlpha;
+
+      if (this.state == 0){
+
+        if (this.uiAlpha < 1){
+          this.uiAlpha = Math.round((this.uiAlpha+this.TRANSITION_SPEED)*100)/100;
+        }
+
+        for (let i=0; i<this.fleet.length; i++){
+          this.fleet[i].layoutDraw();
+        }
+        if (this.selectedShip != null){// draw box around selected ship
+          selectRect(Math.round(this.selectedShip.attributes.fleetx-this.selectedShip.getWidth()/2), Math.round(this.selectedShip.attributes.fleety-this.selectedShip.getHeight()/2), this.selectedShip.getWidth(), this.selectedShip.getHeight());
+        }
+
+        if (this.heldShip != null){
+          if (mouseIsDown){
+            this.heldShip.attributes.fleetx = Math.min(Math.max(mouseX-this.heldShip.dragX, this.FORMATION_SCREEN.x+Math.floor(this.heldShip.getWidth()/2)), this.FORMATION_SCREEN.x + this.FORMATION_SCREEN.w - Math.ceil(this.heldShip.getWidth()/2));
+            this.heldShip.attributes.fleety = Math.min(Math.max(mouseY-this.heldShip.dragY, this.FORMATION_SCREEN.y+Math.floor(this.heldShip.getHeight()/2)), this.FORMATION_SCREEN.y + this.FORMATION_SCREEN.h - Math.ceil(this.heldShip.getHeight()/2));
+
+          }else{
+            this.heldShip = null;
+          }
+          ctx.globalAlpha *= 0.5;
+          uiRect(this.FORMATION_SCREEN.x, this.FORMATION_SCREEN.y, this.FORMATION_SCREEN.w, this.FORMATION_SCREEN.h, true);
+          ctx.globalAlpha *= 2;
+        }
+
+      }
+      
+
+      
+
+      // Bottom UI menu 
+      uiRect(4, 80, 120, 44);
       buttonRect(83, 68, 29, 8, !this.inOptions); // Battle button
       buttonRect2(4, 6, 9, 9, !this.inOptions);
       ctx.fillStyle = COLOR.TEXT;
@@ -788,27 +818,6 @@ class Game{
       drawText("BATTLE!",85,74,"small");
       
       
-      for (let i=0; i<this.fleet.length; i++){
-        this.fleet[i].layoutDraw();
-        
-      }
-
-      if (this.selectedShip != null){// draw box around selected ship
-        selectRect(Math.round(this.selectedShip.attributes.fleetx-this.selectedShip.getWidth()/2), Math.round(this.selectedShip.attributes.fleety-this.selectedShip.getHeight()/2), this.selectedShip.getWidth(), this.selectedShip.getHeight());
-      }
-
-      if (this.heldShip != null){
-        if (mouseIsDown){
-          this.heldShip.attributes.fleetx = Math.min(Math.max(mouseX-this.heldShip.dragX, this.FORMATION_SCREEN.x+Math.floor(this.heldShip.getWidth()/2)), this.FORMATION_SCREEN.x + this.FORMATION_SCREEN.w - Math.ceil(this.heldShip.getWidth()/2));
-          this.heldShip.attributes.fleety = Math.min(Math.max(mouseY-this.heldShip.dragY, this.FORMATION_SCREEN.y+Math.floor(this.heldShip.getHeight()/2)), this.FORMATION_SCREEN.y + this.FORMATION_SCREEN.h - Math.ceil(this.heldShip.getHeight()/2));
-
-        }else{
-          this.heldShip = null;
-        }
-        ctx.globalAlpha *= 0.5;
-        uiRect(this.FORMATION_SCREEN.x, this.FORMATION_SCREEN.y, this.FORMATION_SCREEN.w, this.FORMATION_SCREEN.h, true);
-        ctx.globalAlpha *= 2;
-      }
 
 
       // Bottom ui, text
@@ -841,6 +850,7 @@ class Game{
         }
 
       }
+
       ctx.globalAlpha = 1;
 
       // Options window
@@ -856,12 +866,15 @@ class Game{
         drawText("Back to Game", 40, 78, "small");
         drawText("SAVE & EXIT", 42, 90, "small");
       }
-      
-      
+    }
 
-    }else if (this.state == 1){
+    if (this.state == 1){
+      console.log(this.uiAlpha);
       if (this.gameOverFrames > 64){
         ctx.globalAlpha = Math.min(1,Math.round(20-(this.gameOverFrames-64)/8)/30);
+      }
+      if (this.uiAlpha > 0){
+        this.uiAlpha = Math.round((this.uiAlpha-this.TRANSITION_SPEED)*100)/100;
       }
       this.battleFrames ++;
       this.shipCount = 0;
