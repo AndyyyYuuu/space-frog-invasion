@@ -769,12 +769,12 @@ class Game{
 
     if (this.state == 0 || this.uiAlpha != 0){
 
-      ctx.globalAlpha = this.uiAlpha;
+      ctx.globalAlpha = Math.round(this.uiAlpha*6)/6;
 
       if (this.state == 0){
 
         if (this.uiAlpha < 1){
-          this.uiAlpha = Math.round((this.uiAlpha+this.TRANSITION_SPEED)*100)/100;
+          this.uiAlpha = Math.round((this.uiAlpha+this.TRANSITION_SPEED)*100)/100; // Prevent rounding errors
         }
 
         for (let i=0; i<this.fleet.length; i++){
@@ -869,7 +869,6 @@ class Game{
     }
 
     if (this.state == 1){
-      console.log(this.uiAlpha);
       if (this.gameOverFrames > 64){
         ctx.globalAlpha = Math.min(1,Math.round(20-(this.gameOverFrames-64)/8)/30);
       }
