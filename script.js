@@ -108,7 +108,12 @@ var IMAGE = {
     selectCorner: newImage("misc/select-corner.png"),
     selectFrame: newImage("misc/select-frame.png"),
     settingsIcon: newImage("ui/settings.png"), 
-    title: newImage("ui/title.png")
+    title: newImage("ui/title.png"),
+    sidebar: {
+      frame: newImage("ui/sidebar/frame.png"),
+      ship: newImage("ui/sidebar/ship.png"),
+      frog: newImage("ui/sidebar/frog.png")
+    }
   },
   currency: {
     biomatter: newImage("item/debris-frog.png"),
