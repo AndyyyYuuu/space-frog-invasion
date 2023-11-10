@@ -363,11 +363,38 @@ function creditsOpacity(currentFrame, startAt, duration){
   return Math.max(1-round((currentFrame-startAt-duration*0.6)/20, 8),0);
 }
 
+// Background Star class
+class TitleStar{
+  constructor(y = (Math.random() * 192 - 64)){
+    this.x = Math.random() * 128;
+    this.y = Math.round(y);
+    this.opacity = Math.random()*0.5+0.25;
+    this.speed = 0.5;
+    this.isRed = Math.random() < 0.001;
+    if (this.isRed){
+      this.opacity += 0.5;
+    }
+  }
+
+  // Draw the star and update its position
+  draw(){
+    this.y += this.speed;
+    ctx.globalAlpha = this.opacity;
+    ctx.fillStyle = this.isRed ? "red":"white";
+    ctx.fillRect(Math.round(this.x)*PIXEL, Math.round(this.y)*PIXEL, PIXEL, PIXEL);
+    ctx.globalAlpha = 1;
+  }
+}
+
 var frames = 1;
 var creditsFrames = 0;
 const FPS_LIMIT = 40;
 var updateId,
     previousDelta = 0;
+var bgStars = []; 
+for (var i=0; i<100; i++){
+  bgStars.push(new TitleStar());
+}
 
 function renderLoop(currentDelta){
 
@@ -384,6 +411,13 @@ function renderLoop(currentDelta){
     game.render(); // runs (1 tick of) render loop of the game 
 
   }else if (mode == "start"){
+    for (let i = 0; i < bgStars.length; i++){
+      bgStars[i].draw();
+      
+    }
+    if (Math.random() < 0.15){
+      bgStars.push(new TitleStar(y = -16));
+    }
     // newGameWindow.createdSlot: the index of the slot the player is trying to create a game in
 
     if (clickedSlot != -1){ // Home page, with "enter game" window open
@@ -439,6 +473,7 @@ function renderLoop(currentDelta){
     
     }else{ // Home page, "create save" window not open
 
+      titleY = Math.round((Math.sin(frames/12)*11+96)/4)*4 // Do you like this, Barry? 
       ctx.drawImage(IMAGE.ui.title, 256 - IMAGE.ui.title.naturalWidth/2*PIXEL, titleY, IMAGE.ui.title.naturalWidth*PIXEL, IMAGE.ui.title.naturalHeight*PIXEL);
 
       ctx.strokeStyle = COLOR.UI;
