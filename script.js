@@ -413,10 +413,13 @@ function renderLoop(currentDelta){
   }else if (mode == "start"){
     for (let i = 0; i < bgStars.length; i++){
       bgStars[i].draw();
-      
+      if (bgStars[i].y > 128){
+        bgStars.splice(i, 1);
+        i--;
+      }
     }
     if (Math.random() < 0.15){
-      bgStars.push(new TitleStar(y = -16));
+      bgStars.push(new TitleStar(y = -2));
     }
     // newGameWindow.createdSlot: the index of the slot the player is trying to create a game in
 
