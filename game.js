@@ -789,6 +789,8 @@ class Game{
         }
 
         if (this.heldShip != null){
+          this.selectedShip = this.heldShip;
+          //selectRect(Math.round(this.heldShip.attributes.fleetx-this.heldShip.getWidth()/2), Math.round(this.heldShip.attributes.fleety-this.heldShip.getHeight()/2), this.heldShip.getWidth(), this.heldShip.getHeight());
           if (mouseIsDown){
             this.heldShip.attributes.fleetx = Math.min(Math.max(mouseX-this.heldShip.dragX, this.FORMATION_SCREEN.x+Math.floor(this.heldShip.getWidth()/2)), this.FORMATION_SCREEN.x + this.FORMATION_SCREEN.w - Math.ceil(this.heldShip.getWidth()/2));
             this.heldShip.attributes.fleety = Math.min(Math.max(mouseY-this.heldShip.dragY, this.FORMATION_SCREEN.y+Math.floor(this.heldShip.getHeight()/2)), this.FORMATION_SCREEN.y + this.FORMATION_SCREEN.h - Math.ceil(this.heldShip.getHeight()/2));

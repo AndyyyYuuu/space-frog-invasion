@@ -114,7 +114,8 @@ var IMAGE = {
       frame: newImage("ui/sidebar/frame.png"),
       ship: newImage("ui/sidebar/ship.png"),
       frog: newImage("ui/sidebar/frog.png")
-    }
+    },
+    cursor: newImage("misc/cursor.png")
   },
   currency: {
     biomatter: newImage("item/debris-frog.png"),
@@ -556,12 +557,13 @@ function renderLoop(currentDelta){
     }
     ctx.textAlign = "left";
   }
-
+  /*
   if (settings.pixelChecker){ // Pixel checker tool
     ctx.globalAlpha = 0.5;
     drawImage(IMAGE.debug.pixelChecker, mouseX-4, mouseY-4);
     ctx.globalAlpha = 1;
-  }
+  }*/
+  drawImage(IMAGE.ui.cursor, Math.round(mouseX-2.5), Math.round(mouseY-2.5))
 
   previousDelta = currentDelta;
 }

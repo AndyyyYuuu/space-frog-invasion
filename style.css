@@ -20,10 +20,12 @@ html, body {
   margin: 0px;
   background-color: dimgray;
   overflow: hidden;
+
 }
 canvas{
   /*border: 4px solid white;*/
   background: black;
   font-smooth: never;
   -webkit-font-smoothing: none;
+  cursor: none;
 }
