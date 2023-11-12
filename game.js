@@ -122,8 +122,8 @@ class Phage{
         this.latch_x = this.x - entity.x;
         this.latch_y = this.y - entity.y;
         this.latched_entity = entity;
-        entity.dy = (entity.dy + this.dy)/2
-        entity.dx = (entity.dx + this.dx)/2
+        entity.dy = (entity.dy + this.dy)/3;
+        entity.dx = (entity.dx + this.dx)/3;
         this.dx = 0;
         this.dy = 0;
         return false; 
@@ -134,8 +134,8 @@ class Phage{
       }
       if (this.explosion_time <= 0){
         entity.health -= this.damage;
-        entity.dx += (entity.dx + this.latch_x)/2;
-        entity.dy += (entity.dy + this.latch_y)/2
+        entity.dx += -this.latch_x/3;
+        entity.dy += -this.latch_y/3;
         return true;
       }
     }
