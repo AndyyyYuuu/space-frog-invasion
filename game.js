@@ -555,8 +555,8 @@ class Game{
       mouseY: null
     }
     this.starMap = [];
-    this.frogLevels = [];
     this.currentLevel = 0;
+    this.frogLevels = [this.newLevel(this.currentLevel)];
     for (var i=0;i<100;i++){
       this.starMap.push(new Star());
     }
@@ -624,9 +624,7 @@ class Game{
     this.particles = [];
     this.bullets = [];
     this.phages = [];
-    if (this.frogLevels.length <= this.currentLevel){
-      this.frogLevels.push(this.newLevel(this.currentLevel))
-    }
+    
     this.frogs = this.frogLevels[this.currentLevel];
     for (let i=0; i<this.fleet.concat(this.frogs).length; i++){
       this.fleet.concat(this.frogs)[i].startBattle();
@@ -640,9 +638,13 @@ class Game{
     this.battleFrames = 0;
     this.gameOverFrames = 0;
     this.endBattleFrames = 0;
+    
     if (victory){
       this.currentLevel ++;
       this.currency.metal += 1;
+    }
+    if (this.frogLevels.length <= this.currentLevel){
+      this.frogLevels.push(this.newLevel(this.currentLevel))
     }
   }
 
@@ -777,9 +779,11 @@ class Game{
           this.uiAlpha = Math.round((this.uiAlpha+this.TRANSITION_SPEED)*100)/100; // Prevent rounding errors
         }
 
+        // Draw fleet
         for (let i=0; i<this.fleet.length; i++){
           this.fleet[i].layoutDraw();
         }
+
         if (this.selectedShip != null){// draw box around selected ship
           selectRect(Math.round(this.selectedShip.attributes.fleetx-this.selectedShip.getWidth()/2), Math.round(this.selectedShip.attributes.fleety-this.selectedShip.getHeight()/2), this.selectedShip.getWidth(), this.selectedShip.getHeight());
         }
@@ -795,6 +799,11 @@ class Game{
           ctx.globalAlpha *= 0.5;
           uiRect(this.FORMATION_SCREEN.x, this.FORMATION_SCREEN.y, this.FORMATION_SCREEN.w, this.FORMATION_SCREEN.h, true);
           ctx.globalAlpha *= 2;
+        }
+
+        // Draw frog indicators
+        for (let i = 0; i < this.frogLevels[this.currentLevel].length; i++){
+          drawImage(IMAGE.frog.indicator, this.frogLevels[this.currentLevel][i].attributes.fleetx - 2, (16 + Math.sin(frames*0.3)*0.6))
         }
 
       }

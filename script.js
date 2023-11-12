@@ -99,7 +99,8 @@ var IMAGE = {
     collider: [newImage("frog/collider0.png"), newImage("frog/collider1.png"), newImage("frog/collider2.png")],
     shooter: [newImage("frog/shooter0.png"), newImage("frog/shooter1.png")],
     spawner: [newImage("frog/spawner0.png"),],
-    phage: newImage("frog/phage.png")
+    phage: newImage("frog/phage.png"), 
+    indicator: newImage("frog/indicator.png")
   },
   debug: {
     pixelChecker: newImage("misc/pixel-checker.png")
