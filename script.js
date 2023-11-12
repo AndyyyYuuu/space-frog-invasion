@@ -425,6 +425,7 @@ function renderLoop(currentDelta){
 
     if (clickedSlot != -1){ // Home page, with "enter game" window open
 
+      ctx.fillStyle = COLOR.TEXT; 
       drawText("Slot "+(clickedSlot+1), 32, 54, "small");
       drawText("- " + saveSlots[clickedSlot].name + " -", 32, 62, "small");
       
@@ -460,6 +461,7 @@ function renderLoop(currentDelta){
       }
 
     }else if (newGameWindow.createdSlot != -1){ // Home page, with "create save" window open
+      ctx.fillStyle = COLOR.TEXT; 
       drawText("Create game in Slot "+(newGameWindow.createdSlot+1), 32, 64, "small");
       if (mouseInRect(52, 67, ctx.measureText(newGameWindow.name).width/PIXEL+12, 6)){ // Tactile name switcher
         drawText("Name: >"+newGameWindow.name+"<", 32, 72, "small");

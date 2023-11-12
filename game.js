@@ -803,7 +803,7 @@ class Game{
       
 
       // Bottom UI menu 
-      uiRect(4, 80, 108, 44);
+      uiRect(4, 80, 120, 44);
       buttonRect(83, 68, 29, 8, !this.inOptions); // Battle button
       buttonRect2(4, 6, 9, 9, !this.inOptions);
       ctx.fillStyle = COLOR.TEXT;
@@ -813,7 +813,7 @@ class Game{
       drawImage(IMAGE.currency.biomatter, 34, 70);
       drawText(this.currency.biomatter, 44, 76, "large");
 
-      drawImage(IMAGE.ui.sidebar.frame, 118, 0);
+      //drawImage(IMAGE.ui.sidebar.frame, 118, 0);
 
       drawText("FLEET FORMATION",this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y - 4,"small");
       drawText("BATTLE!",85,74,"small");
