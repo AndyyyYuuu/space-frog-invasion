@@ -543,6 +543,7 @@ class Game{
     this.frogCount = 0;
     this.shipCount = 0;
     this.frogsPassed = false;
+    this.shipsPassed = false;
     this.inOptions = false;
     this.uiAlpha = 1;
     this.currency = {
@@ -890,6 +891,8 @@ class Game{
       this.battleFrames ++;
       this.shipCount = 0;
 
+      this.shipsPassed = true;
+
       // Update fleet
       for (var i=0; i<this.fleet.length; i++){
         if (!this.fleet[i].dead){
@@ -919,7 +922,9 @@ class Game{
             this.fleet[i].collideWith(this.fleet[j], this.particles);
           }
 
-
+          if (this.fleet[i].y > 4){
+            this.shipsPassed = false;
+          }
         }
       }
 
@@ -962,7 +967,7 @@ class Game{
       }
 
       // Game over checks
-      if (this.frogCount == 0 || this.shipCount == 0 || this.frogsPassed){
+      if (this.frogCount == 0 || this.shipCount == 0 || this.frogsPassed || this.shipsPassed){
         this.gameOverFrames ++; 
         if (this.gameOverFrames > 120){
           this.endBattle(this.frogCount == 0);
