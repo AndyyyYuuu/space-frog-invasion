@@ -252,6 +252,7 @@ class Frog extends Entity{
   constructor(attributes){
     attributes.isShip = false;
     super(attributes);
+    this.ddy = 0.02;
   }
 
   draw(){
@@ -270,7 +271,7 @@ class Frog extends Entity{
     super.update();
     
     if (this.dy < 0.2){
-      this.dy += 0.02
+      this.dy += this.ddy
     }
     if (this.health <= 0 && this.dead == false){
       this.dead = true;
@@ -647,6 +648,9 @@ class Game{
     if (this.frogLevels.length <= this.currentLevel){
       this.frogLevels.push(this.newLevel(this.currentLevel))
     }
+    for (var i = 0; i < this.frogs.length; i ++){
+      this.frogs[i].ddy = 0.02;
+    }
   }
 
   // Runs on mousemove event
@@ -973,6 +977,11 @@ class Game{
       // Game over checks
       if (this.frogCount == 0 || this.shipCount == 0 || this.frogsPassed || this.shipsPassed){
         this.gameOverFrames ++; 
+        if (this.gameOverFrames == 1){
+          for (var i = 0; i < this.frogs.length; i ++){
+            this.frogs[i].ddy = 0.8;
+          }
+        }
         if (this.gameOverFrames > 120){
           this.endBattle(this.frogCount == 0);
         }
