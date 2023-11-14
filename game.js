@@ -913,17 +913,21 @@ class Game{
           if (Math.random() < this.fleet[i].thrust/15){
             this.particles.push(new Particle(this.fleet[i].x, this.fleet[i].y, 0, this.fleet[i].dy/2, 10,"cyan"));
           }*/
-          for (var j=0;j<this.frogs.length;j++){
+          for (var j = 0; j < this.frogs.length; j ++){
             this.fleet[i].collideWith(this.frogs[j], this.particles);
             this.frogs[j].collideWith(this.fleet[i], this.particles);
           }
 
-          for (var j=0;j<this.fleet.length;j++){
+          for (var j = 0; j < this.fleet.length; j ++){
             this.fleet[i].collideWith(this.fleet[j], this.particles);
           }
 
-          if (this.fleet[i].y > 4){
-            this.shipsPassed = false;
+          // this.shipsPassed is set to true by default before every update
+          for (var j = 0; j < this.frogs.length; j ++){
+            if (this.fleet[i].y > this.frogs[j].y && !this.fleet[i].dead && !this.frogs[j].dead){
+              this.shipsPassed = false;
+              break;
+            }
           }
         }
       }
