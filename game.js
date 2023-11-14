@@ -461,7 +461,7 @@ class ShooterShip extends Ship{
       typeName: "Shooter",
       lvl: lvl,
       upgrade: new Upgrade("Strengthen", 3+lvl*2, 0, lvl+1, "Shooter"),
-      fireSpeed: 200/(lvl+4)+25
+      fireSpeed: 600/(lvl**2+10)+5
     })
   }
   attemptShoot(){
@@ -593,6 +593,10 @@ class Game{
     return [newFrog, mirroredFrog]
   }
 
+  numFrogs(num, most, min_lvl, max_lvl){
+    return Math.floor(parabola(num, most, min_lvl, max_lvl) + 1);
+  }
+
   // Creates new level with difficulty of num
   newLevel(num){
     //num = 1;
@@ -600,18 +604,19 @@ class Game{
     var randX, randY;
     var spaceIsTaken;
     // level.push.apply(level,this.getNewFrogs(level, new ShooterFrog(0,0,0), new ShooterFrog(0,0,0), num)); // Test shooter frogs
-    for (let i=0;i<num/2+1;i++){
-      level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,0), new ColliderFrog(0,0,0), num));
+
+    for (let frog_lvl=0;frog_lvl<10;frog_lvl++){
+      for (let j=0;j<this.numFrogs(num, 3, frog_lvl*4, frog_lvl*4+5);j++){
+        level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,frog_lvl), new ColliderFrog(0,0,frog_lvl), num));
+      }
     }
-    for (let i=0;i<num/2-1;i++){
-      level.push.apply(level,this.getNewFrogs(level, new ColliderFrog(0,0,1), new ColliderFrog(0,0,1), num));
+
+    for (let frog_lvl=0;frog_lvl<10;frog_lvl++){
+      for (let j=0;j<this.numFrogs(num, 2, frog_lvl*4+3, frog_lvl*4+13);j++){
+        level.push.apply(level,this.getNewFrogs(level, new ShooterFrog(0,0,frog_lvl), new ShooterFrog(0,0,frog_lvl), num));
+      }
     }
-    for (let i=0;i<num/3-1;i++){
-      level.push.apply(level,this.getNewFrogs(level, new ShooterFrog(0,0,0), new ShooterFrog(0,0,0), num));
-    }
-    for (let i=0;i<num/3-3;i++){
-      level.push.apply(level,this.getNewFrogs(level, new ShooterFrog(0,0,1), new ShooterFrog(0,0,1), num));
-    }
+
     return level;
   }
 

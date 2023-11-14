@@ -70,6 +70,11 @@ function newImage(src){
   return img;
 }
 
+// Runs a parabolic function with max/min and x intercepts
+function parabola(x, max, int1, int2){
+  return -4*max/(int1-int2)**2*(x-int1)*(x-int2);
+}
+
 var mode = "start";
 var newGameWindow = {//Stores variables for creating a new game
   createdSlot: -1, // The slot the player is creating a game in, -1 when not creating slot
