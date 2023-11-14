@@ -252,6 +252,7 @@ class Frog extends Entity{
   constructor(attributes){
     attributes.isShip = false;
     super(attributes);
+    this.ddy = 0.02;
   }
 
   draw(){
@@ -270,7 +271,7 @@ class Frog extends Entity{
     super.update();
     
     if (this.dy < 0.2){
-      this.dy += 0.02
+      this.dy += this.ddy
     }
     if (this.health <= 0 && this.dead == false){
       this.dead = true;
@@ -652,6 +653,9 @@ class Game{
     if (this.frogLevels.length <= this.currentLevel){
       this.frogLevels.push(this.newLevel(this.currentLevel))
     }
+    for (var i = 0; i < this.frogs.length; i ++){
+      this.frogs[i].ddy = 0.02;
+    }
   }
 
   // Runs on mousemove event
@@ -918,17 +922,21 @@ class Game{
           if (Math.random() < this.fleet[i].thrust/15){
             this.particles.push(new Particle(this.fleet[i].x, this.fleet[i].y, 0, this.fleet[i].dy/2, 10,"cyan"));
           }*/
-          for (var j=0;j<this.frogs.length;j++){
+          for (var j = 0; j < this.frogs.length; j ++){
             this.fleet[i].collideWith(this.frogs[j], this.particles);
             this.frogs[j].collideWith(this.fleet[i], this.particles);
           }
 
-          for (var j=0;j<this.fleet.length;j++){
+          for (var j = 0; j < this.fleet.length; j ++){
             this.fleet[i].collideWith(this.fleet[j], this.particles);
           }
 
-          if (this.fleet[i].y > 4){
-            this.shipsPassed = false;
+          // this.shipsPassed is set to true by default before every update
+          for (var j = 0; j < this.frogs.length; j ++){
+            if (this.fleet[i].y > this.frogs[j].y && !this.fleet[i].dead && !this.frogs[j].dead){
+              this.shipsPassed = false;
+              break;
+            }
           }
         }
       }
@@ -974,6 +982,11 @@ class Game{
       // Game over checks
       if (this.frogCount == 0 || this.shipCount == 0 || this.frogsPassed || this.shipsPassed){
         this.gameOverFrames ++; 
+        if (this.gameOverFrames == 1){
+          for (var i = 0; i < this.frogs.length; i ++){
+            this.frogs[i].ddy = 0.8;
+          }
+        }
         if (this.gameOverFrames > 120){
           this.endBattle(this.frogCount == 0);
         }
