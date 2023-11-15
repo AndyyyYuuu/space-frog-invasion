@@ -10,7 +10,7 @@ class Star{
     this.opacity = Math.random()*0.5+0.25;
   }
 
-  // Draw the star. Offset is used during paralex scrolling. 
+  // Draw the star. Offset is used during parallax scrolling. 
   draw(offset){
     ctx.globalAlpha = this.opacity;
     ctx.fillStyle = "white";
@@ -77,9 +77,9 @@ class Bullet{
     if (!entity.dead && entity.isInRect(this.x, this.y)){
       entity.damage(this.damage);
       this.life = 0;
-      return true
+      return true;
     }
-    return false
+    return false;
   }
 }
 
