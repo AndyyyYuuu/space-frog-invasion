@@ -548,8 +548,8 @@ class Game{
     this.inOptions = false;
     this.uiAlpha = 1;
     this.currency = {
-      biomatter:0,
-      metal:0
+      biomatter:100,
+      metal:100
     }
     this.newShip = {
       type: null,
