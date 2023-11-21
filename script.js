@@ -17,8 +17,8 @@ const BUTTONS_Y = 56; // The Y level of home page slot buttons
 // Random word generator for save slot names
 
 const RANDWORDS = {
-  adj: ["Crunchy ", "Space ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Hyper", "Slimy ", "Jazzy ", "Singing ", "Shooter ", "Starry ", "Funky ", "Pixel ", "Swingin' ", "Boppy ", "Bluesy ", "Shiny ", "Imperial ", "Solar ", "NASA "],
-  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleet", "War", "Ships", "Stars", "Plasma", "Spheres", "Battle", "Slime", "Nebula", "Toads", "Blast", "Force", "Aliens", "Trek", "Night", "Tech", "Music", "Borg", "Flare", "Mule"]
+  adj: ["Crunchy ", "Space ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Hyper", "Slimy ", "Jazzy ", "Singing ", "Shooter ", "Starry ", "Funky ", "Pixel ", "Swingin' ", "Boppy ", "Bluesy ", "Shiny ", "Imperial ", "Solar ", "NASA ", "I Got ", "Poly"],
+  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleets", "War", "Ships", "Stars", "Plasma", "Spheres", "Battle", "Slime", "Nebula", "Toads", "Blast", "Force", "Aliens", "Trek", "Nights", "Tech", "Music", "Borg", "Flares", "Mule", "Rhythm"]
 }
 
 
@@ -428,6 +428,7 @@ function renderLoop(currentDelta){
     if (Math.random() < 0.15){
       bgStars.push(new TitleStar(y = -2));
     }
+
     // newGameWindow.createdSlot: the index of the slot the player is trying to create a game in
 
     if (clickedSlot != -1){ // Home page, with "enter game" window open
@@ -497,6 +498,7 @@ function renderLoop(currentDelta){
         titleY += dTitleY;
       }
 
+      
       for (let i = 0; i < 3; i ++){
         buttonRect(26, BUTTONS_Y + 20 * i, 76, 16);
 
