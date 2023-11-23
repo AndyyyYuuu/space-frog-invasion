@@ -887,10 +887,10 @@ class Game{
         uiRect(32, 32, 64, 64);
         ctx.fillStyle = COLOR.TEXT;
         drawText("OPTIONS", 48, 28, "small");
-        buttonRect(36, 72, 56, 8); // Back to game
+        buttonRect(36, 36, 56, 8); // Back to game
         buttonRect(36, 84, 56, 8); // Save & exit
         ctx.fillStyle = COLOR.TEXT;
-        drawText("Back to Game", 40, 78, "small");
+        drawText("Back to Game", 40, 42, "small");
         drawText("SAVE & EXIT", 42, 90, "small");
       }
     }
