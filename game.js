@@ -854,7 +854,6 @@ class Game{
         drawText(this.selectedShip.attributes.damage, 26, 104, "large");
         drawText("Lvl. "+this.selectedShip.attributes.lvl, 88, 88, "small");
         if (this.selectedShip.attributes.upgrade != null){
-          console.log(this.selectedShip.attributes.upgrade)
           drawText("Upgrade:", 64, 96, "small");
           this.selectedShip.attributes.upgrade.draw(64, 100, !this.inOptions);
         }
