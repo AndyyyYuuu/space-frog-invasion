@@ -461,7 +461,7 @@ class ShooterShip extends Ship{
       fleety: y,
       typeName: "Shooter",
       lvl: lvl,
-      upgrade: new Upgrade("Strengthen", 3+lvl*2, 0, lvl+1, "Shooter"),
+      upgrade: lvl < 4 ? new Upgrade("Strengthen", 3+lvl*2, 0, lvl+1, "Shooter") : null,
       fireSpeed: 600/(lvl**2+10)+5
     })
   }
@@ -490,7 +490,7 @@ class ColliderShip extends Ship{
       fleety: y,
       typeName: "Collider",
       lvl: lvl,
-      upgrade: new Upgrade("Fortify", 2+lvl*2, 0, lvl+1, "Collider"), 
+      upgrade: lvl < 5 ? new Upgrade("Fortify", 2+lvl*2, 0, lvl+1, "Collider") : null, 
       knockback: lvl*0.15
     })
   }
@@ -733,19 +733,21 @@ class Game{
         if (mouseInRect(83,68,29,8)){ // Battle button
           this.startBattle();
         }else if (mouseInRect(64, 100, 48, 16)){
-          if (this.selectedShip!=null){
-            if (this.selectedShip.attributes.upgrade.currencyType == 0){
-              if (this.currency.biomatter >= this.selectedShip.attributes.upgrade.price){
-                this.currency.biomatter -= this.selectedShip.attributes.upgrade.price
-                this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
-                this.selectedShip = this.fleet[this.selectedIndex];
-              }
-            } else if (this.selectedShip.attributes.upgrade.currencyType == 1){
+          if (this.selectedShip != null){
+            if (this.selectedShip.attributes.upgrade != null){
+              if (this.selectedShip.attributes.upgrade.currencyType == 0){
+                if (this.currency.biomatter >= this.selectedShip.attributes.upgrade.price){
+                  this.currency.biomatter -= this.selectedShip.attributes.upgrade.price
+                  this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
+                  this.selectedShip = this.fleet[this.selectedIndex];
+                }
+              } else if (this.selectedShip.attributes.upgrade.currencyType == 1){
 
-              if (this.currency.metal >= this.selectedShip.attributes.upgrade.price){
-                this.currency.metal -= this.selectedShip.attributes.upgrade.price;
-                this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
-                this.selectedShip = this.fleet[this.selectedIndex];
+                if (this.currency.metal >= this.selectedShip.attributes.upgrade.price){
+                  this.currency.metal -= this.selectedShip.attributes.upgrade.price;
+                  this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
+                  this.selectedShip = this.fleet[this.selectedIndex];
+                }
               }
             }
           }
@@ -757,7 +759,7 @@ class Game{
         this.newShip.mouseX = null;
         this.newShip.mouseY = null;
       }else{ // Options screen clicking
-        if (mouseInRect(36, 72, 56, 8)){ // back to game
+        if (mouseInRect(36, 36, 56, 8)){ // back to game
           this.inOptions = false;
         }else if (mouseInRect(36, 84, 56, 8)){ // save and quit
           this.inOptions = false;
@@ -851,9 +853,12 @@ class Game{
         drawText("DMG: ", 8, 104, "small")
         drawText(this.selectedShip.attributes.damage, 26, 104, "large");
         drawText("Lvl. "+this.selectedShip.attributes.lvl, 88, 88, "small");
-        drawText("Upgrade:", 64, 96, "small");
-        this.selectedShip.attributes.upgrade.draw(64, 100, !this.inOptions);
-        
+        if (this.selectedShip.attributes.upgrade != null){
+          console.log(this.selectedShip.attributes.upgrade)
+          drawText("Upgrade:", 64, 96, "small");
+          this.selectedShip.attributes.upgrade.draw(64, 100, !this.inOptions);
+        }
+          
       }else{
         ctx.fillStyle = COLOR.TEXT;
         drawText("Build new ship...", 8, 88, "large");
