@@ -36,7 +36,7 @@ class Particle{
   update(){
     this.x += this.dx;
     this.y += this.dy;
-    this.life -= 1;
+    this.life -= this.dim;
   }
 
   draw(){
@@ -563,6 +563,7 @@ class Game{
       mouseY: null
     }
     this.starMap = [];
+    this.menu_particles = [];
     this.currentLevel = 0;
     this.frogLevels = [this.newLevel(this.currentLevel)];
     for (var i=0;i<100;i++){
@@ -731,6 +732,10 @@ class Game{
             this.newShip.type.attributes.fleetx = mouseX-this.newShip.mouseX+this.newShip.type.getWidth()/2;
             this.newShip.type.attributes.fleety = mouseY-this.newShip.mouseY+this.newShip.type.getHeight()/2;
             this.fleet.push(this.newShip.type);
+            const thisNewShip = this.fleet[this.fleet.length-1];
+            for (let k=0;k<20;k++){
+              this.menu_particles.push(new Particle(thisNewShip.attributes.fleetx+(Math.random()-0.5)*thisNewShip.getWidth()*1.5, thisNewShip.attributes.fleety+(Math.random()-0.5)*thisNewShip.getHeight()*1.5, Math.random()*3-1.5, Math.random()*3-1.5, 50, randChoice(COLOR.GOLD), 2))
+            }
             this.currency.metal -= this.newShip.type.attributes.price;
           }
           this.newShip.type = null;
@@ -883,6 +888,15 @@ class Game{
 
       }
 
+      for (let i=0;i<this.menu_particles.length; i++){
+        this.menu_particles[i].draw();
+        this.menu_particles[i].update();
+        if (this.life <= 0.05){
+          this.menu_particles.splice(i,1);
+          i--;
+        }
+      }
+
       ctx.globalAlpha = 1;
 
       // Options window
@@ -898,6 +912,7 @@ class Game{
         drawText("Back to Game", 40, 42, "small");
         drawText("SAVE & EXIT", 42, 90, "small");
       }
+
     }
 
     if (this.state == 1){
