@@ -474,7 +474,13 @@ class ShooterShip extends Ship{
       return null;
     }
     this.shootCooldown = this.attributes.fireSpeed;
-    return new Bullet(this.x, this.y, 0, -2, this.attributes.damage);
+    var newBullets = []
+    newBullets.push(new Bullet(this.x, this.y, 0, -2, this.attributes.damage))
+    if (this.attributes.lvl >= 3){
+      newBullets.push(new Bullet(this.x, this.y, 0.7, -1.5, this.attributes.damage))
+      newBullets.push(new Bullet(this.x, this.y, -0.7, -1.5, this.attributes.damage))
+    }
+    return newBullets;
     
   }
 }
@@ -917,9 +923,12 @@ class Game{
                 this.particles.push(this.fleet[i].newParticle(this.fleet[i].x+this.fleet[i].getWidth()*(Math.random()-0.5), this.fleet[i].y+this.fleet[i].getHeight()*(Math.random()-0.5)))
               }
             }
-            var nextBullet = this.fleet[i].attemptShoot();
-            if (nextBullet!=null){
-              this.bullets.push(nextBullet);
+            var nextBullets = this.fleet[i].attemptShoot();
+            if (nextBullets!=null){
+              for (let i=0;i<nextBullets.length;i++){
+                this.bullets.push(nextBullets[i]);
+              }
+              
             }
           }
           /*
