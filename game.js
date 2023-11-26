@@ -477,8 +477,12 @@ class ShooterShip extends Ship{
     var newBullets = []
     newBullets.push(new Bullet(this.x, this.y, 0, -2, this.attributes.damage))
     if (this.attributes.lvl >= 3){
-      newBullets.push(new Bullet(this.x, this.y, 0.7, -1.5, this.attributes.damage))
-      newBullets.push(new Bullet(this.x, this.y, -0.7, -1.5, this.attributes.damage))
+      newBullets.push(new Bullet(this.x, this.y, 1, -1.7, this.attributes.damage))
+      newBullets.push(new Bullet(this.x, this.y, -1, -1.7, this.attributes.damage))
+    }
+    if (this.attributes.lvl >= 4){
+      newBullets.push(new Bullet(this.x, this.y, 1.7, -1, this.attributes.damage))
+      newBullets.push(new Bullet(this.x, this.y, -1.7, -1, this.attributes.damage))
     }
     return newBullets;
     
