@@ -347,6 +347,7 @@ class Upgrade {
     this.currencyType = currencyType;
     this.newLevel = newLevel;
     this.assignment = assignment;
+
   }
 
   upgrade(target){
@@ -360,7 +361,7 @@ class Upgrade {
     return null;
   }
 
-  draw(x, y, isTactile = true){
+  draw(target, x, y, isTactile = true){
 
     buttonRect(x, y, 48, 16, isTactile);
     ctx.fillStyle = COLOR.TEXT;
@@ -370,6 +371,12 @@ class Upgrade {
       drawImage(IMAGE.currency.biomatter, x+1, y+7);
     }else if (this.currencyType == 1){
       drawImage(IMAGE.currency.metal, x+1, y+7);
+    }
+    if (isTactile && mouseInRect(x, y, 48, 16)){
+      ctx.fillStyle = "lime"
+      drawText("+" + (this.upgrade(target).attributes.health - target.attributes.health), 21+ctx.measureText(target.attributes.health.toString()).width/4, 95, "small")
+      drawText("+" + (this.upgrade(target).attributes.damage - target.attributes.damage), 28+ctx.measureText(target.attributes.health.toString()).width/4, 103, "small")
+      ctx.fillStyle = COLOR.text;
     }
   }
 }
@@ -870,7 +877,7 @@ class Game{
         drawText("Lvl. "+this.selectedShip.attributes.lvl, 88, 88, "small");
         if (this.selectedShip.attributes.upgrade != null){
           drawText("Upgrade:", 64, 96, "small");
-          this.selectedShip.attributes.upgrade.draw(64, 100, !this.inOptions);
+          this.selectedShip.attributes.upgrade.draw(this.selectedShip, 64, 100, !this.inOptions);
         }
           
       }else{
