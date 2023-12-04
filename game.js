@@ -361,6 +361,18 @@ class Upgrade {
     return null;
   }
 
+  draw_diff(target, attribute, x, y){
+    const difference = this.upgrade(target).attributes[attribute] - target.attributes[attribute];
+    if (difference > 0){
+      ctx.fillStyle = "lime";
+      drawText("+" + difference, x+ctx.measureText(target.attributes.health.toString()).width/4, y, "small")
+    } else {
+      ctx.fillStyle = "red";
+      drawText(difference, x+ctx.measureText(target.attributes.health.toString()).width/4, y, "small")
+    }
+    ctx.fillStyle = COLOR.text;
+  }
+
   draw(target, x, y, isTactile = true){
 
     buttonRect(x, y, 48, 16, isTactile);
@@ -373,10 +385,9 @@ class Upgrade {
       drawImage(IMAGE.currency.metal, x+1, y+7);
     }
     if (isTactile && mouseInRect(x, y, 48, 16)){
-      ctx.fillStyle = "lime"
-      drawText("+" + (this.upgrade(target).attributes.health - target.attributes.health), 21+ctx.measureText(target.attributes.health.toString()).width/4, 95, "small")
-      drawText("+" + (this.upgrade(target).attributes.damage - target.attributes.damage), 28+ctx.measureText(target.attributes.health.toString()).width/4, 103, "small")
-      ctx.fillStyle = COLOR.text;
+      this.draw_diff(target, "health", 21, 95);
+      this.draw_diff(target, "damage", 28, 103);
+      
     }
   }
 }
