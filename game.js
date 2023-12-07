@@ -385,8 +385,8 @@ class Upgrade {
       drawImage(IMAGE.currency.metal, x+1, y+7);
     }
     if (isTactile && mouseInRect(x, y, 48, 16)){
-      this.draw_diff(target, "health", 21, 95);
-      this.draw_diff(target, "damage", 28, 103);
+      this.draw_diff(target, "health", 21, 96);
+      this.draw_diff(target, "damage", 28, 104);
       
     }
   }
