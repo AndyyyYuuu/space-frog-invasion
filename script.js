@@ -90,6 +90,7 @@ var dTitleY = 4;
 var mouseX = -1;
 var mouseY = -1;
 var mouseIsDown = false;
+var mouseOnCanvas = true;
 
 // Structure to contain and pre-load all images
 var IMAGE = {
@@ -161,6 +162,14 @@ canvas.addEventListener('mousemove', function(evt) {
   mouseX = mousePos.x/4;
   mouseY = mousePos.y/4;
 }, false);
+
+canvas.addEventListener("mouseleave", function(evt) {
+  mouseOnCanvas = false;
+})
+
+canvas.addEventListener("mouseenter", function(evt) {
+  mouseOnCanvas = true;
+})
 
 
 // Checks if mouse is inside a rectangle
@@ -404,11 +413,17 @@ for (var i=0; i<100; i++){
 
 function renderLoop(currentDelta){
 
+
   // Limit FPS under FPS_LIMIT
   updateId = requestAnimationFrame(renderLoop);
   var delta = currentDelta-previousDelta;
   if (FPS_LIMIT && delta < 1000/FPS_LIMIT){
     return;
+  }
+
+  if (!mouseOnCanvas){
+    mouseX = -1;
+    mouseY = -1;
   }
 
   ctx.clearRect(0,0,1000,1000);
