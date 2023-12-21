@@ -575,6 +575,7 @@ class Game{
     this.shipsPassed = false;
     this.inOptions = false;
     this.uiAlpha = 1;
+    this.battleButtonDown = false;
     this.currency = {
       biomatter:100,
       metal:100
@@ -699,12 +700,20 @@ class Game{
         }
       }
     }
+    if (this.state == 0 && this.endBattleFrames >= 56){
+      if (!this.inOptions && mouseInRect(83, 68, 29, 8)){
+        this.battleButtonDown = false;
+      }
+    }
   }
 
   // Runs on mousedown event
   click(){
     if (this.state == 0){
       if (!this.inOptions){
+        if (mouseInRect(83,68,29,8)){
+          this.battleButtonDown = true;
+        }
         if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
 
           for (let i=0; i<this.fleet.length; i++){
@@ -759,7 +768,8 @@ class Game{
           this.newShip.type = null;
           return;
         }
-        if (mouseInRect(83,68,29,8)){ // Battle button
+        if (mouseInRect(83,68,29,8) && this.battleButtonDown){ // Battle button
+          this.battleButtonDown = false;
           this.startBattle();
         }else if (mouseInRect(64, 100, 48, 16)){
           if (this.selectedShip != null){
