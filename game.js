@@ -704,11 +704,7 @@ class Game{
   // Runs on mousedown event
   click(){
     if (this.state == 0){
-      if (this.inOptions){
-        if (!mouseInRect(32, 32, 64, 64)){
-          this.inOptions = false;
-        }
-      }else{
+      if (!this.inOptions){
         if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
 
           for (let i=0; i<this.fleet.length; i++){
@@ -792,9 +788,10 @@ class Game{
         this.newShip.mouseX = null;
         this.newShip.mouseY = null;
       }else{ // Options screen clicking
-        if (mouseInRect(36, 36, 56, 8)){ // back to game
+        if (mouseInRect(36, 36, 56, 8) || !mouseInRect(32, 32, 64, 64)){ // back to game
           this.inOptions = false;
-        }else if (mouseInRect(36, 84, 56, 8)){ // save and quit
+        }
+        else if (mouseInRect(36, 84, 56, 8)){ // save and quit
           this.inOptions = false;
           game = null;
           mode = "start";
