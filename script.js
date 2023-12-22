@@ -51,6 +51,7 @@ And so cold`.split(/\r?\n|\r|\n/g);
 var settings = {
   pixelChecker: true, 
   // Pixel checker: a pixel that follows the mouse, useful to make sure pixels are aligned
+  saving: false
 }
 
 // Returns a random element from list
@@ -132,6 +133,11 @@ var IMAGE = {
   }
 }
 
+function copyInstanceVars(copy, original){
+  for (var instanceVar in original){
+    copy[instanceVar] = original[instanceVar];
+  }
+}
 
 
 var game; // The currently played game
@@ -139,10 +145,13 @@ var game; // The currently played game
 var saveSlots = [null, null, null];
 
 function loadGames(){
+
   // if nothing has been stored yet, load default games
-  if (localStorage.getItem("game0") === null && 
+  if (
+    (localStorage.getItem("game0") === null && 
     localStorage.getItem("game1") === null && 
-    localStorage.getItem("game2") === null
+    localStorage.getItem("game2") === null) ||
+    !settings.saving
   ){
     saveSlots = [
       new Game("Test Save"),
@@ -156,12 +165,25 @@ function loadGames(){
       console.log(localStorage.getItem("game" + i))
       var slotItem = JSON.parse(localStorage.getItem("game" + i)); // parse JSON for instance vars
       saveSlots[i] = new Game(); // create game
-      for(var k in slotItem) saveSlots[i][k] = slotItem[k]; // copy all instance vars to game
+      for (var instanceVar in slotItem){
+        if (saveSlots[i][instanceVar] !== saveSlots[i].starMap && saveSlots[i][instanceVar] !== saveSlots[i].selectedShip){
+          if (saveSlots[i][instanceVar] === saveSlots[i].fleet){
+            for (var ship in slotItem.fleet){
+              copyInstanceVars(saveSlots[i].fleet[ship], ship);
+            }
+          }
+          
+          else{
+            saveSlots[i][instanceVar] = slotItem[instanceVar]; // copy instance var to game
+          }
+        }
+      }
     }
   }
 }
 
 function saveGames(){
+  if (!settings.saving) return;
   for (var i = 0; i < 3; i ++){
     if (saveSlots[i] != null){
       localStorage.setItem("game" + i, JSON.stringify(saveSlots[i])); // for each game, save as JSON
@@ -638,5 +660,4 @@ window.addEventListener("keydown", (event) => {
     mode = "start";
   }
 });
-
 
