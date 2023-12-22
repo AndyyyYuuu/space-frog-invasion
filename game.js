@@ -804,7 +804,7 @@ class Game{
         else if (mouseInRect(36, 84, 56, 8)){ // save and quit
           this.inOptions = false;
           game = null;
-          saveGame();
+          saveGames();
           mode = "start";
         }
       }
