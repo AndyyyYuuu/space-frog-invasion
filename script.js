@@ -76,7 +76,7 @@ function parabola(x, max, int1, int2){
 }
 
 var mode = "start";
-var newGameWindow = {//Stores variables for creating a new game
+var newGameWindow = {// Stores variables for creating a new game
   createdSlot: -1, // The slot the player is creating a game in, -1 when not creating slot
   name:randName() // The currently selected name
 };
@@ -136,13 +136,35 @@ var IMAGE = {
 
 var game; // The currently played game
 
+var saveSlots = [null, null, null];
+
+function loadGames(){
+  if (localStorage.getItem("game0") === null){ // if nothing has been stored yet, load default games
+    saveSlots = [
+      new Game("Test Save"),
+      null,
+      null
+    ]
+    return;
+  }
+  for (var i = 0; i < 3; i ++){
+    if (localStorage.getItem("game" + i) != null){ // if the slot is not empty
+      var slotItem = JSON.parse(localStorage.getItem("game" + i)); // parse JSON for instance vars
+      saveSlots[i] = new Game(); // create game
+      for(var k in slotItem) saveSlots[i][k] = slotItem[k]; // copy all instance vars to game
+    }
+  }
+}
+
+function saveGames(){
+  for (var i = 0; i < 3; i ++){
+    localStorage.setItem("game" + i, JSON.stringify(saveSlots[i])); // for each game, save as JSON
+  }
+}
 
 // 3 save slots for <Game>
-var saveSlots = [
-  new Game("Test Save"),
-  null,
-  null
-]
+loadGames()
+console.log(saveSlots);
 
 
 // Gets mouse position
@@ -230,6 +252,7 @@ canvas.onmouseup = function(){ // You know what this does
         newGameWindow.createdSlot = -1;
       }else if (mouseInRect(64, 78, 28, 8)){ // Create new game button
         saveSlots[newGameWindow.createdSlot] = new Game(newGameWindow.name);
+        saveGames();
         newGameWindow.createdSlot = -1;
       }
 
@@ -265,6 +288,7 @@ canvas.onmouseup = function(){ // You know what this does
             break;
           }else{
             game = saveSlots[i];
+            console.log(game.render);
             clickedSlot = i;
           }
         }
