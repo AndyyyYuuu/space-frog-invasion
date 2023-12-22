@@ -139,7 +139,11 @@ var game; // The currently played game
 var saveSlots = [null, null, null];
 
 function loadGames(){
-  if (localStorage.getItem("game0") === null){ // if nothing has been stored yet, load default games
+  // if nothing has been stored yet, load default games
+  if (localStorage.getItem("game0") === null && 
+    localStorage.getItem("game1") === null && 
+    localStorage.getItem("game2") === null
+  ){
     saveSlots = [
       new Game("Test Save"),
       null,
@@ -149,6 +153,7 @@ function loadGames(){
   }
   for (var i = 0; i < 3; i ++){
     if (localStorage.getItem("game" + i) != null){ // if the slot is not empty
+      console.log(localStorage.getItem("game" + i))
       var slotItem = JSON.parse(localStorage.getItem("game" + i)); // parse JSON for instance vars
       saveSlots[i] = new Game(); // create game
       for(var k in slotItem) saveSlots[i][k] = slotItem[k]; // copy all instance vars to game
@@ -158,13 +163,18 @@ function loadGames(){
 
 function saveGames(){
   for (var i = 0; i < 3; i ++){
-    localStorage.setItem("game" + i, JSON.stringify(saveSlots[i])); // for each game, save as JSON
+    if (saveSlots[i] != null){
+      localStorage.setItem("game" + i, JSON.stringify(saveSlots[i])); // for each game, save as JSON
+    }
+    else{
+      localStorage.removeItem("game" + i);
+    }
+    console.log(localStorage.getItem("game" + i))
   }
 }
 
 // 3 save slots for <Game>
 loadGames()
-console.log(saveSlots);
 
 
 // Gets mouse position
@@ -274,6 +284,7 @@ canvas.onmouseup = function(){ // You know what this does
           saveSlots[clickedSlot] = null;
           deletionStage = -1;
           clickedSlot = -1;
+          saveGames();
         }else if (mouseInRect(70, 78, 20, 8) || !mouseInRect(32, 32, 64, 64)){ // Cancel
           deletionStage = -1;
         }
