@@ -479,7 +479,7 @@ class ShooterShip extends Ship{
       fleety: y,
       typeName: "Shooter",
       lvl: lvl,
-      upgrade: lvl < 4 ? new Upgrade("Strengthen", 3+lvl*2, 0, lvl+1, "Shooter") : null,
+      upgrade: lvl < 5 ? new Upgrade("Strengthen", 3+lvl*2, 0, lvl+1, "Shooter") : null,
       fireSpeed: 600/(lvl**2+10)+5
     })
   }

@@ -98,7 +98,7 @@ var IMAGE = {
   
   ship:{
 
-    shooter: [newImage("ship/shooter0.png"), newImage("ship/shooter1.png"), newImage("ship/shooter2.png"), newImage("ship/shooter3.png"), newImage("ship/shooter4.png")],
+    shooter: [newImage("ship/shooter0.png"), newImage("ship/shooter1.png"), newImage("ship/shooter2.png"), newImage("ship/shooter3.png"), newImage("ship/shooter4.png"), newImage("ship/shooter5.png")],
     collider: [newImage("ship/collider0.png"), newImage("ship/collider1.png"), newImage("ship/collider2.png"), newImage("ship/collider3.png"), newImage("ship/collider4.png"), newImage("ship/collider5.png")]
   },
   frog:{
