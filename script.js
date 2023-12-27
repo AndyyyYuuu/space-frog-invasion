@@ -49,7 +49,7 @@ And so cold`.split(/\r?\n|\r|\n/g);
 
 // Some settings
 var settings = {
-  pixelChecker: true, 
+  pixelChecker: false, 
   // Pixel checker: a pixel that follows the mouse, useful to make sure pixels are aligned
   saving: false
 }
@@ -635,12 +635,12 @@ function renderLoop(currentDelta){
     }
     ctx.textAlign = "left";
   }
-  /*
+  
   if (settings.pixelChecker){ // Pixel checker tool
     ctx.globalAlpha = 0.5;
     drawImage(IMAGE.debug.pixelChecker, mouseX-4, mouseY-4);
     ctx.globalAlpha = 1;
-  }*/
+  }
   drawImage(IMAGE.ui.cursor, Math.round(mouseX-2.5), Math.round(mouseY-2.5))
 
   previousDelta = currentDelta;
