@@ -724,7 +724,7 @@ class Game{
             }
           }
           this.selectedShip = null;
-        }else{
+        }else if (this.selectedShip == null){
           for (let i=0; i<3; i++){
             if (mouseInRect(20+i*38, 96, 7, 7)){
               if (this.currency.metal >= i+1){
