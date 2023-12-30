@@ -527,7 +527,7 @@ class ColliderShip extends Ship{
   }
 }
 
-class Tractor extends Ship{
+class TractorShip extends Ship{
   constructor(x, y, lvl){
     super({
       price: 3,
