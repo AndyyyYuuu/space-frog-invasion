@@ -17,8 +17,8 @@ const BUTTONS_Y = 56; // The Y level of home page slot buttons
 // Random word generator for save slot names
 
 const RANDWORDS = {
-  adj: ["Crunchy ", "Space ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Hyper", "Slimy ", "Jazzy ", "Singing ", "Shooter ", "Starry ", "Funky ", "Pixel ", "Swingin' ", "Boppy ", "Bluesy ", "Shiny ", "Imperial ", "Solar ", "NASA ", "I Got ", "Poly"],
-  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleets", "War", "Ships", "Stars", "Plasma", "Spheres", "Battle", "Slime", "Nebula", "Toads", "Blast", "Force", "Aliens", "Trek", "Nights", "Tech", "Music", "Borg", "Flares", "Mule", "Rhythm"]
+  adj: ["Crunchy ", "Space ", "Froggy ", "Green ", "Super ", "Bio-", "Mega", "Hyper", "Slimy ", "Jazzy ", "Singing ", "Shooter ", "Starry ", "Funky ", "Pixel ", "Swingin' ", "Boppy ", "Bluesy ", "Shiny ", "Imperial ", "Solar ", "NASA ", "I Got ", "Poly", "Leapin'"],
+  n: ["Planet", "Frogs", "Croak", "Gravity", "Fleets", "War", "Ships", "Stars", "Plasma", "Spheres", "Battle", "Slime", "Nebula", "Toads", "Blast", "Force", "Aliens", "Trek", "Nights", "Tech", "Music", "Borg", "Flares", "Mule", "Rhythm", "Sax", "Horn", "Chords"]
 }
 
 
