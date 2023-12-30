@@ -355,8 +355,8 @@ class Upgrade {
       return new ShooterShip(target.attributes.fleetx, target.attributes.fleety, target.attributes.lvl+1);
     }else if (this.assignment == "Collider"){
       return new ColliderShip(target.attributes.fleetx, target.attributes.fleety, target.attributes.lvl+1);
-    }else if (this.assignment == "Healer"){
-      return new HealerShip(target.attributes.fleetx, target.attributes.fleety, target.attributes.lvl+1);
+    }else if (this.assignment == "Tractor"){
+      return new TractorShip(target.attributes.fleetx, target.attributes.fleety, target.attributes.lvl+1);
     }
     return null;
   }
@@ -527,18 +527,18 @@ class ColliderShip extends Ship{
   }
 }
 
-class HealerShip extends Ship{
+class Tractor extends Ship{
   constructor(x, y, lvl){
     super({
       price: 3,
       health: 2+lvl*2,
       damage: 1+lvl,
-      image: IMAGE.ship.collider[lvl], 
+      image: IMAGE.ship.tractor[lvl], 
       fleetx: x,
       fleety: y,
-      typeName: "Healer",
+      typeName: "Tractor",
       lvl: lvl,
-      upgrade: new Upgrade("Upgrade", 2+lvl*3, 0, lvl+1, "Healer")
+      upgrade: new Upgrade("Upgrade", 2+lvl*3, 0, lvl+1, "Tractor")
     })
   }
   attemptShoot(){
@@ -736,7 +736,7 @@ class Game{
                   this.newShip.type = new ShooterShip(-1, -1, 0);
                   break;
                 case 2:
-                  this.newShip.type = new HealerShip(-1, -1, 0);
+                  this.newShip.type = new TractorShip(-1, -1, 0);
                   break;
                 }
                 this.newShip.mouseX = mouseX-(20+i*38)-1;
