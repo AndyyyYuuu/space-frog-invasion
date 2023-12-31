@@ -242,6 +242,14 @@ class Entity{
     this.health = this.attributes.health;
     this.dead = false;
   }
+
+  attemptShoot(){
+    return null;
+  }
+
+  attemptTractor(){
+    return null;
+  }
 }
 
 
@@ -285,9 +293,6 @@ class Frog extends Entity{
     //return new Particle(x, y, Math.random()-0.5, Math.random()-0.5, 30, `hsl(${Math.random()*30+80}, 100%, ${Math.random()*10+50}%`);
     return new Particle(x, y, Math.random()-0.5, Math.random()-0.5, 40, randChoice(COLOR.GREEN));
     
-  }
-  attemptShoot(){
-    return null;
   }
 
 }
@@ -522,9 +527,6 @@ class ColliderShip extends Ship{
       knockback: lvl*0.15
     })
   }
-  attemptShoot(){
-    return null;
-  }
 }
 
 class TractorShip extends Ship{
@@ -540,9 +542,16 @@ class TractorShip extends Ship{
       lvl: lvl,
       upgrade: new Upgrade("Upgrade", 2+lvl*3, 0, lvl+1, "Tractor")
     })
+    this.targetFrog = null;
   }
-  attemptShoot(){
-    return null;
+  startBattle(){
+    this.targetFrog = null;
+    super.startBattle();
+  }
+  attemptTractor(){
+    if (this.targetFrog != null){
+      
+    }
   }
 }
 
@@ -904,7 +913,7 @@ class Game{
         drawText("Build new ship...", 8, 88, "large");
         drawText("Collider", 12, 112, "small");
         drawText("Shooter", 50, 112, "small");
-        drawText("Healer", 88, 112, "small");
+        drawText("Tractor", 88, 112, "small");
         for (let i=0; i<3; i++){
           if (mouseIsDown && mouseInRect(20+i*38, 96, 7, 7)){
             selectRect(21+i*38, 97, 5, 5);
