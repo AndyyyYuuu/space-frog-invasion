@@ -554,11 +554,12 @@ class TractorShip extends Ship{
   }
   attemptTractor(frogs){
     if (this.targetFrog != null){
-      if (frames % 2 == 0){
+      if (this.targetFrog.dead || distance(this.targetFrog.x, this.targetFrog.y, this.x, this.y) > this.attributes.range+4){
+        this.targetFrog = null;
+      }else if (frames % 2 == 0){
         return new FrogPart(this);
       }
     }else{
-
       var nearestFrog = null;
       for (let i=0; i<frogs.length; i++){
         let dist = distance(frogs[i].x, frogs[i].y, this.x, this.y);
