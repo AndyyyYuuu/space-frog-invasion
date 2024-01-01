@@ -538,7 +538,7 @@ class TractorShip extends Ship{
       price: 3,
       health: 2+lvl*2,
       damage: 1+lvl,
-      range: 64,
+      range: 24,
       image: IMAGE.ship.tractor[lvl], 
       fleetx: x,
       fleety: y,
@@ -585,12 +585,15 @@ class FrogPart{
     this.x = this.frog.x-this.frog.getWidth()/4+Math.random()*this.frog.getWidth()/2;
     this.y = this.frog.y-this.frog.getHeight()/4+Math.random()*this.frog.getHeight()/2;
     this.color = randChoice(COLOR.GREEN);
-    
+    this.life = 1;
   }
 
   update(){
     this.x = (this.x*9+this.ship.x)/10;
     this.y = (this.y*9+this.ship.y)/10;
+    if (this.ship.isInRect(this.x, this.y)){
+      this.life = 0;
+    }
   }
 
   draw(){
@@ -598,7 +601,6 @@ class FrogPart{
     ctx.fillRect(Math.round(this.x)*PIXEL, Math.round(this.y)*PIXEL, PIXEL, PIXEL);
     ctx.globalAlpha = 1;
   }
-
 
 }
 
