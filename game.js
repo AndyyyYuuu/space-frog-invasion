@@ -47,6 +47,7 @@ class Particle{
   }
 }
 
+
 // Bullet class (during battle)
 class Bullet{
   constructor(x, y, dx, dy, damage){
@@ -83,6 +84,8 @@ class Bullet{
   }
 }
 
+
+// Frog's phage
 class Phage{
   constructor(x, y, dx, dy, damage){
     this.x = x;
@@ -535,6 +538,7 @@ class TractorShip extends Ship{
       price: 3,
       health: 2+lvl*2,
       damage: 1+lvl,
+      range: 64,
       image: IMAGE.ship.tractor[lvl], 
       fleetx: x,
       fleety: y,
@@ -548,13 +552,55 @@ class TractorShip extends Ship{
     this.targetFrog = null;
     super.startBattle();
   }
-  attemptTractor(){
+  attemptTractor(frogs){
     if (this.targetFrog != null){
-      
+      if (frames % 2 == 0){
+        return new FrogPart(this);
+      }
+    }else{
+
+      var nearestFrog = null;
+      for (let i=0; i<frogs.length; i++){
+        let dist = distance(frogs[i].x, frogs[i].y, this.x, this.y);
+        if (dist < this.attributes.range && !frogs[i].dead){
+          if (nearestFrog == null || dist < distance(nearestFrog.x, nearestFrog.y, this.x, this.y)){
+            nearestFrog = frogs[i];
+          }
+        }
+      }
+      if (nearestFrog != null && distance(nearestFrog.x, nearestFrog.y, this.x, this.y) < this.attributes.range){
+        this.targetFrog = nearestFrog;
+      }
     }
+    return null;
   }
 }
 
+
+// Tractor's frog particle class
+class FrogPart{
+  constructor(ship){
+    this.ship = ship;
+    this.frog = ship.targetFrog;
+    this.x = this.frog.x-this.frog.getWidth()/4+Math.random()*this.frog.getWidth()/2;
+    this.y = this.frog.y-this.frog.getHeight()/4+Math.random()*this.frog.getHeight()/2;
+    this.color = randChoice(COLOR.GREEN);
+    
+  }
+
+  update(){
+    this.x = (this.x*9+this.ship.x)/10;
+    this.y = (this.y*9+this.ship.y)/10;
+  }
+
+  draw(){
+    ctx.fillStyle = this.color;
+    ctx.fillRect(Math.round(this.x)*PIXEL, Math.round(this.y)*PIXEL, PIXEL, PIXEL);
+    ctx.globalAlpha = 1;
+  }
+
+
+}
 
 
 // MAIN GAME CLASS
@@ -983,6 +1029,10 @@ class Game{
                 this.bullets.push(nextBullets[i]);
               }
               
+            }
+            var nextFrogPart = this.fleet[i].attemptTractor(this.frogs);
+            if (nextFrogPart!=null){
+              this.particles.push(nextFrogPart);
             }
           }
           /*
