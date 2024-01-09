@@ -539,7 +539,7 @@ class TractorShip extends Ship{
     super({
       price: 3,
       health: 2+lvl*2,
-      damage: 1+lvl,
+      damage: 2+lvl,
       range: 32+16*lvl,
       image: IMAGE.ship.tractor[lvl], 
       fleetx: x,
@@ -558,8 +558,17 @@ class TractorShip extends Ship{
     if (this.targetFrog != null){
       if (this.targetFrog.dead || distance(this.targetFrog.x, this.targetFrog.y, this.x, this.y) > this.attributes.range+4){
         this.targetFrog = null;
-      }else if (frames % 2 == 0){
-        return new FrogPart(this);
+      }else{
+        let PULL_STRENGTH = 0.01;
+        if (distance(this.targetFrog.x, this.targetFrog.y, this.x, this.y) > (this.targetFrog.getWidth()+this.targetFrog.getHeight()+this.getWidth()+this.getHeight())/2){
+          this.targetFrog.x += (this.x - this.targetFrog.x)*PULL_STRENGTH;
+          this.targetFrog.y += (this.y - this.targetFrog.y)*PULL_STRENGTH;
+        }
+        
+        if (frames % 2 == 0){
+          this.targetFrog.health -= this.attributes.damage*0.02;
+          return new FrogPart(this);
+        }
       }
     }else{
       var nearestFrog = null;
