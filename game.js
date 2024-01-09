@@ -369,14 +369,14 @@ class Upgrade {
     return null;
   }
 
-  draw_diff(target, attribute, x, y){
+  drawDiff(target, attribute, x, y){
     const difference = this.upgrade(target).attributes[attribute] - target.attributes[attribute];
     if (difference > 0){
       ctx.fillStyle = "lime";
-      drawText("+" + difference, x+ctx.measureText(target.attributes.health.toString()).width/4, y, "small")
+      drawText("+" + difference, x+ctx.measureText(target.attributes[attribute].toString()).width/4, y, "small")
     } else {
       ctx.fillStyle = "red";
-      drawText(difference, x+ctx.measureText(target.attributes.health.toString()).width/4, y, "small")
+      drawText(difference, x+ctx.measureText(target.attributes[attribute].toString()).width/4, y, "small")
     }
     ctx.fillStyle = COLOR.text;
   }
@@ -393,9 +393,11 @@ class Upgrade {
       drawImage(IMAGE.currency.metal, x+1, y+7);
     }
     if (isTactile && mouseInRect(x, y, 48, 16)){
-      this.draw_diff(target, "health", 21, 96);
-      this.draw_diff(target, "damage", 28, 104);
-      
+      this.drawDiff(target, "health", 21, 96);
+      this.drawDiff(target, "damage", 28, 104);
+      if (target.attributes.typeName == "Tractor"){
+        this.drawDiff(target, "range", 28, 112);
+      }
     }
   }
 }
@@ -538,7 +540,7 @@ class TractorShip extends Ship{
       price: 3,
       health: 2+lvl*2,
       damage: 1+lvl,
-      range: 24,
+      range: 32+16*lvl,
       image: IMAGE.ship.tractor[lvl], 
       fleetx: x,
       fleety: y,
@@ -954,6 +956,10 @@ class Game{
         drawText(this.selectedShip.attributes.health, 20, 96, "large");
         drawText("DMG: ", 8, 104, "small")
         drawText(this.selectedShip.attributes.damage, 26, 104, "large");
+        if (this.selectedShip.attributes.typeName == "Tractor"){
+          drawText("RNG: ", 8, 112, "small")
+          drawText(this.selectedShip.attributes.range, 26, 112, "large");
+        }
         drawText("Lvl. "+this.selectedShip.attributes.lvl, 88, 88, "small");
         if (this.selectedShip.attributes.upgrade != null){
           drawText("Upgrade:", 64, 96, "small");
