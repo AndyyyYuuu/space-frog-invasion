@@ -528,7 +528,7 @@ class ColliderShip extends Ship{
       fleety: y,
       typeName: "Collider",
       lvl: lvl,
-      upgrade: lvl < 5 ? new Upgrade("Fortify", 2+lvl*2, 0, lvl+1, "Collider") : null, 
+      upgrade: lvl < 5 ? new Upgrade("Fortify", 2+lvl*2+Math.floor(lvl**0.5), 0, lvl+1, "Collider") : null, 
       knockback: lvl*0.15
     })
   }
@@ -546,7 +546,7 @@ class TractorShip extends Ship{
       fleety: y,
       typeName: "Tractor",
       lvl: lvl,
-      upgrade: new Upgrade("Upgrade", 2+lvl*3, 0, lvl+1, "Tractor")
+      upgrade: new Upgrade("Upgrade", Math.floor(0.5*(lvl+1)**2+5), 0, lvl+1, "Tractor")
     })
     this.targetFrog = null;
   }
@@ -649,8 +649,8 @@ class Game{
     this.uiAlpha = 1;
     this.battleButtonDown = false;
     this.currency = {
-      biomatter:100,
-      metal:100
+      biomatter:0,
+      metal:0
     }
     this.newShip = {
       type: null,
@@ -811,6 +811,9 @@ class Game{
                   this.newShip.type = new TractorShip(-1, -1, 0);
                   break;
                 }
+                for (let k=0;k<20;k++){
+                  this.menu_particles.push(new Particle(mouseX+(Math.random()-0.5)*this.newShip.type.getWidth()*1.5, mouseY+(Math.random()-0.5)*this.newShip.type.getHeight()*1.5, Math.random()*3-1.5, Math.random()*3-1.5, 50, randChoice(COLOR.GOLD), 2))
+                }
                 this.newShip.mouseX = mouseX-(20+i*38)-1;
                 this.newShip.mouseY = mouseY-96;
               }
@@ -923,7 +926,7 @@ class Game{
           }else{
             this.heldShip = null;
           }
-          ctx.globalAlpha *= 0.5;
+          ctx.globalAlpha *= 0.5; // Dirty dirty method
           uiRect(this.FORMATION_SCREEN.x, this.FORMATION_SCREEN.y, this.FORMATION_SCREEN.w, this.FORMATION_SCREEN.h, true);
           ctx.globalAlpha *= 2;
         }
@@ -1208,6 +1211,13 @@ class Game{
     ctx.globalAlpha = 1;
     if (this.newShip.type != null){
       drawImage(this.newShip.type.attributes.image, mouseX-this.newShip.mouseX, mouseY-this.newShip.mouseY)
+    }
+  }
+
+  setLevel(num){
+    this.currentLevel = num;
+    while (this.frogLevels.length <= this.currentLevel){
+      this.frogLevels.push(this.newLevel(this.frogLevels.length))
     }
   }
 }
