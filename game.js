@@ -1220,6 +1220,12 @@ class Game{
       this.frogLevels.push(this.newLevel(this.frogLevels.length))
     }
   }
+
+  getRich(){
+    this.currency.metal += 100 + Math.random()*400
+    this.currency.biomatter += 200 + Math.random()*800
+  }
+  
 }
 
 // Export Game as global class
