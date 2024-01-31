@@ -12,7 +12,7 @@ ctx.imageSmoothingEnabled = false;
 
 const PIXEL = 4;
 const TRANSITION_MOVE = 56;
-const BUTTONS_Y = 56; // The Y level of home page slot buttons
+const BUTTONS_Y = 64//56; // The Y level of home page slot buttons
 
 // Random word generator for save slot names
 
@@ -122,7 +122,9 @@ var IMAGE = {
       ship: newImage("ui/sidebar/ship.png"),
       frog: newImage("ui/sidebar/frog.png")
     },
-    cursor: newImage("misc/cursor.png")
+    cursor: newImage("misc/cursor.png"), 
+    ships: newImage("ui/ships.png"), 
+    frogs: newImage("ui/frogs.png")
   },
   currency: {
     biomatter: newImage("item/debris-frog.png"),
@@ -558,9 +560,14 @@ function renderLoop(currentDelta){
     
     }else{ // Home page, "create save" window not open
 
-      titleY = Math.round((Math.sin(frames/12)*11+96)/4)*4 // Do you like this, Barry? 
+      titleY = Math.round((Math.sin(frames/12)*11+96)/4)*4; // Do you like this, Barry? 
       ctx.drawImage(IMAGE.ui.title, 256 - IMAGE.ui.title.naturalWidth/2*PIXEL, titleY, IMAGE.ui.title.naturalWidth*PIXEL, IMAGE.ui.title.naturalHeight*PIXEL);
-
+      for (let i=0; i<4; i++){
+        ctx.drawImage(IMAGE.ui.frogs, (576-((Math.floor(frames/2)+i*54)%216)*4), 208, IMAGE.ui.frogs.naturalWidth*PIXEL, IMAGE.ui.frogs.naturalHeight*PIXEL);
+      }
+      for (let i=0; i<4; i++){
+        ctx.drawImage(IMAGE.ui.ships, (-192+((Math.floor(frames/2)+i*54)%216)*4), 52, IMAGE.ui.ships.naturalWidth*PIXEL, IMAGE.ui.ships.naturalHeight*PIXEL);
+      }
       ctx.strokeStyle = COLOR.UI;
 
       if (frames % 10 == 0){
