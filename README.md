@@ -1,12 +1,2 @@
-# space-frog-invasion
-### GAME: SPACE FROG INVASION
-
-#### Planned Ship Types:
-- Collider Ship
-- Shooty Ship
-- Healer Ship
-
-#### Planned Frog Types:
-- Collider Frog
-- Tongue Frog
-- Spawner Frog
+![beautiful-title](https://github.com/AndyyyYuuu/space-frog-invasion/blob/main/assets/image/misc/title.png)
+# GAME: SPACE FROG INVASION
