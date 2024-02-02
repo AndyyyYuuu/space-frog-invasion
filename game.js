@@ -206,13 +206,13 @@ class Entity{
   // Returns whether Entity and other are colliding. If so, emits collision particles and applies knockback and damage. 
   collideWith(other, particles){
     if (!this.dead && !other.dead && this !== other && this.isTouching(other)){
-      this.dx += (this.x-other.x)/distance(this.x, this.y, other.x, other.y)*0.75//*Math.abs(other.dx/2);
-      this.dy += (this.y-other.y)/distance(this.x, this.y, other.x, other.y)*0.75//*Math.abs(other.dy/2);
+      this.dx += (this.x-other.x)/distance(this.x, this.y, other.x, other.y)*0.5;
+      this.dy += (this.y-other.y)/distance(this.x, this.y, other.x, other.y)*0.5;
       if (this.attributes.typeName == "Collider" && other.isShip != this.isShip){
         other.damage(this.attributes.damage);
         // Additional knockback
-        other.dx += (other.x-this.x)/distance(this.x, this.y, other.x, other.y)*this.attributes.knockback//*Math.abs(other.dx/2);
-        other.dy += (other.y-this.y)/distance(this.x, this.y, other.x, other.y)*this.attributes.knockback//*Math.abs(other.dy/2);
+        other.dx += (other.x-this.x)/distance(this.x, this.y, other.x, other.y)*this.attributes.knockback*0.75;
+        other.dy += (other.y-this.y)/distance(this.x, this.y, other.x, other.y)*this.attributes.knockback*0.75;
       }
       this.health *= 0.75;
       this.damage(0.25);
@@ -1225,7 +1225,7 @@ class Game{
     this.currency.metal += 100 + Math.random()*400
     this.currency.biomatter += 200 + Math.random()*800
   }
-  
+
 }
 
 // Export Game as global class
