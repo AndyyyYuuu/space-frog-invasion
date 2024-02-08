@@ -12,7 +12,11 @@ ctx.imageSmoothingEnabled = false;
 
 const PIXEL = 4;
 const TRANSITION_MOVE = 56;
-const BUTTONS_Y = 64//56; // The Y level of home page slot buttons
+const BUTTONS_Y = 56//56; // The Y level of home page slot buttons
+
+// Scrolling frogs and ships on the home screen
+const V_SCROLLERS = true;
+const H_SCROLLERS = false;
 
 // Random word generator for save slot names
 
@@ -123,8 +127,10 @@ var IMAGE = {
       frog: newImage("ui/sidebar/frog.png")
     },
     cursor: newImage("misc/cursor.png"), 
-    ships: newImage("ui/ships.png"), 
-    frogs: newImage("ui/frogs.png")
+    shipsH: newImage("ui/shipsh.png"), 
+    frogsH: newImage("ui/frogsh.png"), 
+    shipsV: newImage("ui/shipsv.png"), 
+    frogsV: newImage("ui/frogsv.png"), 
   },
   currency: {
     biomatter: newImage("item/debris-frog.png"),
@@ -501,12 +507,12 @@ function renderLoop(currentDelta){
       bgStars.push(new TitleStar(y = -2));
     }
   }
+
   if(mode == "game"){
     game.render(); // runs (1 tick of) render loop of the game 
 
   }else if (mode == "start"){
     
-
     // newGameWindow.createdSlot: the index of the slot the player is trying to create a game in
 
     if (clickedSlot != -1){ // Home page, with "enter game" window open
@@ -566,11 +572,22 @@ function renderLoop(currentDelta){
 
       titleY = Math.round((Math.sin(frames/12)*11+96)/4)*4; // Do you like this, Barry? 
       ctx.drawImage(IMAGE.ui.title, 256 - IMAGE.ui.title.naturalWidth/2*PIXEL, titleY, IMAGE.ui.title.naturalWidth*PIXEL, IMAGE.ui.title.naturalHeight*PIXEL);
-      for (let i=0; i<4; i++){
-        ctx.drawImage(IMAGE.ui.frogs, (576-((Math.floor(frames/2)+i*54)%216)*4), 208, IMAGE.ui.frogs.naturalWidth*PIXEL, IMAGE.ui.frogs.naturalHeight*PIXEL);
+      if (H_SCROLLERS){
+        for (let i=0; i<4; i++){
+          ctx.drawImage(IMAGE.ui.frogsH, (576-((Math.floor(frames/2)+i*54)%216)*4), 208, IMAGE.ui.frogsH.naturalWidth*PIXEL, IMAGE.ui.frogsH.naturalHeight*PIXEL);
+        }
+        for (let i=0; i<4; i++){
+          ctx.drawImage(IMAGE.ui.shipsH, (-192+((Math.floor(frames/2)+i*54)%216)*4), 52, IMAGE.ui.shipsH.naturalWidth*PIXEL, IMAGE.ui.shipsH.naturalHeight*PIXEL);
+        }
       }
-      for (let i=0; i<4; i++){
-        ctx.drawImage(IMAGE.ui.ships, (-192+((Math.floor(frames/2)+i*54)%216)*4), 52, IMAGE.ui.ships.naturalWidth*PIXEL, IMAGE.ui.ships.naturalHeight*PIXEL);
+      if (V_SCROLLERS){
+        for (let i=0; i<4; i++){
+          ctx.drawImage(IMAGE.ui.frogsV, 436, (-192+((Math.floor(frames/2)+i*54)%216)*4), IMAGE.ui.frogsV.naturalWidth*PIXEL, IMAGE.ui.frogsV.naturalHeight*PIXEL);
+        }
+        
+        for (let i=0; i<4; i++){
+          ctx.drawImage(IMAGE.ui.shipsV, 48, (576-((Math.floor(frames/2)+i*54)%216)*4), IMAGE.ui.shipsV.naturalWidth*PIXEL, IMAGE.ui.shipsV.naturalHeight*PIXEL);
+        }
       }
       ctx.strokeStyle = COLOR.UI;
 
