@@ -488,10 +488,8 @@ function renderLoop(currentDelta){
 
   ctx.clearRect(0,0,1000,1000);
   frames += 1;
-  if(mode == "game"){
-    game.render(); // runs (1 tick of) render loop of the game 
 
-  }else if (mode == "start"){
+  if (mode == "start" || mode == "credits"){
     for (let i = 0; i < bgStars.length; i++){
       bgStars[i].draw();
       if (bgStars[i].y > 128){
@@ -502,6 +500,12 @@ function renderLoop(currentDelta){
     if (Math.random() < 0.15){
       bgStars.push(new TitleStar(y = -2));
     }
+  }
+  if(mode == "game"){
+    game.render(); // runs (1 tick of) render loop of the game 
+
+  }else if (mode == "start"){
+    
 
     // newGameWindow.createdSlot: the index of the slot the player is trying to create a game in
 
