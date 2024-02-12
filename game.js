@@ -1073,10 +1073,14 @@ class Game{
           }
 
           // this.shipsPassed is set to true by default before every update
-          for (var j = 0; j < this.frogs.length; j ++){
-            if (this.fleet[i].y > this.frogs[j].y && !this.fleet[i].dead && !this.frogs[j].dead){
-              this.shipsPassed = false;
-              break;
+          if (this.fleet[i].attributes.typeName == "Tractor" && this.targetFrog != null){
+            this.shipsPassed = false;
+          }else{
+            for (var j = 0; j < this.frogs.length; j ++){
+              if (this.fleet[i].y > this.frogs[j].y && !this.fleet[i].dead && !this.frogs[j].dead){
+                this.shipsPassed = false;
+                break;
+              }
             }
           }
         }
