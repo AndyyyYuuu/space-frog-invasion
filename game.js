@@ -641,6 +641,7 @@ class Game{
     this.battleFrames = 0;
     this.gameOverFrames = 0;
     this.endBattleFrames = 56;
+    this.enterGameAnim = 0;
     this.frogCount = 0;
     this.shipCount = 0;
     this.frogsPassed = false;
@@ -658,7 +659,7 @@ class Game{
       mouseY: null
     }
     this.starMap = [];
-    this.menu_particles = [];
+    this.menuParticles = [];
     this.currentLevel = 0;
     this.frogLevels = [this.newLevel(this.currentLevel)];
     for (var i=0;i<100;i++){
@@ -670,6 +671,16 @@ class Game{
     }
   }
 
+  enterGame(){
+    this.enterGameAnim = 0;
+    this.selectedShip = null;
+    this.menuParticles = [];
+    for (let i=0; i<this.fleet.length; i++){
+      for (let k=0;k<20;k++){
+        this.menuParticles.push(new Particle(this.fleet[i].attributes.fleetx+(Math.random()-0.5)*this.fleet[i].getWidth()*1.5, this.fleet[i].attributes.fleety+(Math.random()-0.5)*this.fleet[i].getHeight()*1.5, Math.random()*3-1.5, Math.random()*3-1.5, 50, randChoice(COLOR.GOLD), 2))
+      }
+    }
+  }
 
   // Horrible, messy, ostrich algorithm that should never had existed but does anyway
   // Gets two mirrored frogs to append to a level
@@ -812,7 +823,7 @@ class Game{
                   break;
                 }
                 for (let k=0;k<20;k++){
-                  this.menu_particles.push(new Particle(mouseX+(Math.random()-0.5)*this.newShip.type.getWidth()*1.5, mouseY+(Math.random()-0.5)*this.newShip.type.getHeight()*1.5, Math.random()*3-1.5, Math.random()*3-1.5, 50, randChoice(COLOR.GOLD), 2))
+                  this.menuParticles.push(new Particle(mouseX+(Math.random()-0.5)*this.newShip.type.getWidth()*1.5, mouseY+(Math.random()-0.5)*this.newShip.type.getHeight()*1.5, Math.random()*3-1.5, Math.random()*3-1.5, 50, randChoice(COLOR.GOLD), 2))
                 }
                 this.newShip.mouseX = mouseX-(20+i*38)-1;
                 this.newShip.mouseY = mouseY-96;
@@ -836,7 +847,7 @@ class Game{
             this.fleet.push(this.newShip.type);
             const thisNewShip = this.fleet[this.fleet.length-1];
             for (let k=0;k<20;k++){
-              this.menu_particles.push(new Particle(thisNewShip.attributes.fleetx+(Math.random()-0.5)*thisNewShip.getWidth()*1.5, thisNewShip.attributes.fleety+(Math.random()-0.5)*thisNewShip.getHeight()*1.5, Math.random()*3-1.5, Math.random()*3-1.5, 50, randChoice(COLOR.GOLD), 2))
+              this.menuParticles.push(new Particle(thisNewShip.attributes.fleetx+(Math.random()-0.5)*thisNewShip.getWidth()*1.5, thisNewShip.attributes.fleety+(Math.random()-0.5)*thisNewShip.getHeight()*1.5, Math.random()*3-1.5, Math.random()*3-1.5, 50, randChoice(COLOR.GOLD), 2))
             }
             this.currency.metal -= this.newShip.type.attributes.price;
           }
@@ -997,11 +1008,11 @@ class Game{
 
       }
 
-      for (let i=0;i<this.menu_particles.length; i++){
-        this.menu_particles[i].draw();
-        this.menu_particles[i].update();
+      for (let i=0;i<this.menuParticles.length; i++){
+        this.menuParticles[i].draw();
+        this.menuParticles[i].update();
         if (this.life <= 0.05){
-          this.menu_particles.splice(i,1);
+          this.menuParticles.splice(i,1);
           i--;
         }
       }

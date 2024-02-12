@@ -302,7 +302,8 @@ canvas.onmouseup = function(){ // You know what this does
         if (mouseInRect(32, 68, 28, 8)){ // Cancel button
           clickedSlot = -1;
         }else if (mouseInRect(64, 68, 28, 8)){ // Play game button
-          mode = "game"
+          mode = "game";
+          game.enterGame();
           clickedSlot = -1;
         }else if (mouseInRect(32, 90, 48, 8)){ // Delete save button
           //saveSlots[clickedSlot] = null;
