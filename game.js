@@ -671,14 +671,18 @@ class Game{
     }
   }
 
+  shipBoom(ship){
+    for (let k=0;k<15+ship.attributes.lvl*3;k++){
+      this.menuParticles.push(new Particle(ship.attributes.fleetx+(Math.random()-0.5)*ship.getWidth()*1.5, ship.attributes.fleety+(Math.random()-0.5)*ship.getHeight()*1.5, Math.random()*2-1, Math.random()*2-1, 50, randChoice(COLOR.GOLD), 2))
+    }
+  }
+
   enterGame(){
     this.enterGameAnim = 0;
     this.selectedShip = null;
     this.menuParticles = [];
     for (let i=0; i<this.fleet.length; i++){
-      for (let k=0;k<20;k++){
-        this.menuParticles.push(new Particle(this.fleet[i].attributes.fleetx+(Math.random()-0.5)*this.fleet[i].getWidth()*1.5, this.fleet[i].attributes.fleety+(Math.random()-0.5)*this.fleet[i].getHeight()*1.5, Math.random()*3-1.5, Math.random()*3-1.5, 50, randChoice(COLOR.GOLD), 2))
-      }
+      this.shipBoom(this.fleet[i]);
     }
   }
 
@@ -822,9 +826,7 @@ class Game{
                   this.newShip.type = new TractorShip(-1, -1, 0);
                   break;
                 }
-                for (let k=0;k<20;k++){
-                  this.menuParticles.push(new Particle(mouseX+(Math.random()-0.5)*this.newShip.type.getWidth()*1.5, mouseY+(Math.random()-0.5)*this.newShip.type.getHeight()*1.5, Math.random()*3-1.5, Math.random()*3-1.5, 50, randChoice(COLOR.GOLD), 2))
-                }
+                this.shipBoom(this.newShip.type);
                 this.newShip.mouseX = mouseX-(20+i*38)-1;
                 this.newShip.mouseY = mouseY-96;
               }
@@ -846,9 +848,7 @@ class Game{
             this.newShip.type.attributes.fleety = mouseY-this.newShip.mouseY+this.newShip.type.getHeight()/2;
             this.fleet.push(this.newShip.type);
             const thisNewShip = this.fleet[this.fleet.length-1];
-            for (let k=0;k<20;k++){
-              this.menuParticles.push(new Particle(thisNewShip.attributes.fleetx+(Math.random()-0.5)*thisNewShip.getWidth()*1.5, thisNewShip.attributes.fleety+(Math.random()-0.5)*thisNewShip.getHeight()*1.5, Math.random()*3-1.5, Math.random()*3-1.5, 50, randChoice(COLOR.GOLD), 2))
-            }
+            this.shipBoom(thisNewShip);
             this.currency.metal -= this.newShip.type.attributes.price;
           }
           this.newShip.type = null;
@@ -865,6 +865,7 @@ class Game{
                   this.currency.biomatter -= this.selectedShip.attributes.upgrade.price
                   this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
                   this.selectedShip = this.fleet[this.selectedIndex];
+                  this.shipBoom(this.selectedShip);
                 }
               } else if (this.selectedShip.attributes.upgrade.currencyType == 1){
 
@@ -872,6 +873,7 @@ class Game{
                   this.currency.metal -= this.selectedShip.attributes.upgrade.price;
                   this.fleet[this.selectedIndex] = this.selectedShip.attributes.upgrade.upgrade(this.selectedShip);
                   this.selectedShip = this.fleet[this.selectedIndex];
+                  this.shipBoom(this.selectedShip);
                 }
               }
             }
@@ -1011,7 +1013,7 @@ class Game{
       for (let i=0;i<this.menuParticles.length; i++){
         this.menuParticles[i].draw();
         this.menuParticles[i].update();
-        if (this.life <= 0.05){
+        if (this.life <= 0.05 || this.x > 128 || this.x < 0 || this.y > 128 || this.y < 0){
           this.menuParticles.splice(i,1);
           i--;
         }
@@ -1237,8 +1239,8 @@ class Game{
   }
 
   getRich(){
-    this.currency.metal += 100 + Math.random()*400
-    this.currency.biomatter += 200 + Math.random()*800
+    this.currency.metal += 100 + Math.round(Math.random()*400);
+    this.currency.biomatter += 200 + Math.round(Math.random()*800);
   }
 
 }
