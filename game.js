@@ -307,10 +307,10 @@ class ColliderFrog extends Frog{
       fleetx:x,
       fleety:y,
       image:IMAGE.frog.collider[lvl],
-      health: 2+lvl*2,
+      health: 2**(lvl+1),
       damage: 1+lvl,
       lvl: lvl,
-      typeName: "collider"
+      typeName: "Collider"
     })
   }
 }
@@ -323,11 +323,11 @@ class ShooterFrog extends Frog{
       fleetx:x,
       fleety:y,
       image:IMAGE.frog.shooter[lvl],
-      health: 1+lvl,
+      health: 2+lvl*2,
       damage: 1+lvl,
       fireSpeed: 200/(lvl+4)+40,
       lvl: lvl,
-      typeName: "shooter"
+      typeName: "Shooter"
     })
     this.shootCooldown = Math.random()*100+25;
   }
@@ -491,7 +491,7 @@ class ShooterShip extends Ship{
       fleety: y,
       typeName: "Shooter",
       lvl: lvl,
-      upgrade: lvl < 5 ? new Upgrade("Strengthen", 3+lvl*2, 0, lvl+1, "Shooter") : null,
+      upgrade: lvl < 5 ? new Upgrade("Strengthen", Math.floor(1.2*(lvl+2)**2+3), 0, lvl+1, "Shooter") : null,
       fireSpeed: 600/(lvl**2+10)+5
     })
   }
@@ -530,7 +530,7 @@ class ColliderShip extends Ship{
       fleety: y,
       typeName: "Collider",
       lvl: lvl,
-      upgrade: lvl < 5 ? new Upgrade("Fortify", 2+lvl*2+Math.floor(lvl**0.5), 0, lvl+1, "Collider") : null, 
+      upgrade: lvl < 5 ? new Upgrade("Fortify", Math.floor(1*(lvl+1)**2+5), 0, lvl+1, "Collider") : null, 
       knockback: lvl*0.15
     })
   }
@@ -539,16 +539,16 @@ class ColliderShip extends Ship{
 class TractorShip extends Ship{
   constructor(x, y, lvl){
     super({
-      price: 3,
+      price: 4,
       health: 2+lvl*2,
-      damage: 2+lvl,
+      damage: 1+lvl,
       range: 32+16*lvl,
       image: IMAGE.ship.tractor[lvl], 
       fleetx: x,
       fleety: y,
       typeName: "Tractor",
       lvl: lvl,
-      upgrade: lvl < 5 ? new Upgrade("Upgrade", Math.floor(0.5*(lvl+1)**2+5), 0, lvl+1, "Tractor") : null
+      upgrade: lvl < 5 ? new Upgrade("Upgrade", Math.floor(1.5*(lvl+3)**2-1), 0, lvl+1, "Tractor") : null
     })
     this.targetFrog = null;
   }
@@ -568,7 +568,7 @@ class TractorShip extends Ship{
         }
         
         if (frames % 2 == 0){
-          this.targetFrog.health -= this.attributes.damage*0.02;
+          this.targetFrog.health -= this.attributes.damage*0.01;
           return new FrogPart(this);
         }
       }
@@ -1241,8 +1241,8 @@ class Game{
   }
 
   getRich(){
-    this.currency.metal += 100 + Math.round(Math.random()*400);
-    this.currency.biomatter += 200 + Math.round(Math.random()*800);
+    this.currency.metal += 1000 + Math.round(Math.random()*4000);
+    this.currency.biomatter += 2000 + Math.round(Math.random()*8000);
   }
 
 }
