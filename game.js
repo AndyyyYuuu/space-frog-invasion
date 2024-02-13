@@ -208,7 +208,7 @@ class Entity{
     if (!this.dead && !other.dead && this !== other && this.isTouching(other)){
       this.dx += (this.x-other.x)/distance(this.x, this.y, other.x, other.y)*0.5;
       this.dy += (this.y-other.y)/distance(this.x, this.y, other.x, other.y)*0.5;
-      if (this.attributes.typeName == "Collider" && other.isShip != this.isShip){
+      if (this.attributes.typeName == "Collider" && this.isShip && !other.isShip){
         other.damage(this.attributes.damage);
         // Additional knockback
         other.dx += (other.x-this.x)/distance(this.x, this.y, other.x, other.y)*this.attributes.knockback*0.75;
