@@ -55,7 +55,7 @@ And so cold`.split(/\r?\n|\r|\n/g);
 var settings = {
   pixelChecker: false, 
   // Pixel checker: a pixel that follows the mouse, useful to make sure pixels are aligned
-  saving: false
+  saving: true
 }
 
 // Returns a random element from list
@@ -171,19 +171,24 @@ function loadGames(){
   }
   for (var i = 0; i < 3; i ++){
     if (localStorage.getItem("game" + i) != null){ // if the slot is not empty
-      console.log(localStorage.getItem("game" + i))
       var slotItem = JSON.parse(localStorage.getItem("game" + i)); // parse JSON for instance vars
       saveSlots[i] = new Game(); // create game
-      for (var instanceVar in slotItem){
-        if (saveSlots[i][instanceVar] !== saveSlots[i].starMap && saveSlots[i][instanceVar] !== saveSlots[i].selectedShip){
-          if (saveSlots[i][instanceVar] === saveSlots[i].fleet){
-            for (var ship in slotItem.fleet){
-              copyInstanceVars(saveSlots[i].fleet[ship], ship);
-            }
+      for (var instanceVar in saveSlots[i]){ // iterate thru all instance vars in parsed game
+        copyInstanceVars(saveSlots[i], slotItem)  // copy all instance vars from parsed game onto new game
+        if (instanceVar[0] instanceof Ship){
+          console.log("copying fleet");
+          for (var ship in slotItem.fleet){
+            copyInstanceVars(saveSlots[i].fleet[ship], ship);
           }
-          
-          else{
-            saveSlots[i][instanceVar] = slotItem[instanceVar]; // copy instance var to game
+        }else if (instanceVar[0] instanceof Frog){
+          console.log("copying frogs");
+          for (var frog in slotItem.frogs){
+            copyInstanceVars(saveSlots[i].frogs[frog], frog);
+          }
+        }else if (instanceVar[0] instanceof Star){
+          console.log("copying starmap");
+          for (var star in slotItem.starMap){
+            copyInstanceVars(saveSlots[i].starMap[star], star);
           }
         }
       }
