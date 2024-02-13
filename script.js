@@ -171,23 +171,24 @@ function loadGames(){
   }
   for (var i = 0; i < 3; i ++){
     if (localStorage.getItem("game" + i) != null){ // if the slot is not empty
-      var slotItem = JSON.parse(localStorage.getItem("game" + i)); // parse JSON for instance vars
+      var loadedSlot = JSON.parse(localStorage.getItem("game" + i)); // parse JSON for instance vars
       saveSlots[i] = new Game(); // create game
       for (var instanceVar in saveSlots[i]){ // iterate thru all instance vars in parsed game
-        copyInstanceVars(saveSlots[i], slotItem)  // copy all instance vars from parsed game onto new game
-        if (instanceVar[0] instanceof Ship){
+        copyInstanceVars(saveSlots[i], loadedSlot) // copy all instance vars from parsed game onto new game
+        console.log(loadedSlot[instanceVar])
+        if (saveSlots[instanceVar] instanceof Ship){
           console.log("copying fleet");
-          for (var ship in slotItem.fleet){
+          for (var ship in loadedSlot.fleet){
             copyInstanceVars(saveSlots[i].fleet[ship], ship);
           }
         }else if (instanceVar[0] instanceof Frog){
           console.log("copying frogs");
-          for (var frog in slotItem.frogs){
+          for (var frog in loadedSlot.frogs){
             copyInstanceVars(saveSlots[i].frogs[frog], frog);
           }
-        }else if (instanceVar[0] instanceof Star){
+        }else if (loadedSlot[instanceVar] instanceof Array && loadedSlot[instanceVar][0] instanceof Star){ // if the instance variable is of
           console.log("copying starmap");
-          for (var star in slotItem.starMap){
+          for (var star in loadedSlot.starMap){
             copyInstanceVars(saveSlots[i].starMap[star], star);
           }
         }
