@@ -548,7 +548,7 @@ class TractorShip extends Ship{
       fleety: y,
       typeName: "Tractor",
       lvl: lvl,
-      upgrade: new Upgrade("Upgrade", Math.floor(0.5*(lvl+1)**2+5), 0, lvl+1, "Tractor")
+      upgrade: lvl < 5 ? new Upgrade("Upgrade", Math.floor(0.5*(lvl+1)**2+5), 0, lvl+1, "Tractor") : null
     })
     this.targetFrog = null;
   }
