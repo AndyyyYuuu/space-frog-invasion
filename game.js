@@ -310,7 +310,7 @@ class ColliderFrog extends Frog{
       health: 2+lvl*2,
       damage: 1+lvl,
       lvl: lvl,
-      typeName: "collider"
+      typeName: "Collider"
     })
   }
 }
@@ -327,7 +327,7 @@ class ShooterFrog extends Frog{
       damage: 1+lvl,
       fireSpeed: 200/(lvl+4)+40,
       lvl: lvl,
-      typeName: "shooter"
+      typeName: "Shooter"
     })
     this.shootCooldown = Math.random()*100+25;
   }

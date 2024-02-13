@@ -194,11 +194,11 @@ function loadGames(){
           //alert("fleet: " + loadedSlot[instanceVar][0] instanceof Ship)
           saveSlots[i][instanceVar] = []
           for (var j = 0; j < loadedSlot[instanceVar].length; j ++){
-            if (loadedSlot[instanceVar][j].typeName = "shooter"){
+            if (loadedSlot[instanceVar][j].typeName = "Shooter"){
               saveSlots[i][instanceVar].push(new ShooterShip(0, 0, 0))
-            }else if (loadedSlot[instanceVar][j].typeName = "collider"){
+            }else if (loadedSlot[instanceVar][j].typeName = "Collider"){
               saveSlots[i][instanceVar].push(new ColliderShip(0, 0, 0))
-            }else if (loadedSlot[instanceVar][j].typeName = "tractor"){
+            }else if (loadedSlot[instanceVar][j].typeName = "Tractor"){
               saveSlots[i][instanceVar].push(new TractorShip(0, 0, 0));
             }
 
@@ -208,9 +208,9 @@ function loadGames(){
           console.log("copying frogs")
           saveSlots[i][instanceVar] = []
           for (var j = 0; j < loadedSlot[instanceVar].length; j ++){
-            if (loadedSlot[instanceVar][j].typeName = "shooter"){
+            if (loadedSlot[instanceVar][j].typeName = "Shooter"){
               saveSlots[i][instanceVar].push(new ShooterFrog(0, 0, 0))
-            }else if (loadedSlot[instanceVar][j].typeName = "collider"){
+            }else if (loadedSlot[instanceVar][j].typeName = "Collider"){
               saveSlots[i][instanceVar].push(new ColliderFrog(0, 0, 0))
             }
 
