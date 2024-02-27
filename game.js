@@ -542,7 +542,7 @@ class TractorShip extends Ship{
       price: 4,
       health: 2+lvl*2,
       damage: 1+lvl,
-      range: 32+16*lvl,
+      range: 16+8*lvl,
       image: IMAGE.ship.tractor[lvl], 
       fleetx: x,
       fleety: y,
