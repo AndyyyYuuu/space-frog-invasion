@@ -673,9 +673,9 @@ class Game{
     }
   }
 
-  shipBoom(ship){
+  shipBoom(ship, x=ship.attributes.fleetx, y=ship.attributes.fleety){
     for (let k=0;k<15+ship.attributes.lvl*3;k++){
-      this.menuParticles.push(new Particle(ship.attributes.fleetx+(Math.random()-0.5)*ship.getWidth()*1.5, ship.attributes.fleety+(Math.random()-0.5)*ship.getHeight()*1.5, Math.random()*2-1, Math.random()*2-1, 50, randChoice(COLOR.GOLD), 2))
+      this.menuParticles.push(new Particle(x+(Math.random()-0.5)*ship.getWidth()*1.5, y+(Math.random()-0.5)*ship.getHeight()*1.5, Math.random()*2-1, Math.random()*2-1, 50, randChoice(COLOR.GOLD), 2));
     }
   }
 
@@ -828,7 +828,7 @@ class Game{
                   this.newShip.type = new TractorShip(-1, -1, 0);
                   break;
                 }
-                this.shipBoom(this.newShip.type);
+                this.shipBoom(this.newShip.type, mouseX, mouseY);
                 this.newShip.mouseX = mouseX-(20+i*38)-1;
                 this.newShip.mouseY = mouseY-96;
               }
@@ -1000,7 +1000,7 @@ class Game{
         drawText("Shooter", 50, 112, "small");
         drawText("Tractor", 88, 112, "small");
         for (let i=0; i<3; i++){
-          if (mouseIsDown && mouseInRect(20+i*38, 96, 7, 7)){
+          if (!mouseIsDown && mouseInRect(20+i*38, 96, 7, 7)){
             selectRect(21+i*38, 97, 5, 5);
           }else{
             selectRect(20+i*38, 96, 7, 7);
