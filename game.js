@@ -539,10 +539,10 @@ class ColliderShip extends Ship{
 class TractorShip extends Ship{
   constructor(x, y, lvl){
     super({
-      price: 4,
+      price: 3,
       health: 2+lvl*2,
-      damage: 1+lvl,
-      range: 16+8*lvl,
+      damage: 2+lvl,
+      range: 16+12*lvl,
       image: IMAGE.ship.tractor[lvl], 
       fleetx: x,
       fleety: y,
@@ -568,7 +568,7 @@ class TractorShip extends Ship{
         }
         
         if (frames % 2 == 0){
-          this.targetFrog.health -= this.attributes.damage*0.01;
+          this.targetFrog.health -= this.attributes.damage*0.03;
           return new FrogPart(this);
         }
       }
