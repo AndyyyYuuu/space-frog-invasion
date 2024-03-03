@@ -144,7 +144,10 @@ var IMAGE = {
 
 function copyInstanceVars(copy, original){
   for (var instanceVar in original){
-    copy[instanceVar] = original[instanceVar] * 1;
+    console.log(instanceVar)
+    if (instanceVar != "image"){
+      copy[instanceVar] = original[instanceVar] * 1;
+    }
   }
 }
 
@@ -175,11 +178,11 @@ function loadGames(){
       saveSlots[i] = new Game(); // create game
       copyInstanceVars(saveSlots[i], loadedSlot) // copy all instance vars from parsed game onto new game
       for (var instanceVar in saveSlots[i]){ // iterate thru all instance vars in parsed game
-        console.log(typeof instanceVar) // string
-        console.log(typeof loadedSlot[instanceVar]) // all sorts
+        //console.log(typeof instanceVar) // string
+        //console.log(typeof loadedSlot[instanceVar]) // all sorts
 
         if (instanceVar == "starMap"){
-          console.log("copying starMap")
+          console.log("!!copying starMap")
           //alert("starmap: " + loadedSlot[instanceVar])
           console.log(saveSlots[i][instanceVar].length)
           saveSlots[i][instanceVar] = [] // empty the starmap
@@ -190,7 +193,7 @@ function loadGames(){
           }
 
         }else if (instanceVar == "fleet"){
-          console.log("copying fleet")
+          console.log("!!copying fleet")
           //alert("fleet: " + loadedSlot[instanceVar][0] instanceof Ship)
           saveSlots[i][instanceVar] = []
           for (var j = 0; j < loadedSlot[instanceVar].length; j ++){
@@ -205,7 +208,7 @@ function loadGames(){
             copyInstanceVars(saveSlots[i][instanceVar][j],loadedSlot[instanceVar][j])
           }
         }else if (instanceVar == "frogs"){
-          console.log("copying frogs")
+          console.log("!!copying frogs")
           saveSlots[i][instanceVar] = []
           for (var j = 0; j < loadedSlot[instanceVar].length; j ++){
             if (loadedSlot[instanceVar][j].typeName = "Shooter"){
