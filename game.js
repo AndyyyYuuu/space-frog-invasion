@@ -941,10 +941,11 @@ class Game{
           }else{
             this.heldShip = null;
           }
-          ctx.globalAlpha *= 0.5; // Dirty dirty method
-          uiRect(this.FORMATION_SCREEN.x, this.FORMATION_SCREEN.y, this.FORMATION_SCREEN.w, this.FORMATION_SCREEN.h, true);
-          ctx.globalAlpha *= 2;
+          
         }
+        ctx.globalAlpha *= 0.5; // Dirty dirty method
+        uiRect(this.FORMATION_SCREEN.x, this.FORMATION_SCREEN.y, this.FORMATION_SCREEN.w, this.FORMATION_SCREEN.h, true);
+        ctx.globalAlpha *= 2;
 
         // Draw frog indicators
         for (let i = 0; i < this.frogLevels[this.currentLevel].length; i++){
@@ -959,7 +960,7 @@ class Game{
       // Bottom UI menu 
       uiRect(4, 80, 120, 44);
       buttonRect(83, 68, 29, 8, !this.inOptions); // Battle button
-      buttonRect2(4, 6, 9, 9, !this.inOptions);
+      buttonRect(4, 6, 9, 9, !this.inOptions);
       ctx.fillStyle = COLOR.TEXT;
       drawImage(IMAGE.ui.settingsIcon, 6, 8);
       drawImage(IMAGE.currency.metal, 2, 70);

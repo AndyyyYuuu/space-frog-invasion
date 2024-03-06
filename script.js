@@ -34,6 +34,7 @@ const COLOR = {
     "#362B87",
     "#CCDDFF"
   ],
+  BOX: "#98C1E3",
   TITLE: "#fc8d3d", 
   GREEN: ["#ADFF94","#71ED66","#23B84A","#07734F","#023138","#011824"], 
   GOLD: ["#240013","#4D041C","#822D11","#96561E","#C4A64B","#E0DE77"]
@@ -352,6 +353,35 @@ function uiRect(x, y, w, h, hollow = false){
     ctx.fillRect(x*PIXEL,y*PIXEL,w*PIXEL,h*PIXEL);
   }
   ctx.lineWidth = 4;
+  ctx.strokeStyle = COLOR.BOX;
+  ctx.beginPath();
+  ctx.rect(x*PIXEL-2, y*PIXEL-2, w*PIXEL+4, h*PIXEL+4);
+  ctx.stroke();
+}
+
+// Draws a tactile rectangle in UI style
+function buttonRect(x, y, w, h, isTactile = true, isRed = false){
+  
+  if (mouseInRect(x, y, w, h) && !mouseIsDown && isTactile){
+    uiRect(x, y, w, h);
+  }else{
+    ctx.fillStyle = "black";
+    ctx.fillRect(x*PIXEL,y*PIXEL,w*PIXEL,h*PIXEL);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = COLOR.BOX;
+    ctx.beginPath();
+    ctx.rect(x*PIXEL+2, y*PIXEL+2, w*PIXEL-4, h*PIXEL-4);
+    ctx.stroke();
+  }
+}
+
+// Draws a rectangle in UI style
+function uiRect1(x, y, w, h, hollow = false){
+  if (!hollow){
+    ctx.fillStyle = "black";
+    ctx.fillRect(x*PIXEL,y*PIXEL,w*PIXEL,h*PIXEL);
+  }
+  ctx.lineWidth = 4;
   ctx.strokeStyle = COLOR.UI[0];
   ctx.beginPath();
   ctx.rect(x*PIXEL-2, y*PIXEL-2, w*PIXEL+4, h*PIXEL+4);
@@ -364,7 +394,7 @@ function uiRect(x, y, w, h, hollow = false){
 
 
 // Draws a tactile rectangle in UI style
-function buttonRect(x, y, w, h, isTactile = true, isRed = false){
+function buttonRect1(x, y, w, h, isTactile = true, isRed = false){
   
   if (mouseInRect(x, y, w, h) && !mouseIsDown && isTactile){
     uiRect(x, y, w, h);
