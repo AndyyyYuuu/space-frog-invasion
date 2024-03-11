@@ -539,7 +539,7 @@ class ColliderShip extends Ship{
 class TractorShip extends Ship{
   constructor(x, y, lvl){
     super({
-      price: 3,
+      price: 4,
       health: 2+lvl*2,
       damage: 2+lvl,
       range: 16+12*lvl,
@@ -1008,7 +1008,7 @@ class Game{
           }
           
           drawImage(IMAGE.currency.metal, 12+i*38, 113);
-          drawText(i+1, 22+i*38, 119, "large")
+          drawText({1, 2, 4}[i], 22+i*38, 119, "large")
         }
 
       }
