@@ -483,7 +483,7 @@ class Ship extends Entity{
 class ShooterShip extends Ship{
   constructor(x, y, lvl){
     super({
-      price: 2,
+      price: SHIP_PRICES[1],
       health: 2+lvl,
       damage: 2+lvl*2,
       image: IMAGE.ship.shooter[lvl], 
@@ -522,7 +522,7 @@ class ShooterShip extends Ship{
 class ColliderShip extends Ship{
   constructor(x, y, lvl){
     super({
-      price: 1,
+      price: SHIP_PRICES[0],
       health: 2+lvl*2,
       damage: 1+lvl,
       image: IMAGE.ship.collider[lvl], 
@@ -539,7 +539,7 @@ class ColliderShip extends Ship{
 class TractorShip extends Ship{
   constructor(x, y, lvl){
     super({
-      price: 4,
+      price: SHIP_PRICES[2],
       health: 2+lvl*2,
       damage: 2+lvl,
       range: 16+12*lvl,
@@ -589,6 +589,8 @@ class TractorShip extends Ship{
     return null;
   }
 }
+
+const SHIP_PRICES = [1, 2, 4];
 
 
 // Tractor's frog particle class
@@ -949,7 +951,7 @@ class Game{
 
         // Draw frog indicators
         for (let i = 0; i < this.frogLevels[this.currentLevel].length; i++){
-          drawImage(IMAGE.frog.indicator, this.frogLevels[this.currentLevel][i].attributes.fleetx - 2, (16 + Math.sin(frames*0.3)*0.6))
+          drawImage(IMAGE.frog.indicator, this.frogLevels[this.currentLevel][i].attributes.fleetx - 2, (17 + Math.sin(frames*0.3)*0.6))
         }
 
       }
@@ -1008,7 +1010,7 @@ class Game{
           }
           
           drawImage(IMAGE.currency.metal, 12+i*38, 113);
-          drawText({1, 2, 4}[i], 22+i*38, 119, "large")
+          drawText(SHIP_PRICES[i], 22+i*38, 119, "large")
         }
 
       }
