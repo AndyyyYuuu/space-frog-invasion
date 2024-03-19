@@ -81,6 +81,11 @@ function parabola(x, max, int1, int2){
   return -4*max/(int1-int2)**2*(x-int1)*(x-int2);
 }
 
+// 
+function cappedIdx(list, idx){
+  return list[Math.max(0, Math.min(list.length-1, idx))];
+}
+
 var mode = "start";
 var newGameWindow = {// Stores variables for creating a new game
   createdSlot: -1, // The slot the player is creating a game in, -1 when not creating slot

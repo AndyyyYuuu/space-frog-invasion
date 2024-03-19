@@ -304,9 +304,9 @@ class Frog extends Entity{
 class ColliderFrog extends Frog{
   constructor(x, y, lvl){
     super({
-      fleetx:x,
-      fleety:y,
-      image:IMAGE.frog.collider[lvl],
+      fleetx: x,
+      fleety: y,
+      image: cappedIdx(IMAGE.frog.collider, lvl),
       health: 2**(lvl+1),
       damage: 1+lvl,
       lvl: lvl,
@@ -320,9 +320,9 @@ class ShooterFrog extends Frog{
   constructor(x, y, lvl){
     
     super({
-      fleetx:x,
-      fleety:y,
-      image:IMAGE.frog.shooter[lvl],
+      fleetx: x,
+      fleety: y,
+      image: cappedIdx(IMAGE.frog.shooter, lvl),
       health: 2+lvl*2,
       damage: 1+lvl,
       fireSpeed: 200/(lvl+4)+40,
@@ -491,7 +491,7 @@ class ShooterShip extends Ship{
       fleety: y,
       typeName: "Shooter",
       lvl: lvl,
-      upgrade: lvl < 5 ? new Upgrade("Strengthen", Math.floor(1.2*(lvl+2)**2+3), 0, lvl+1, "Shooter") : null,
+      upgrade: lvl < IMAGE.ship.shooter.length ? new Upgrade("Strengthen", Math.floor(1.2*(lvl+2)**2+3), 0, lvl+1, "Shooter") : null,
       fireSpeed: 600/(lvl**2+10)+5
     })
   }
@@ -525,12 +525,12 @@ class ColliderShip extends Ship{
       price: SHIP_PRICES[0],
       health: 2+lvl*2,
       damage: 1+lvl,
-      image: IMAGE.ship.collider[lvl], 
+      image: cappedIdx(IMAGE.ship.collider, lvl), 
       fleetx: x,
       fleety: y,
       typeName: "Collider",
       lvl: lvl,
-      upgrade: lvl < 5 ? new Upgrade("Fortify", Math.floor(1*(lvl+1)**2+5), 0, lvl+1, "Collider") : null, 
+      upgrade: lvl < IMAGE.ship.collider.length ? new Upgrade("Fortify", Math.floor(1*(lvl+1)**2+5), 0, lvl+1, "Collider") : null, 
       knockback: lvl*0.15
     })
   }
@@ -543,12 +543,12 @@ class TractorShip extends Ship{
       health: 2+lvl*2,
       damage: 2+lvl,
       range: 16+12*lvl,
-      image: IMAGE.ship.tractor[lvl], 
+      image: cappedIdx(IMAGE.ship.tractor, lvl), 
       fleetx: x,
       fleety: y,
       typeName: "Tractor",
       lvl: lvl,
-      upgrade: lvl < 5 ? new Upgrade("Upgrade", Math.floor(1.5*(lvl+3)**2-1), 0, lvl+1, "Tractor") : null
+      upgrade: lvl < IMAGE.ship.tractor.length ? new Upgrade("Upgrade", Math.floor(1.5*(lvl+3)**2-1), 0, lvl+1, "Tractor") : null
     })
     this.targetFrog = null;
   }
