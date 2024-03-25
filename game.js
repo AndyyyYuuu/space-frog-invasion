@@ -385,7 +385,7 @@ class Upgrade {
 
   draw(target, x, y, isTactile = true){
 
-    buttonRect(x, y, 48, 16, isTactile);
+    buttonRect({x: x, y: y, w: 48, h: 16}, isTactile);
     ctx.fillStyle = COLOR.TEXT;
     drawText(this.name, x+2, y+6, "small");
     drawText(this.price, x+10, y+14, "large");
@@ -394,7 +394,7 @@ class Upgrade {
     }else if (this.currencyType == 1){
       drawImage(IMAGE.currency.metal, x+1, y+7);
     }
-    if (isTactile && mouseInRect(x, y, 48, 16)){
+    if (isTactile && mouseInRect({x: x, y: y, w: 48, h: 16})){
       this.drawDiff(target, "health", 21, 96);
       this.drawDiff(target, "damage", 28, 104);
       if (target.attributes.typeName == "Tractor"){
@@ -476,7 +476,7 @@ class Ship extends Entity{
   }*/
   
   attributeInRect(){
-    return mouseInRect(Math.round(this.attributes.fleetx-this.getWidth()/2), Math.round(this.attributes.fleety-this.getHeight()/2), this.getWidth(), this.getHeight())
+    return mouseInRect({x: Math.round(this.attributes.fleetx-this.getWidth()/2), y: Math.round(this.attributes.fleety-this.getHeight()/2), w: this.getWidth(), h: this.getHeight()})
   }
 }
 
@@ -673,6 +673,7 @@ class Game{
     this.FORMATION_SCREEN = {
       x: 16, y: 16, w: 96, h: 48
     }
+    this.OPTIONS_SZ = 28;
   }
 
   shipBoom(ship, x=ship.attributes.fleetx, y=ship.attributes.fleety){
@@ -792,7 +793,7 @@ class Game{
       }
     }
     if (this.state == 0 && this.endBattleFrames >= 56){
-      if (!this.inOptions && mouseInRect(83, 68, 29, 8)){
+      if (!this.inOptions && mouseInRect({x: 83, y: 68, w: 29, h: 8})){
         this.battleButtonDown = false;
       }
     }
@@ -802,10 +803,10 @@ class Game{
   click(){
     if (this.state == 0){
       if (!this.inOptions){
-        if (mouseInRect(83,68,29,8)){
+        if (mouseInRect({x: 83, y: 68, w: 29, h: 8})){
           this.battleButtonDown = true;
         }
-        if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
+        if (mouseInRect({x: this.FORMATION_SCREEN.x, y: this.FORMATION_SCREEN.y, w: this.FORMATION_SCREEN.w, h: this.FORMATION_SCREEN.h})){
 
           for (let i=0; i<this.fleet.length; i++){
             if (this.fleet[i].attributeInRect()){
@@ -817,7 +818,7 @@ class Game{
           this.selectedShip = null;
         }else if (this.selectedShip == null){
           for (let i=0; i<3; i++){
-            if (mouseInRect(20+i*38, 96, 7, 7)){
+            if (mouseInRect({x: 20+i*38, y: 96, w: 7, h: 7})){
               if (this.currency.metal >= i+1){
                 switch (i){
                 case 0:
@@ -847,7 +848,7 @@ class Game{
     if (this.state == 0 && this.endBattleFrames >= 56){
       if (!this.inOptions){
         if (this.newShip.type != null){
-          if (mouseInRect(this.FORMATION_SCREEN.x,this.FORMATION_SCREEN.y,this.FORMATION_SCREEN.w,this.FORMATION_SCREEN.h)){
+          if (mouseInRect(this.FORMATION_SCREEN)){
             this.newShip.type.attributes.fleetx = mouseX-this.newShip.mouseX+this.newShip.type.getWidth()/2;
             this.newShip.type.attributes.fleety = mouseY-this.newShip.mouseY+this.newShip.type.getHeight()/2;
             this.fleet.push(this.newShip.type);
@@ -858,10 +859,10 @@ class Game{
           this.newShip.type = null;
           return;
         }
-        if (mouseInRect(83,68,29,8) && this.battleButtonDown){ // Battle button
+        if (mouseInRect({x: 83, y: 68, w: 29, h: 8}) && this.battleButtonDown){ // Battle button
           this.battleButtonDown = false;
           this.startBattle();
-        }else if (mouseInRect(64, 100, 48, 16)){
+        }else if (mouseInRect({x: 64, y: 100, w: 48, h: 16})){
           if (this.selectedShip != null){
             if (this.selectedShip.attributes.upgrade != null){
               if (this.selectedShip.attributes.upgrade.currencyType == 0){
@@ -882,7 +883,7 @@ class Game{
               }
             }
           }
-        }else if (mouseInRect(4, 6, 9, 9)){
+        }else if (mouseInRect({x: 4, y: 6, w: 9, h: 9})){
           this.inOptions = true;
         }
 
@@ -890,10 +891,10 @@ class Game{
         this.newShip.mouseX = null;
         this.newShip.mouseY = null;
       }else{ // Options screen clicking
-        if (mouseInRect(36, 36, 56, 8) || !mouseInRect(32, 32, 64, 64)){ // back to game
+        if (mouseInRect({x: 36, y: 64-this.OPTIONS_SZ/2 + 4, w: 56, h: 8}) || !mouseInRect({x: 32, y: 64-this.OPTIONS_SZ/2, w: 64, h: this.OPTIONS_SZ})){ // back to game
           this.inOptions = false;
         }
-        else if (mouseInRect(36, 84, 56, 8)){ // save and quit
+        else if (mouseInRect({x: 36, y: 64+this.OPTIONS_SZ/2 - 12, w: 56, h: 8})){ // save and quit
           this.inOptions = false;
           game = null;
           saveGames();
@@ -946,7 +947,7 @@ class Game{
           
         }
         ctx.globalAlpha *= 0.5; // Dirty dirty method
-        uiRect(this.FORMATION_SCREEN.x, this.FORMATION_SCREEN.y, this.FORMATION_SCREEN.w, this.FORMATION_SCREEN.h, true);
+        uiRect({x: this.FORMATION_SCREEN.x, y: this.FORMATION_SCREEN.y, w: this.FORMATION_SCREEN.w, h: this.FORMATION_SCREEN.h}, true);
         ctx.globalAlpha *= 2;
 
         // Draw frog indicators
@@ -960,9 +961,9 @@ class Game{
       
 
       // Bottom UI menu 
-      uiRect(4, 80, 120, 44);
-      buttonRect(83, 68, 29, 8, !this.inOptions); // Battle button
-      buttonRect(4, 6, 9, 9, !this.inOptions);
+      uiRect({x: 4, y: 80, w: 120, h: 44});
+      buttonRect({x: 83, y: 68, w: 29, h: 8}, !this.inOptions); // Battle button
+      buttonRect({x: 4, y: 6, w: 9, h: 9}, !this.inOptions);
       ctx.fillStyle = COLOR.TEXT;
       drawImage(IMAGE.ui.settingsIcon, 6, 8);
       drawImage(IMAGE.currency.metal, 2, 70);
@@ -1003,7 +1004,7 @@ class Game{
         drawText("Shooter", 50, 112, "small");
         drawText("Tractor", 88, 112, "small");
         for (let i=0; i<3; i++){
-          if (!mouseIsDown && mouseInRect(20+i*38, 96, 7, 7)){
+          if (!mouseIsDown && mouseInRect({x: 20+i*38, y: 96, w: 7, h: 7})){
             selectRect(21+i*38, 97, 5, 5);
           }else{
             selectRect(20+i*38, 96, 7, 7);
@@ -1030,14 +1031,15 @@ class Game{
       if (this.inOptions){
         ctx.fillStyle = "rgba(0,0,0,0.7)";
         ctx.fillRect(0, 0, 512, 512);
-        uiRect(32, 32, 64, 64);
+        
+        uiRect({x: 32, y: 64-this.OPTIONS_SZ/2, w: 64, h: this.OPTIONS_SZ});//uiRect(32, 32, 64, 64);
         ctx.fillStyle = COLOR.TEXT;
-        drawText("OPTIONS", 48, 28, "small");
-        buttonRect(36, 36, 56, 8); // Back to game
-        buttonRect(36, 84, 56, 8); // Save & exit
+        drawText("OPTIONS", 48, 64-this.OPTIONS_SZ/2 - 4, "small");
+        buttonRect({x: 36, y: 64-this.OPTIONS_SZ/2 + 4, w: 56, h: 8}); // Back to game
+        buttonRect({x: 36, y: 64+this.OPTIONS_SZ/2 - 12, w: 56, h: 8}); // Save & exit
         ctx.fillStyle = COLOR.TEXT;
-        drawText("Back to Game", 40, 42, "small");
-        drawText("SAVE & EXIT", 42, 90, "small");
+        drawText("Back to Game", 40, 64-this.OPTIONS_SZ/2 + 10, "small");
+        drawText("SAVE & EXIT", 42, 64+this.OPTIONS_SZ/2 - 6, "small");
       }
 
     }

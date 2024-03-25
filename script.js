@@ -148,6 +148,21 @@ var IMAGE = {
   }
 }
 
+var BUTTON = {
+  creatingSlot: {
+    newGame: {x: 64, y: 78, w: 28, h: 8},
+    cancel: {x: 32, y: 78, w: 28, h: 8}
+  }, 
+  loadingSlot: {
+    enterGame: {x: 64, y: 68, w: 28, h: 8},
+    cancel: {x: 32, y: 68, w: 28, h: 8},
+    deleteSave: {x: 32, y: 90, w: 48, h: 8, delete: {
+      delete: {x: 39, y: 78, w: 27, h: 8}, 
+      nvm: {x: 70, y: 78, w: 20, h: 8}
+    }}
+  }
+}
+
 function copyInstanceVars(copy, original){
   for (var instanceVar in original){
     copy[instanceVar] = original[instanceVar];
@@ -242,16 +257,14 @@ canvas.addEventListener("mouseenter", function(evt) {
 
 
 // Checks if mouse is inside a rectangle
-function mouseInRect(x, y, w, h){
-  return mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h;
+function mouseInRect(rect){
+  return mouseX > rect.x && mouseX < rect.x+rect.w && mouseY > rect.y && mouseY < rect.y+rect.h;
 }
-
 
 // Returns distance between (x1, y1) and (x2, y2)
 function distance(x1, y1, x2, y2){
   return Math.sqrt((x1-x2)**2 + (y1-y2)**2);
 }
-
 
 // Rounds a number to the nearest denom (default 1)
 function round(num, denom = 1){
@@ -265,7 +278,6 @@ canvas.onmousemove = function(){
   }
 }
 
-
 canvas.onmousedown = function(){
   mouseIsDown = true;
   if (mode == "game"){
@@ -273,7 +285,7 @@ canvas.onmousedown = function(){
   }else if (mode == "start"){
 
     if (newGameWindow.createdSlot != -1){ // "new game" window is open
-      if (mouseInRect(52, 67, ctx.measureText(newGameWindow.name).width/PIXEL+12, 6)){ // mouse is on the change name button
+      if (mouseInRect({x: 52, y: 67, w: ctx.measureText(newGameWindow.name).width/PIXEL+12, h: 6})){ // mouse is on the change name button
         newGameWindow.name = randName();
       }
     }else if (clickedSlot != -1 && deletionStage == -1){
@@ -283,7 +295,6 @@ canvas.onmousedown = function(){
     }
   }
 }
-
 
 canvas.onmouseup = function(){ // You know what this does
   mouseIsDown = false;
@@ -295,9 +306,9 @@ canvas.onmouseup = function(){ // You know what this does
 
 
     if (newGameWindow.createdSlot != -1){ // If a slot is being created / slot creation window
-      if (mouseInRect(32, 78, 28, 8)){ // Cancel button
+      if (mouseInRect(BUTTON.creatingSlot.cancel)){ // Cancel button
         newGameWindow.createdSlot = -1;
-      }else if (mouseInRect(64, 78, 28, 8)){ // Create new game button
+      }else if (mouseInRect(BUTTON.creatingSlot.newGame)){ // Create new game button
         saveSlots[newGameWindow.createdSlot] = new Game(newGameWindow.name);
         saveGames();
         newGameWindow.createdSlot = -1;
@@ -305,32 +316,32 @@ canvas.onmouseup = function(){ // You know what this does
 
     }else if (clickedSlot != -1){ // Enter game window
       if (deletionStage == -1){
-        if (mouseInRect(32, 68, 28, 8)){ // Cancel button
+        if (mouseInRect(BUTTON.loadingSlot.cancel)){ // Cancel button
           clickedSlot = -1;
-        }else if (mouseInRect(64, 68, 28, 8)){ // Play game button
+        }else if (mouseInRect(BUTTON.loadingSlot.enterGame)){ // Play game button
           mode = "game";
           game.enterGame();
           clickedSlot = -1;
-        }else if (mouseInRect(32, 90, 48, 8)){ // Delete save button
+        }else if (mouseInRect(BUTTON.loadingSlot.deleteSave)){ // Delete save button
           //saveSlots[clickedSlot] = null;
           //clickedSlot = -1;
           deletionStage = 0;
         }
       }else if (deletionStage == 0){
 
-        if (mouseInRect(39, 78, 27, 8)){ // Delete button
+        if (mouseInRect(BUTTON.loadingSlot.deleteSave.delete.delete)){ // Delete button
           saveSlots[clickedSlot] = null;
           deletionStage = -1;
           clickedSlot = -1;
           saveGames();
-        }else if (mouseInRect(70, 78, 20, 8) || !mouseInRect(32, 32, 64, 64)){ // Cancel
+        }else if (mouseInRect(BUTTON.loadingSlot.deleteSave.delete.nvm) || !mouseInRect({x: 32, y: 32, w: 64, h: 64})){ // Cancel
           deletionStage = -1;
         }
       }
 
     }else{ // Title screen
       for (let i=0; i<3; i++){
-        if (mouseInRect(26, BUTTONS_Y+20*i, 76, 16)){
+        if (mouseInRect({x: 26, y: BUTTONS_Y+20*i, w: 76, h: 16})){
           if (saveSlots[i] == null){ // If slot is empty
             newGameWindow.createdSlot = i;
             newGameWindow.name = randName();
@@ -352,30 +363,31 @@ document.addEventListener("keydown", event => {
 
 
 // Draws a rectangle in UI style
-function uiRect(x, y, w, h, hollow = false){
+function uiRect(rect, hollow = false){
   if (!hollow){
     ctx.fillStyle = "black";
-    ctx.fillRect(x*PIXEL,y*PIXEL,w*PIXEL,h*PIXEL);
+    ctx.fillRect(rect.x*PIXEL, rect.y*PIXEL, rect.w*PIXEL, rect.h*PIXEL);
   }
   ctx.lineWidth = 4;
   ctx.strokeStyle = COLOR.BOX;
   ctx.beginPath();
-  ctx.rect(x*PIXEL-2, y*PIXEL-2, w*PIXEL+4, h*PIXEL+4);
+  ctx.rect(rect.x*PIXEL-2, rect.y*PIXEL-2, rect.w*PIXEL+4, rect.h*PIXEL+4);
   ctx.stroke();
 }
 
+
 // Draws a tactile rectangle in UI style
-function buttonRect(x, y, w, h, isTactile = true, isRed = false){
+function buttonRect(rect, isTactile = true, isRed = false){
   
-  if (mouseInRect(x, y, w, h) && !mouseIsDown && isTactile){
-    uiRect(x, y, w, h);
+  if (mouseInRect(rect) && !mouseIsDown && isTactile){
+    uiRect(rect);
   }else{
     ctx.fillStyle = "black";
-    ctx.fillRect(x*PIXEL,y*PIXEL,w*PIXEL,h*PIXEL);
+    ctx.fillRect(rect.x*PIXEL, rect.y*PIXEL, rect.w*PIXEL, rect.h*PIXEL);
     ctx.lineWidth = 4;
     ctx.strokeStyle = COLOR.BOX;
     ctx.beginPath();
-    ctx.rect(x*PIXEL+2, y*PIXEL+2, w*PIXEL-4, h*PIXEL-4);
+    ctx.rect(rect.x*PIXEL+2, rect.y*PIXEL+2, rect.w*PIXEL-4, rect.h*PIXEL-4);
     ctx.stroke();
   }
 }
@@ -396,7 +408,6 @@ function uiRect1(x, y, w, h, hollow = false){
   ctx.rect(x*PIXEL+2, y*PIXEL+2, w*PIXEL-4, h*PIXEL-4);
   ctx.stroke();
 }
-
 
 // Draws a tactile rectangle in UI style
 function buttonRect1(x, y, w, h, isTactile = true, isRed = false){
@@ -558,13 +569,13 @@ function renderLoop(currentDelta){
       drawText("- " + saveSlots[clickedSlot].name + " -", 32, 62, "small");
       
       if (deletionStage == -1){
-        buttonRect(32, 68, 28, 8, true);
-        buttonRect(64, 68, 28, 8, true);
-        buttonRect(32, 90, 48, 8, true);
+        buttonRect(BUTTON.loadingSlot.cancel, true);
+        buttonRect(BUTTON.loadingSlot.deleteSave, true);
+        buttonRect(BUTTON.loadingSlot.enterGame, true);
       }else{
-        buttonRect(32, 68, 28, 8, false);
-        buttonRect(64, 68, 28, 8, false);
-        buttonRect(32, 90, 48, 8, false);
+        buttonRect(BUTTON.loadingSlot.cancel, false);
+        buttonRect(BUTTON.loadingSlot.deleteSave, false);
+        buttonRect(BUTTON.loadingSlot.enterGame, false);
       }
 
       ctx.fillStyle = COLOR.TEXT;
@@ -575,14 +586,14 @@ function renderLoop(currentDelta){
       if (deletionStage >= 0){ // "ARE YOU SURE???" window
         ctx.fillStyle = "rgb(0, 0, 0, 0.5)";
         ctx.fillRect(0, 0, 512, 512);
-        uiRect(32, 32, 64, 64);
+        uiRect({x: 32, y: 32, w: 64, h: 64});
         ctx.fillStyle = COLOR.TEXT;
         drawText("Are you SURE?", 38, 46, "small");
         drawText("You will NEVER ", 38, 58, "small");
         drawText("get your save", 38, 64, "small");
         drawText("back!!!", 38, 70, "small");
-        buttonRect(39, 78, 27, 8, true);
-        buttonRect(70, 78, 20, 8, true);
+        buttonRect(BUTTON.loadingSlot.deleteSave.delete.delete, true);
+        buttonRect(BUTTON.loadingSlot.deleteSave.delete.nvm, true);
         ctx.fillStyle = COLOR.TEXT;
         drawText("DELETE", 41, 84, "small");
         drawText("nvm", 73, 84, "small");
@@ -591,14 +602,14 @@ function renderLoop(currentDelta){
     }else if (newGameWindow.createdSlot != -1){ // Home page, with "create save" window open
       ctx.fillStyle = COLOR.TEXT; 
       drawText("Create game in Slot "+(newGameWindow.createdSlot+1), 32, 64, "small");
-      if (mouseInRect(52, 67, ctx.measureText(newGameWindow.name).width/PIXEL+12, 6)){ // Tactile name switcher
+      if (mouseInRect({x: 52, y: 67, w: ctx.measureText(newGameWindow.name).width/PIXEL+12, h: 6})){ // Tactile name switcher
         drawText("Name: >"+newGameWindow.name+"<", 32, 72, "small");
       }else{
         drawText("Name:  "+newGameWindow.name, 32, 72, "small");
       }
       
-      buttonRect(32, 78, 28, 8);
-      buttonRect(64, 78, 28, 8);
+      buttonRect(BUTTON.creatingSlot.newGame);
+      buttonRect(BUTTON.creatingSlot.cancel);
       ctx.fillStyle = COLOR.TEXT;
       drawText(" Cancel", 32, 84, "small");
       drawText(" Create", 64, 84, "small");
@@ -636,13 +647,13 @@ function renderLoop(currentDelta){
 
       
       for (let i = 0; i < 3; i ++){
-        buttonRect(26, BUTTONS_Y + 20 * i, 76, 16);
+        buttonRect({x: 26, y: BUTTONS_Y + 20 * i, w: 76, h: 16});
 
         ctx.fillStyle = COLOR.TEXT;
         drawText("Save Slot "+(i+1), 36, BUTTONS_Y+7+20*i, "small");
         if (saveSlots[i] == null){
           ctx.globalAlpha = 0.6;
-          if (mouseInRect(26, BUTTONS_Y+20*i, 76, 16)){ // Tactile save slot buttons
+          if (mouseInRect({x: 26, y: BUTTONS_Y+20*i, w: 76, h: 16})){ // Tactile save slot buttons
             drawText("< Create New >", 36, BUTTONS_Y+13+20*i, "small");
           }else{
             drawText("  Empty Save  ", 36, BUTTONS_Y+13+20*i, "small");
@@ -650,7 +661,7 @@ function renderLoop(currentDelta){
           ctx.globalAlpha = 1;
         }else{
           
-          if (mouseInRect(26, BUTTONS_Y+20*i, 76, 16)){
+          if (mouseInRect({x: 26, y: BUTTONS_Y+20*i, w: 76, h: 16})){
             drawText("> "+saveSlots[i].name, 36, BUTTONS_Y+13+20*i);
           }else{
             drawText("  "+saveSlots[i].name, 36, BUTTONS_Y+13+20*i);
